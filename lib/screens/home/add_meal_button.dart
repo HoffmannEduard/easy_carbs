@@ -11,7 +11,7 @@ class AddMealButton extends StatelessWidget {
     return ElevatedButton(
               onPressed: () {
                 Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const MealDetailscreen()));
+                MaterialPageRoute(builder: (context) => const MealDetailScreen()));
               },
               child: Center(
                 child: Row(

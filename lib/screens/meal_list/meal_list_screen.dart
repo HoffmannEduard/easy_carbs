@@ -25,7 +25,7 @@ class MealListscreen extends ConsumerWidget {
             itemBuilder: (context, index) {
               final meal = meals[index];
               return ListTile(
-                leading: Image.asset(meal.imagePath!),
+                leading: Image.asset(meal.imagePath),
                 title: Text(meal.name),
                 subtitle: Text('${meal.carbs} g carbs'),
                 trailing: IconButton(

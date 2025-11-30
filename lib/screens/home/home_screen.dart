@@ -1,6 +1,8 @@
 import 'package:easy_carbs/screens/home/add_meal_button.dart';
+import 'package:easy_carbs/screens/home/db_viewer_button.dart';
 import 'package:easy_carbs/screens/home/search_meal_card.dart';
 import 'package:easy_carbs/screens/home/show_all_meals_button.dart';
+import 'package:easy_carbs/screens/user_settings/user_settings_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -16,6 +18,17 @@ class HomeScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
             fontSize: 24
           ),)),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context, 
+                  MaterialPageRoute(builder: (context) => UserSettingsScreen())
+                );
+              }, 
+              icon: const Icon(Icons.settings_applications_rounded)
+              ),
+          ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -26,7 +39,10 @@ class HomeScreen extends StatelessWidget {
               SizedBox(height: 24), 
               ShowAllMealsButton(),
               SizedBox(height: 24), 
-              AddMealButton()
+              AddMealButton(),
+              //Database nur für Testzwecke
+              SizedBox(height: 46,),
+              DbViewerButton()
             ],
           ),
         ),

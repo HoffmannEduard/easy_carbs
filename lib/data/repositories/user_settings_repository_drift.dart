@@ -9,6 +9,13 @@ class UserSettingsRepo implements IUserSettingsRepository {
   UserSettingsRepo(this.dao);
 
   @override
+  Stream<UserSettings> watchSettings() {
+    return dao.watchSettings().map(
+      (row) => row != null ? UserSettingsMapper.fromTable(row) : throw Exception('No user settings found'),
+    );
+  }
+
+  @override
   Future<UserSettings?> loadSettings() async {
     final row = await dao.loadSettings();
     if (row == null) return null;
@@ -20,4 +27,12 @@ class UserSettingsRepo implements IUserSettingsRepository {
     final row = UserSettingsMapper.toTable(settings);
     return dao.saveSettings(row);
   }
+
+  @override
+  Future<void> updateSettings(UserSettings settings) async {
+    final row = UserSettingsMapper.toTable(settings);
+    return dao.updateSettings(row);
+  }
+
+
 }

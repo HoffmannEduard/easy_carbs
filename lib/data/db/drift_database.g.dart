@@ -699,9 +699,9 @@ class $UserSettingsTableTable extends UserSettingsTable
   late final GeneratedColumn<double> carbFactor = GeneratedColumn<double>(
     'carb_factor',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.double,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _showFpeMeta = const VerificationMeta(
     'showFpe',
@@ -729,21 +729,6 @@ class $UserSettingsTableTable extends UserSettingsTable
     type: DriftSqlType.double,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _darkModeMeta = const VerificationMeta(
-    'darkMode',
-  );
-  @override
-  late final GeneratedColumn<bool> darkMode = GeneratedColumn<bool>(
-    'dark_mode',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("dark_mode" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -751,7 +736,6 @@ class $UserSettingsTableTable extends UserSettingsTable
     carbFactor,
     showFpe,
     fpeFactor,
-    darkMode,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -775,8 +759,6 @@ class $UserSettingsTableTable extends UserSettingsTable
         _carbFactorMeta,
         carbFactor.isAcceptableOrUnknown(data['carb_factor']!, _carbFactorMeta),
       );
-    } else if (isInserting) {
-      context.missing(_carbFactorMeta);
     }
     if (data.containsKey('show_fpe')) {
       context.handle(
@@ -788,12 +770,6 @@ class $UserSettingsTableTable extends UserSettingsTable
       context.handle(
         _fpeFactorMeta,
         fpeFactor.isAcceptableOrUnknown(data['fpe_factor']!, _fpeFactorMeta),
-      );
-    }
-    if (data.containsKey('dark_mode')) {
-      context.handle(
-        _darkModeMeta,
-        darkMode.isAcceptableOrUnknown(data['dark_mode']!, _darkModeMeta),
       );
     }
     return context;
@@ -816,11 +792,10 @@ class $UserSettingsTableTable extends UserSettingsTable
           data['${effectivePrefix}carb_unit'],
         )!,
       ),
-      carbFactor:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.double,
-            data['${effectivePrefix}carb_factor'],
-          )!,
+      carbFactor: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}carb_factor'],
+      ),
       showFpe:
           attachedDatabase.typeMapping.read(
             DriftSqlType.bool,
@@ -830,11 +805,6 @@ class $UserSettingsTableTable extends UserSettingsTable
         DriftSqlType.double,
         data['${effectivePrefix}fpe_factor'],
       ),
-      darkMode:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.bool,
-            data['${effectivePrefix}dark_mode'],
-          )!,
     );
   }
 
@@ -851,17 +821,15 @@ class UserSettingsTableData extends DataClass
     implements Insertable<UserSettingsTableData> {
   final String id;
   final CarbUnit carbUnit;
-  final double carbFactor;
+  final double? carbFactor;
   final bool showFpe;
   final double? fpeFactor;
-  final bool darkMode;
   const UserSettingsTableData({
     required this.id,
     required this.carbUnit,
-    required this.carbFactor,
+    this.carbFactor,
     required this.showFpe,
     this.fpeFactor,
-    required this.darkMode,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -872,12 +840,13 @@ class UserSettingsTableData extends DataClass
         $UserSettingsTableTable.$convertercarbUnit.toSql(carbUnit),
       );
     }
-    map['carb_factor'] = Variable<double>(carbFactor);
+    if (!nullToAbsent || carbFactor != null) {
+      map['carb_factor'] = Variable<double>(carbFactor);
+    }
     map['show_fpe'] = Variable<bool>(showFpe);
     if (!nullToAbsent || fpeFactor != null) {
       map['fpe_factor'] = Variable<double>(fpeFactor);
     }
-    map['dark_mode'] = Variable<bool>(darkMode);
     return map;
   }
 
@@ -885,13 +854,15 @@ class UserSettingsTableData extends DataClass
     return UserSettingsTableCompanion(
       id: Value(id),
       carbUnit: Value(carbUnit),
-      carbFactor: Value(carbFactor),
+      carbFactor:
+          carbFactor == null && nullToAbsent
+              ? const Value.absent()
+              : Value(carbFactor),
       showFpe: Value(showFpe),
       fpeFactor:
           fpeFactor == null && nullToAbsent
               ? const Value.absent()
               : Value(fpeFactor),
-      darkMode: Value(darkMode),
     );
   }
 
@@ -903,10 +874,9 @@ class UserSettingsTableData extends DataClass
     return UserSettingsTableData(
       id: serializer.fromJson<String>(json['id']),
       carbUnit: serializer.fromJson<CarbUnit>(json['carbUnit']),
-      carbFactor: serializer.fromJson<double>(json['carbFactor']),
+      carbFactor: serializer.fromJson<double?>(json['carbFactor']),
       showFpe: serializer.fromJson<bool>(json['showFpe']),
       fpeFactor: serializer.fromJson<double?>(json['fpeFactor']),
-      darkMode: serializer.fromJson<bool>(json['darkMode']),
     );
   }
   @override
@@ -915,27 +885,24 @@ class UserSettingsTableData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'carbUnit': serializer.toJson<CarbUnit>(carbUnit),
-      'carbFactor': serializer.toJson<double>(carbFactor),
+      'carbFactor': serializer.toJson<double?>(carbFactor),
       'showFpe': serializer.toJson<bool>(showFpe),
       'fpeFactor': serializer.toJson<double?>(fpeFactor),
-      'darkMode': serializer.toJson<bool>(darkMode),
     };
   }
 
   UserSettingsTableData copyWith({
     String? id,
     CarbUnit? carbUnit,
-    double? carbFactor,
+    Value<double?> carbFactor = const Value.absent(),
     bool? showFpe,
     Value<double?> fpeFactor = const Value.absent(),
-    bool? darkMode,
   }) => UserSettingsTableData(
     id: id ?? this.id,
     carbUnit: carbUnit ?? this.carbUnit,
-    carbFactor: carbFactor ?? this.carbFactor,
+    carbFactor: carbFactor.present ? carbFactor.value : this.carbFactor,
     showFpe: showFpe ?? this.showFpe,
     fpeFactor: fpeFactor.present ? fpeFactor.value : this.fpeFactor,
-    darkMode: darkMode ?? this.darkMode,
   );
   UserSettingsTableData copyWithCompanion(UserSettingsTableCompanion data) {
     return UserSettingsTableData(
@@ -945,7 +912,6 @@ class UserSettingsTableData extends DataClass
           data.carbFactor.present ? data.carbFactor.value : this.carbFactor,
       showFpe: data.showFpe.present ? data.showFpe.value : this.showFpe,
       fpeFactor: data.fpeFactor.present ? data.fpeFactor.value : this.fpeFactor,
-      darkMode: data.darkMode.present ? data.darkMode.value : this.darkMode,
     );
   }
 
@@ -956,15 +922,13 @@ class UserSettingsTableData extends DataClass
           ..write('carbUnit: $carbUnit, ')
           ..write('carbFactor: $carbFactor, ')
           ..write('showFpe: $showFpe, ')
-          ..write('fpeFactor: $fpeFactor, ')
-          ..write('darkMode: $darkMode')
+          ..write('fpeFactor: $fpeFactor')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, carbUnit, carbFactor, showFpe, fpeFactor, darkMode);
+  int get hashCode => Object.hash(id, carbUnit, carbFactor, showFpe, fpeFactor);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -973,18 +937,16 @@ class UserSettingsTableData extends DataClass
           other.carbUnit == this.carbUnit &&
           other.carbFactor == this.carbFactor &&
           other.showFpe == this.showFpe &&
-          other.fpeFactor == this.fpeFactor &&
-          other.darkMode == this.darkMode);
+          other.fpeFactor == this.fpeFactor);
 }
 
 class UserSettingsTableCompanion
     extends UpdateCompanion<UserSettingsTableData> {
   final Value<String> id;
   final Value<CarbUnit> carbUnit;
-  final Value<double> carbFactor;
+  final Value<double?> carbFactor;
   final Value<bool> showFpe;
   final Value<double?> fpeFactor;
-  final Value<bool> darkMode;
   final Value<int> rowid;
   const UserSettingsTableCompanion({
     this.id = const Value.absent(),
@@ -992,27 +954,23 @@ class UserSettingsTableCompanion
     this.carbFactor = const Value.absent(),
     this.showFpe = const Value.absent(),
     this.fpeFactor = const Value.absent(),
-    this.darkMode = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserSettingsTableCompanion.insert({
     required String id,
     required CarbUnit carbUnit,
-    required double carbFactor,
+    this.carbFactor = const Value.absent(),
     this.showFpe = const Value.absent(),
     this.fpeFactor = const Value.absent(),
-    this.darkMode = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
-       carbUnit = Value(carbUnit),
-       carbFactor = Value(carbFactor);
+       carbUnit = Value(carbUnit);
   static Insertable<UserSettingsTableData> custom({
     Expression<String>? id,
     Expression<String>? carbUnit,
     Expression<double>? carbFactor,
     Expression<bool>? showFpe,
     Expression<double>? fpeFactor,
-    Expression<bool>? darkMode,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1021,7 +979,6 @@ class UserSettingsTableCompanion
       if (carbFactor != null) 'carb_factor': carbFactor,
       if (showFpe != null) 'show_fpe': showFpe,
       if (fpeFactor != null) 'fpe_factor': fpeFactor,
-      if (darkMode != null) 'dark_mode': darkMode,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1029,10 +986,9 @@ class UserSettingsTableCompanion
   UserSettingsTableCompanion copyWith({
     Value<String>? id,
     Value<CarbUnit>? carbUnit,
-    Value<double>? carbFactor,
+    Value<double?>? carbFactor,
     Value<bool>? showFpe,
     Value<double?>? fpeFactor,
-    Value<bool>? darkMode,
     Value<int>? rowid,
   }) {
     return UserSettingsTableCompanion(
@@ -1041,7 +997,6 @@ class UserSettingsTableCompanion
       carbFactor: carbFactor ?? this.carbFactor,
       showFpe: showFpe ?? this.showFpe,
       fpeFactor: fpeFactor ?? this.fpeFactor,
-      darkMode: darkMode ?? this.darkMode,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1066,9 +1021,6 @@ class UserSettingsTableCompanion
     if (fpeFactor.present) {
       map['fpe_factor'] = Variable<double>(fpeFactor.value);
     }
-    if (darkMode.present) {
-      map['dark_mode'] = Variable<bool>(darkMode.value);
-    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1083,7 +1035,6 @@ class UserSettingsTableCompanion
           ..write('carbFactor: $carbFactor, ')
           ..write('showFpe: $showFpe, ')
           ..write('fpeFactor: $fpeFactor, ')
-          ..write('darkMode: $darkMode, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1437,20 +1388,18 @@ typedef $$UserSettingsTableTableCreateCompanionBuilder =
     UserSettingsTableCompanion Function({
       required String id,
       required CarbUnit carbUnit,
-      required double carbFactor,
+      Value<double?> carbFactor,
       Value<bool> showFpe,
       Value<double?> fpeFactor,
-      Value<bool> darkMode,
       Value<int> rowid,
     });
 typedef $$UserSettingsTableTableUpdateCompanionBuilder =
     UserSettingsTableCompanion Function({
       Value<String> id,
       Value<CarbUnit> carbUnit,
-      Value<double> carbFactor,
+      Value<double?> carbFactor,
       Value<bool> showFpe,
       Value<double?> fpeFactor,
-      Value<bool> darkMode,
       Value<int> rowid,
     });
 
@@ -1488,11 +1437,6 @@ class $$UserSettingsTableTableFilterComposer
     column: $table.fpeFactor,
     builder: (column) => ColumnFilters(column),
   );
-
-  ColumnFilters<bool> get darkMode => $composableBuilder(
-    column: $table.darkMode,
-    builder: (column) => ColumnFilters(column),
-  );
 }
 
 class $$UserSettingsTableTableOrderingComposer
@@ -1528,11 +1472,6 @@ class $$UserSettingsTableTableOrderingComposer
     column: $table.fpeFactor,
     builder: (column) => ColumnOrderings(column),
   );
-
-  ColumnOrderings<bool> get darkMode => $composableBuilder(
-    column: $table.darkMode,
-    builder: (column) => ColumnOrderings(column),
-  );
 }
 
 class $$UserSettingsTableTableAnnotationComposer
@@ -1560,9 +1499,6 @@ class $$UserSettingsTableTableAnnotationComposer
 
   GeneratedColumn<double> get fpeFactor =>
       $composableBuilder(column: $table.fpeFactor, builder: (column) => column);
-
-  GeneratedColumn<bool> get darkMode =>
-      $composableBuilder(column: $table.darkMode, builder: (column) => column);
 }
 
 class $$UserSettingsTableTableTableManager
@@ -1613,10 +1549,9 @@ class $$UserSettingsTableTableTableManager
               ({
                 Value<String> id = const Value.absent(),
                 Value<CarbUnit> carbUnit = const Value.absent(),
-                Value<double> carbFactor = const Value.absent(),
+                Value<double?> carbFactor = const Value.absent(),
                 Value<bool> showFpe = const Value.absent(),
                 Value<double?> fpeFactor = const Value.absent(),
-                Value<bool> darkMode = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsTableCompanion(
                 id: id,
@@ -1624,17 +1559,15 @@ class $$UserSettingsTableTableTableManager
                 carbFactor: carbFactor,
                 showFpe: showFpe,
                 fpeFactor: fpeFactor,
-                darkMode: darkMode,
                 rowid: rowid,
               ),
           createCompanionCallback:
               ({
                 required String id,
                 required CarbUnit carbUnit,
-                required double carbFactor,
+                Value<double?> carbFactor = const Value.absent(),
                 Value<bool> showFpe = const Value.absent(),
                 Value<double?> fpeFactor = const Value.absent(),
-                Value<bool> darkMode = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsTableCompanion.insert(
                 id: id,
@@ -1642,7 +1575,6 @@ class $$UserSettingsTableTableTableManager
                 carbFactor: carbFactor,
                 showFpe: showFpe,
                 fpeFactor: fpeFactor,
-                darkMode: darkMode,
                 rowid: rowid,
               ),
           withReferenceMapper:

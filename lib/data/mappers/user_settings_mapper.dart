@@ -11,7 +11,6 @@ class UserSettingsMapper {
       carbFactor: row.carbFactor,
       showFpe: row.showFpe,
       fpeFactor: row.fpeFactor,
-      darkMode: row.darkMode,
     );
   }
 
@@ -22,7 +21,6 @@ class UserSettingsMapper {
       carbFactor: Value(entity.carbFactor),
       showFpe: Value(entity.showFpe),
       fpeFactor: Value(entity.fpeFactor),
-      darkMode: Value(entity.darkMode),
     );
   }
 }

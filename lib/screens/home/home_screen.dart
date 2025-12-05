@@ -26,7 +26,7 @@ class HomeScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => UserSettingsScreen())
                 );
               }, 
-              icon: const Icon(Icons.settings_applications_rounded)
+              icon: const Icon(Icons.account_circle)
               ),
           ],
       ),

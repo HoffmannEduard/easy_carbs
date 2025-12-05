@@ -36,7 +36,26 @@ class UserSettingsAsyncNotifier extends AsyncNotifier<UserSettings> {
     await _repo.updateSettings(updated);
     state = AsyncData(updated);
   }
+
+  Future<void> setCarbUnit(CarbUnit unit) async {
+    final current = state.value;
+    final updated = current!.copyWith(carbUnit: unit);
+    await _repo.updateSettings(updated);
+    state = AsyncData(updated);
+  }
   
+  Future<void> setCarbFactor(double carbFactor) async {
+    final current = state.value;
+    final updated = current!.copyWith(carbFactor: carbFactor);
+    await _repo.updateSettings(updated);
+    state = AsyncData(updated);
+  }
+  Future<void> setFpeFactor(double fpeFactor) async {
+    final current = state.value;
+    final updated = current!.copyWith(fpeFactor: fpeFactor);
+    await _repo.updateSettings(updated);
+    state = AsyncData(updated);
+  }
 
 
 }

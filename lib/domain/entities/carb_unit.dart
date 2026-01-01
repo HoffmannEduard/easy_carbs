@@ -4,7 +4,7 @@ extension CarbUnitExt on CarbUnit {
   String get label {
     switch (this) {
       case CarbUnit.gramm:
-        return 'gramm';
+        return 'Gramm';
       case CarbUnit.be:
         return 'BE';
       case CarbUnit.ke:

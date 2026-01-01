@@ -27,7 +27,14 @@ class MealListscreen extends ConsumerWidget {
               return ListTile(
                 leading: Image.asset(meal.imagePath),
                 title: Text(meal.name),
-                subtitle: Text('${meal.carbs} g carbs'),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('${meal.carbsInUnit} BE'),
+                    if (meal.nutrition?.carbs != null)
+                      Text('${meal.nutrition!.carbs} g Carbs')
+                  ],
+                ),
                 trailing: IconButton(
                   onPressed: () async {
                     final repo = ref.read(mealRepositoryProvider);

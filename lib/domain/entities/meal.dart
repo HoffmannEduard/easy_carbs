@@ -1,3 +1,6 @@
+import 'package:easy_carbs/domain/entities/carb_unit.dart';
+import 'package:easy_carbs/domain/entities/nutrition.dart';
+import 'package:easy_carbs/domain/entities/portion_unit.dart';
 import 'package:uuid/uuid.dart';
 
 // Seperation of Concerns! Deshalb die UUID und weitere Default-Logik hier und nicht in der DB-Schicht!
@@ -5,13 +8,15 @@ import 'package:uuid/uuid.dart';
 class Meal {
   final String id;
   final String name;
-  final double carbs;
   final DateTime timestamp;
+  final CarbUnit carbUnit;
 
-  final double? fat;
-  final double? protein;
+  final double? carbsInUnit;
+  final double? fpe;
   final String? location;
-  final double? quantity;
+  final Nutrition? nutrition;
+  final double? portionsize;
+  final PortionUnit? portionUnit;
   final String? note;
   final String? categories;
   final String imagePath;
@@ -19,12 +24,14 @@ class Meal {
   Meal({
     String? id,
     required this.name,
-    required this.carbs,
+    required this.carbUnit,
     DateTime? timestamp,
-    this.fat,
-    this.protein,
+    this.carbsInUnit,
+    this.fpe,
     this.location,
-    this.quantity,
+    this.nutrition,
+    this.portionsize,
+    this.portionUnit,
     this.note,
     this.categories,
     String? imagePath,

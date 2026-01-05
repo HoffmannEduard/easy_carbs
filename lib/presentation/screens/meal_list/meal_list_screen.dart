@@ -1,4 +1,4 @@
-import 'package:easy_carbs/app/provider/drift_db_provider.dart';
+import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -25,9 +25,16 @@ class MealListscreen extends ConsumerWidget {
             itemBuilder: (context, index) {
               final meal = meals[index];
               return ListTile(
-                leading: Image.asset(meal.imagePath!),
+                leading: Image.asset(meal.imagePath),
                 title: Text(meal.name),
-                subtitle: Text('${meal.carbs} g carbs'),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('${meal.carbsInUnit} BE'),
+                    if (meal.nutrition?.carbs != null)
+                      Text('${meal.nutrition!.carbs} g Carbs')
+                  ],
+                ),
                 trailing: IconButton(
                   onPressed: () async {
                     final repo = ref.read(mealRepositoryProvider);

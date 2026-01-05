@@ -1,5 +1,7 @@
-import 'package:easy_carbs/app/provider/drift_db_provider.dart';
+import 'package:easy_carbs/domain/entities/carb_unit.dart';
 import 'package:easy_carbs/domain/entities/meal.dart';
+import 'package:easy_carbs/domain/entities/nutrition.dart';
+import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,6 +16,7 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _carbsController = TextEditingController();
+  final _nutritioncarbsController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +41,14 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
               ),
               TextFormField(
                 controller: _carbsController,
-                decoration: const InputDecoration(labelText: 'Carbs (g)'),
+                decoration: const InputDecoration(labelText: 'BE'),
+                keyboardType: TextInputType.number,
+                validator: (value) =>
+                    value!.isEmpty ? 'Bitte Carbs eingeben' : null,
+              ),
+              TextFormField(
+                controller: _nutritioncarbsController,
+                decoration: const InputDecoration(labelText: 'carbs'),
                 keyboardType: TextInputType.number,
                 validator: (value) =>
                     value!.isEmpty ? 'Bitte Carbs eingeben' : null,
@@ -50,7 +60,11 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
                     final repo = ref.read(mealRepositoryProvider);
                     final meal = Meal(
                       name: _nameController.text,
-                      carbs: double.parse(_carbsController.text),
+                      carbUnit: CarbUnit.be,
+                      carbsInUnit: double.parse(_carbsController.text),
+                      nutrition: Nutrition(
+                        carbs: double.parse(_nutritioncarbsController.text)
+                      )
                     );
                     await repo.addMeal(meal);
                     Navigator.pop(context); // zurück zur Liste

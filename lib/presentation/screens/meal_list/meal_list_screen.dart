@@ -1,4 +1,4 @@
-import 'package:easy_carbs/app/provider/drift_db_provider.dart';
+import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

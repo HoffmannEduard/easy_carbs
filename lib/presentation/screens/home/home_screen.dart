@@ -1,8 +1,8 @@
-import 'package:easy_carbs/screens/home/add_meal_button.dart';
-import 'package:easy_carbs/screens/home/db_viewer_button.dart';
-import 'package:easy_carbs/screens/home/search_meal_card.dart';
-import 'package:easy_carbs/screens/home/show_all_meals_button.dart';
-import 'package:easy_carbs/screens/user_settings/user_settings_screen.dart';
+import 'package:easy_carbs/presentation/screens/home/add_meal_button.dart';
+import 'package:easy_carbs/presentation/screens/home/db_viewer_button.dart';
+import 'package:easy_carbs/presentation/screens/home/search_meal_card.dart';
+import 'package:easy_carbs/presentation/screens/home/show_all_meals_button.dart';
+import 'package:easy_carbs/presentation/screens/user_settings/user_settings_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {

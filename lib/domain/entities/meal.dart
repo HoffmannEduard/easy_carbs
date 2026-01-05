@@ -38,5 +38,37 @@ class Meal {
   })  : id = id ?? const Uuid().v4(), // UUID erzeugen, wenn nicht gesetzt
         timestamp = timestamp ?? DateTime.now(),
         imagePath = imagePath ?? 'assets/defaults/default-burger.jpg';
+
+  Meal copyWith({
+    String? id,
+    String? name,
+    DateTime? timestamp,
+    CarbUnit? carbUnit,
+    double? carbsInUnit,
+    double? fpe,
+    String? location,
+    Nutrition? nutrition,
+    double? portionsize,
+    PortionUnit? portionUnit,
+    String? note,
+    String? categories,
+    String? imagePath,
+  }) {
+    return Meal(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      timestamp: timestamp ?? this.timestamp,
+      carbUnit: carbUnit ?? this.carbUnit,
+      carbsInUnit: carbsInUnit ?? this.carbsInUnit,
+      fpe: fpe ?? this.fpe,
+      location: location ?? this.location,
+      nutrition: nutrition ?? this.nutrition,
+      portionsize: portionsize ?? this.portionsize,
+      portionUnit: portionUnit ?? this.portionUnit,
+      note: note ?? this.note,
+      categories: categories ?? this.categories,
+      imagePath: imagePath ?? this.imagePath,
+    );
+  }
 }
 

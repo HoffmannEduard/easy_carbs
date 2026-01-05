@@ -1,4 +1,4 @@
-import 'package:easy_carbs/screens/meal_detail/meal_detail_screen.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/meal_detail_screen.dart';
 import 'package:flutter/material.dart';
 
 class AddMealButton extends StatelessWidget {

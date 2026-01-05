@@ -15,5 +15,20 @@ Nutrition({
   this.protein
 })   : id = id ?? const Uuid().v4(); // UUID erzeugen, wenn nicht gesetzt
 
+// copyWith-Methode
+  Nutrition copyWith({
+    double? carbs,
+    double? sugar,
+    double? fat,
+    double? protein,
+  }) {
+    return Nutrition(
+      id: id, // ID bleibt gleich
+      carbs: carbs ?? this.carbs,
+      sugar: sugar ?? this.sugar,
+      fat: fat ?? this.fat,
+      protein: protein ?? this.protein,
+    );
+  }
 
 }

@@ -1,4 +1,4 @@
-import 'package:easy_carbs/screens/user_settings/us_input_widget.dart';
+import 'package:easy_carbs/presentation/screens/user_settings/us_input_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -52,6 +52,18 @@ class HomeScreen extends StatelessWidget {
 }
 
 
+//Dialog erstellen und folgendes mitgeben:
+//final meal = await ref
+//    .read(mealListProvider.notifier)
+//    .createMeal(
+//      name: name,
+//      location: location,
+//    );
+
+//context.push('/meal/${meal.id}');
+
+
+
 
 
 

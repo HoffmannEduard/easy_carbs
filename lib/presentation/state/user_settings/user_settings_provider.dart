@@ -14,10 +14,10 @@ final userSettingsDaoProvider = Provider<UserSettingsDao>((ref) {
 // Verbindung des IRepo mit der konkreten Implementierung (MealRepositoryDrift) und der CRUD-Operationen über DAO
 final userSettingsRepositoryProvider = Provider<IUserSettingsRepository>((ref) {
   final dao = ref.watch(userSettingsDaoProvider);
-  return UserSettingsRepo(dao);
+  return UserSettingsRepositoryDrift(dao);
 });
 
-final userSettingsProvider = StreamProvider<UserSettings>((ref) {
+final userSettingsProvider = StreamProvider<UserSettings?>((ref) {
   final repo = ref.watch(userSettingsRepositoryProvider);
   return repo.watchSettings();
 });

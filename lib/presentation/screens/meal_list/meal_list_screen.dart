@@ -1,4 +1,5 @@
-import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/meal_detail_screen.dart';
+import 'package:easy_carbs/presentation/state/meals/meal_list_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,7 +16,7 @@ class MealListscreen extends ConsumerWidget {
             fontSize: 24
           ),),
           ),
-      body: ref.watch(mealsStreamProvider).when(
+      body: ref.watch(mealListNotifierProvider).when(
         data: (meals) {
           if (meals.isEmpty) {
             return const Center(child: Text('Noch keine Mahlzeiten'));
@@ -35,10 +36,16 @@ class MealListscreen extends ConsumerWidget {
                       Text('${meal.nutrition!.carbs} g Carbs')
                   ],
                 ),
+                onTap: () {
+                  Navigator.push(
+                    context, MaterialPageRoute(
+                      builder: (_) => MealDetailScreen(mealId: meal.id)
+                      )
+                    );
+                },
                 trailing: IconButton(
                   onPressed: () async {
-                    final repo = ref.read(mealRepositoryProvider);
-                    await repo.deleteMeal(meal.id);
+                    await ref.read(mealListNotifierProvider.notifier).deleteMeal(meal.id);
                   }, 
                   icon: const Icon(Icons.delete, color: Colors.red,)),
               );

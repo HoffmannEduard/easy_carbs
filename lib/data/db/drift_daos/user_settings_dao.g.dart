@@ -6,4 +6,6 @@ part of 'user_settings_dao.dart';
 mixin _$UserSettingsDaoMixin on DatabaseAccessor<AppDatabase> {
   $UserSettingsTableTable get userSettingsTable =>
       attachedDatabase.userSettingsTable;
+  $TimeBasedInsulinFactorsTableTable get timeBasedInsulinFactorsTable =>
+      attachedDatabase.timeBasedInsulinFactorsTable;
 }

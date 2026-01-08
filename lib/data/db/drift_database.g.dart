@@ -1155,7 +1155,8 @@ class $UserSettingsTableTable extends UserSettingsTable
     aliasedName,
     false,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
+    clientDefault: () => 'user',
   );
   @override
   late final GeneratedColumnWithTypeConverter<CarbUnit, String> carbUnit =
@@ -1166,17 +1167,6 @@ class $UserSettingsTableTable extends UserSettingsTable
         type: DriftSqlType.string,
         requiredDuringInsert: true,
       ).withConverter<CarbUnit>($UserSettingsTableTable.$convertercarbUnit);
-  static const VerificationMeta _carbFactorMeta = const VerificationMeta(
-    'carbFactor',
-  );
-  @override
-  late final GeneratedColumn<double> carbFactor = GeneratedColumn<double>(
-    'carb_factor',
-    aliasedName,
-    true,
-    type: DriftSqlType.double,
-    requiredDuringInsert: false,
-  );
   static const VerificationMeta _showFpeMeta = const VerificationMeta(
     'showFpe',
   );
@@ -1204,13 +1194,7 @@ class $UserSettingsTableTable extends UserSettingsTable
     requiredDuringInsert: false,
   );
   @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    carbUnit,
-    carbFactor,
-    showFpe,
-    fpeFactor,
-  ];
+  List<GeneratedColumn> get $columns => [id, carbUnit, showFpe, fpeFactor];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1225,14 +1209,6 @@ class $UserSettingsTableTable extends UserSettingsTable
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('carb_factor')) {
-      context.handle(
-        _carbFactorMeta,
-        carbFactor.isAcceptableOrUnknown(data['carb_factor']!, _carbFactorMeta),
-      );
     }
     if (data.containsKey('show_fpe')) {
       context.handle(
@@ -1266,10 +1242,6 @@ class $UserSettingsTableTable extends UserSettingsTable
           data['${effectivePrefix}carb_unit'],
         )!,
       ),
-      carbFactor: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}carb_factor'],
-      ),
       showFpe:
           attachedDatabase.typeMapping.read(
             DriftSqlType.bool,
@@ -1295,13 +1267,11 @@ class UserSettingsTableData extends DataClass
     implements Insertable<UserSettingsTableData> {
   final String id;
   final CarbUnit carbUnit;
-  final double? carbFactor;
   final bool showFpe;
   final double? fpeFactor;
   const UserSettingsTableData({
     required this.id,
     required this.carbUnit,
-    this.carbFactor,
     required this.showFpe,
     this.fpeFactor,
   });
@@ -1314,9 +1284,6 @@ class UserSettingsTableData extends DataClass
         $UserSettingsTableTable.$convertercarbUnit.toSql(carbUnit),
       );
     }
-    if (!nullToAbsent || carbFactor != null) {
-      map['carb_factor'] = Variable<double>(carbFactor);
-    }
     map['show_fpe'] = Variable<bool>(showFpe);
     if (!nullToAbsent || fpeFactor != null) {
       map['fpe_factor'] = Variable<double>(fpeFactor);
@@ -1328,10 +1295,6 @@ class UserSettingsTableData extends DataClass
     return UserSettingsTableCompanion(
       id: Value(id),
       carbUnit: Value(carbUnit),
-      carbFactor:
-          carbFactor == null && nullToAbsent
-              ? const Value.absent()
-              : Value(carbFactor),
       showFpe: Value(showFpe),
       fpeFactor:
           fpeFactor == null && nullToAbsent
@@ -1348,7 +1311,6 @@ class UserSettingsTableData extends DataClass
     return UserSettingsTableData(
       id: serializer.fromJson<String>(json['id']),
       carbUnit: serializer.fromJson<CarbUnit>(json['carbUnit']),
-      carbFactor: serializer.fromJson<double?>(json['carbFactor']),
       showFpe: serializer.fromJson<bool>(json['showFpe']),
       fpeFactor: serializer.fromJson<double?>(json['fpeFactor']),
     );
@@ -1359,7 +1321,6 @@ class UserSettingsTableData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'carbUnit': serializer.toJson<CarbUnit>(carbUnit),
-      'carbFactor': serializer.toJson<double?>(carbFactor),
       'showFpe': serializer.toJson<bool>(showFpe),
       'fpeFactor': serializer.toJson<double?>(fpeFactor),
     };
@@ -1368,13 +1329,11 @@ class UserSettingsTableData extends DataClass
   UserSettingsTableData copyWith({
     String? id,
     CarbUnit? carbUnit,
-    Value<double?> carbFactor = const Value.absent(),
     bool? showFpe,
     Value<double?> fpeFactor = const Value.absent(),
   }) => UserSettingsTableData(
     id: id ?? this.id,
     carbUnit: carbUnit ?? this.carbUnit,
-    carbFactor: carbFactor.present ? carbFactor.value : this.carbFactor,
     showFpe: showFpe ?? this.showFpe,
     fpeFactor: fpeFactor.present ? fpeFactor.value : this.fpeFactor,
   );
@@ -1382,8 +1341,6 @@ class UserSettingsTableData extends DataClass
     return UserSettingsTableData(
       id: data.id.present ? data.id.value : this.id,
       carbUnit: data.carbUnit.present ? data.carbUnit.value : this.carbUnit,
-      carbFactor:
-          data.carbFactor.present ? data.carbFactor.value : this.carbFactor,
       showFpe: data.showFpe.present ? data.showFpe.value : this.showFpe,
       fpeFactor: data.fpeFactor.present ? data.fpeFactor.value : this.fpeFactor,
     );
@@ -1394,7 +1351,6 @@ class UserSettingsTableData extends DataClass
     return (StringBuffer('UserSettingsTableData(')
           ..write('id: $id, ')
           ..write('carbUnit: $carbUnit, ')
-          ..write('carbFactor: $carbFactor, ')
           ..write('showFpe: $showFpe, ')
           ..write('fpeFactor: $fpeFactor')
           ..write(')'))
@@ -1402,14 +1358,13 @@ class UserSettingsTableData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(id, carbUnit, carbFactor, showFpe, fpeFactor);
+  int get hashCode => Object.hash(id, carbUnit, showFpe, fpeFactor);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is UserSettingsTableData &&
           other.id == this.id &&
           other.carbUnit == this.carbUnit &&
-          other.carbFactor == this.carbFactor &&
           other.showFpe == this.showFpe &&
           other.fpeFactor == this.fpeFactor);
 }
@@ -1418,31 +1373,26 @@ class UserSettingsTableCompanion
     extends UpdateCompanion<UserSettingsTableData> {
   final Value<String> id;
   final Value<CarbUnit> carbUnit;
-  final Value<double?> carbFactor;
   final Value<bool> showFpe;
   final Value<double?> fpeFactor;
   final Value<int> rowid;
   const UserSettingsTableCompanion({
     this.id = const Value.absent(),
     this.carbUnit = const Value.absent(),
-    this.carbFactor = const Value.absent(),
     this.showFpe = const Value.absent(),
     this.fpeFactor = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserSettingsTableCompanion.insert({
-    required String id,
+    this.id = const Value.absent(),
     required CarbUnit carbUnit,
-    this.carbFactor = const Value.absent(),
     this.showFpe = const Value.absent(),
     this.fpeFactor = const Value.absent(),
     this.rowid = const Value.absent(),
-  }) : id = Value(id),
-       carbUnit = Value(carbUnit);
+  }) : carbUnit = Value(carbUnit);
   static Insertable<UserSettingsTableData> custom({
     Expression<String>? id,
     Expression<String>? carbUnit,
-    Expression<double>? carbFactor,
     Expression<bool>? showFpe,
     Expression<double>? fpeFactor,
     Expression<int>? rowid,
@@ -1450,7 +1400,6 @@ class UserSettingsTableCompanion
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (carbUnit != null) 'carb_unit': carbUnit,
-      if (carbFactor != null) 'carb_factor': carbFactor,
       if (showFpe != null) 'show_fpe': showFpe,
       if (fpeFactor != null) 'fpe_factor': fpeFactor,
       if (rowid != null) 'rowid': rowid,
@@ -1460,7 +1409,6 @@ class UserSettingsTableCompanion
   UserSettingsTableCompanion copyWith({
     Value<String>? id,
     Value<CarbUnit>? carbUnit,
-    Value<double?>? carbFactor,
     Value<bool>? showFpe,
     Value<double?>? fpeFactor,
     Value<int>? rowid,
@@ -1468,7 +1416,6 @@ class UserSettingsTableCompanion
     return UserSettingsTableCompanion(
       id: id ?? this.id,
       carbUnit: carbUnit ?? this.carbUnit,
-      carbFactor: carbFactor ?? this.carbFactor,
       showFpe: showFpe ?? this.showFpe,
       fpeFactor: fpeFactor ?? this.fpeFactor,
       rowid: rowid ?? this.rowid,
@@ -1485,9 +1432,6 @@ class UserSettingsTableCompanion
       map['carb_unit'] = Variable<String>(
         $UserSettingsTableTable.$convertercarbUnit.toSql(carbUnit.value),
       );
-    }
-    if (carbFactor.present) {
-      map['carb_factor'] = Variable<double>(carbFactor.value);
     }
     if (showFpe.present) {
       map['show_fpe'] = Variable<bool>(showFpe.value);
@@ -1506,9 +1450,416 @@ class UserSettingsTableCompanion
     return (StringBuffer('UserSettingsTableCompanion(')
           ..write('id: $id, ')
           ..write('carbUnit: $carbUnit, ')
-          ..write('carbFactor: $carbFactor, ')
           ..write('showFpe: $showFpe, ')
           ..write('fpeFactor: $fpeFactor, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $TimeBasedInsulinFactorsTableTable extends TimeBasedInsulinFactorsTable
+    with
+        TableInfo<
+          $TimeBasedInsulinFactorsTableTable,
+          TimeBasedInsulinFactorsTableData
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TimeBasedInsulinFactorsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _userSettingsIdMeta = const VerificationMeta(
+    'userSettingsId',
+  );
+  @override
+  late final GeneratedColumn<String> userSettingsId = GeneratedColumn<String>(
+    'user_settings_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _startTimeMinutesMeta = const VerificationMeta(
+    'startTimeMinutes',
+  );
+  @override
+  late final GeneratedColumn<int> startTimeMinutes = GeneratedColumn<int>(
+    'start_time_minutes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _endTimeMinutesMeta = const VerificationMeta(
+    'endTimeMinutes',
+  );
+  @override
+  late final GeneratedColumn<int> endTimeMinutes = GeneratedColumn<int>(
+    'end_time_minutes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _insulinFactorMeta = const VerificationMeta(
+    'insulinFactor',
+  );
+  @override
+  late final GeneratedColumn<double> insulinFactor = GeneratedColumn<double>(
+    'insulin_factor',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    userSettingsId,
+    startTimeMinutes,
+    endTimeMinutes,
+    insulinFactor,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'time_based_insulin_factors_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TimeBasedInsulinFactorsTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('user_settings_id')) {
+      context.handle(
+        _userSettingsIdMeta,
+        userSettingsId.isAcceptableOrUnknown(
+          data['user_settings_id']!,
+          _userSettingsIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_userSettingsIdMeta);
+    }
+    if (data.containsKey('start_time_minutes')) {
+      context.handle(
+        _startTimeMinutesMeta,
+        startTimeMinutes.isAcceptableOrUnknown(
+          data['start_time_minutes']!,
+          _startTimeMinutesMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_startTimeMinutesMeta);
+    }
+    if (data.containsKey('end_time_minutes')) {
+      context.handle(
+        _endTimeMinutesMeta,
+        endTimeMinutes.isAcceptableOrUnknown(
+          data['end_time_minutes']!,
+          _endTimeMinutesMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_endTimeMinutesMeta);
+    }
+    if (data.containsKey('insulin_factor')) {
+      context.handle(
+        _insulinFactorMeta,
+        insulinFactor.isAcceptableOrUnknown(
+          data['insulin_factor']!,
+          _insulinFactorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_insulinFactorMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TimeBasedInsulinFactorsTableData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TimeBasedInsulinFactorsTableData(
+      id:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}id'],
+          )!,
+      userSettingsId:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}user_settings_id'],
+          )!,
+      startTimeMinutes:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.int,
+            data['${effectivePrefix}start_time_minutes'],
+          )!,
+      endTimeMinutes:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.int,
+            data['${effectivePrefix}end_time_minutes'],
+          )!,
+      insulinFactor:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.double,
+            data['${effectivePrefix}insulin_factor'],
+          )!,
+    );
+  }
+
+  @override
+  $TimeBasedInsulinFactorsTableTable createAlias(String alias) {
+    return $TimeBasedInsulinFactorsTableTable(attachedDatabase, alias);
+  }
+}
+
+class TimeBasedInsulinFactorsTableData extends DataClass
+    implements Insertable<TimeBasedInsulinFactorsTableData> {
+  final String id;
+  final String userSettingsId;
+  final int startTimeMinutes;
+  final int endTimeMinutes;
+  final double insulinFactor;
+  const TimeBasedInsulinFactorsTableData({
+    required this.id,
+    required this.userSettingsId,
+    required this.startTimeMinutes,
+    required this.endTimeMinutes,
+    required this.insulinFactor,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['user_settings_id'] = Variable<String>(userSettingsId);
+    map['start_time_minutes'] = Variable<int>(startTimeMinutes);
+    map['end_time_minutes'] = Variable<int>(endTimeMinutes);
+    map['insulin_factor'] = Variable<double>(insulinFactor);
+    return map;
+  }
+
+  TimeBasedInsulinFactorsTableCompanion toCompanion(bool nullToAbsent) {
+    return TimeBasedInsulinFactorsTableCompanion(
+      id: Value(id),
+      userSettingsId: Value(userSettingsId),
+      startTimeMinutes: Value(startTimeMinutes),
+      endTimeMinutes: Value(endTimeMinutes),
+      insulinFactor: Value(insulinFactor),
+    );
+  }
+
+  factory TimeBasedInsulinFactorsTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TimeBasedInsulinFactorsTableData(
+      id: serializer.fromJson<String>(json['id']),
+      userSettingsId: serializer.fromJson<String>(json['userSettingsId']),
+      startTimeMinutes: serializer.fromJson<int>(json['startTimeMinutes']),
+      endTimeMinutes: serializer.fromJson<int>(json['endTimeMinutes']),
+      insulinFactor: serializer.fromJson<double>(json['insulinFactor']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'userSettingsId': serializer.toJson<String>(userSettingsId),
+      'startTimeMinutes': serializer.toJson<int>(startTimeMinutes),
+      'endTimeMinutes': serializer.toJson<int>(endTimeMinutes),
+      'insulinFactor': serializer.toJson<double>(insulinFactor),
+    };
+  }
+
+  TimeBasedInsulinFactorsTableData copyWith({
+    String? id,
+    String? userSettingsId,
+    int? startTimeMinutes,
+    int? endTimeMinutes,
+    double? insulinFactor,
+  }) => TimeBasedInsulinFactorsTableData(
+    id: id ?? this.id,
+    userSettingsId: userSettingsId ?? this.userSettingsId,
+    startTimeMinutes: startTimeMinutes ?? this.startTimeMinutes,
+    endTimeMinutes: endTimeMinutes ?? this.endTimeMinutes,
+    insulinFactor: insulinFactor ?? this.insulinFactor,
+  );
+  TimeBasedInsulinFactorsTableData copyWithCompanion(
+    TimeBasedInsulinFactorsTableCompanion data,
+  ) {
+    return TimeBasedInsulinFactorsTableData(
+      id: data.id.present ? data.id.value : this.id,
+      userSettingsId:
+          data.userSettingsId.present
+              ? data.userSettingsId.value
+              : this.userSettingsId,
+      startTimeMinutes:
+          data.startTimeMinutes.present
+              ? data.startTimeMinutes.value
+              : this.startTimeMinutes,
+      endTimeMinutes:
+          data.endTimeMinutes.present
+              ? data.endTimeMinutes.value
+              : this.endTimeMinutes,
+      insulinFactor:
+          data.insulinFactor.present
+              ? data.insulinFactor.value
+              : this.insulinFactor,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TimeBasedInsulinFactorsTableData(')
+          ..write('id: $id, ')
+          ..write('userSettingsId: $userSettingsId, ')
+          ..write('startTimeMinutes: $startTimeMinutes, ')
+          ..write('endTimeMinutes: $endTimeMinutes, ')
+          ..write('insulinFactor: $insulinFactor')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    userSettingsId,
+    startTimeMinutes,
+    endTimeMinutes,
+    insulinFactor,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TimeBasedInsulinFactorsTableData &&
+          other.id == this.id &&
+          other.userSettingsId == this.userSettingsId &&
+          other.startTimeMinutes == this.startTimeMinutes &&
+          other.endTimeMinutes == this.endTimeMinutes &&
+          other.insulinFactor == this.insulinFactor);
+}
+
+class TimeBasedInsulinFactorsTableCompanion
+    extends UpdateCompanion<TimeBasedInsulinFactorsTableData> {
+  final Value<String> id;
+  final Value<String> userSettingsId;
+  final Value<int> startTimeMinutes;
+  final Value<int> endTimeMinutes;
+  final Value<double> insulinFactor;
+  final Value<int> rowid;
+  const TimeBasedInsulinFactorsTableCompanion({
+    this.id = const Value.absent(),
+    this.userSettingsId = const Value.absent(),
+    this.startTimeMinutes = const Value.absent(),
+    this.endTimeMinutes = const Value.absent(),
+    this.insulinFactor = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TimeBasedInsulinFactorsTableCompanion.insert({
+    required String id,
+    required String userSettingsId,
+    required int startTimeMinutes,
+    required int endTimeMinutes,
+    required double insulinFactor,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       userSettingsId = Value(userSettingsId),
+       startTimeMinutes = Value(startTimeMinutes),
+       endTimeMinutes = Value(endTimeMinutes),
+       insulinFactor = Value(insulinFactor);
+  static Insertable<TimeBasedInsulinFactorsTableData> custom({
+    Expression<String>? id,
+    Expression<String>? userSettingsId,
+    Expression<int>? startTimeMinutes,
+    Expression<int>? endTimeMinutes,
+    Expression<double>? insulinFactor,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userSettingsId != null) 'user_settings_id': userSettingsId,
+      if (startTimeMinutes != null) 'start_time_minutes': startTimeMinutes,
+      if (endTimeMinutes != null) 'end_time_minutes': endTimeMinutes,
+      if (insulinFactor != null) 'insulin_factor': insulinFactor,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TimeBasedInsulinFactorsTableCompanion copyWith({
+    Value<String>? id,
+    Value<String>? userSettingsId,
+    Value<int>? startTimeMinutes,
+    Value<int>? endTimeMinutes,
+    Value<double>? insulinFactor,
+    Value<int>? rowid,
+  }) {
+    return TimeBasedInsulinFactorsTableCompanion(
+      id: id ?? this.id,
+      userSettingsId: userSettingsId ?? this.userSettingsId,
+      startTimeMinutes: startTimeMinutes ?? this.startTimeMinutes,
+      endTimeMinutes: endTimeMinutes ?? this.endTimeMinutes,
+      insulinFactor: insulinFactor ?? this.insulinFactor,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (userSettingsId.present) {
+      map['user_settings_id'] = Variable<String>(userSettingsId.value);
+    }
+    if (startTimeMinutes.present) {
+      map['start_time_minutes'] = Variable<int>(startTimeMinutes.value);
+    }
+    if (endTimeMinutes.present) {
+      map['end_time_minutes'] = Variable<int>(endTimeMinutes.value);
+    }
+    if (insulinFactor.present) {
+      map['insulin_factor'] = Variable<double>(insulinFactor.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TimeBasedInsulinFactorsTableCompanion(')
+          ..write('id: $id, ')
+          ..write('userSettingsId: $userSettingsId, ')
+          ..write('startTimeMinutes: $startTimeMinutes, ')
+          ..write('endTimeMinutes: $endTimeMinutes, ')
+          ..write('insulinFactor: $insulinFactor, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1524,6 +1875,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $MealsTableTable mealsTable = $MealsTableTable(this);
   late final $UserSettingsTableTable userSettingsTable =
       $UserSettingsTableTable(this);
+  late final $TimeBasedInsulinFactorsTableTable timeBasedInsulinFactorsTable =
+      $TimeBasedInsulinFactorsTableTable(this);
   late final MealDao mealDao = MealDao(this as AppDatabase);
   late final UserSettingsDao userSettingsDao = UserSettingsDao(
     this as AppDatabase,
@@ -1536,6 +1889,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     nutritionsTable,
     mealsTable,
     userSettingsTable,
+    timeBasedInsulinFactorsTable,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -2359,9 +2713,8 @@ typedef $$MealsTableTableProcessedTableManager =
     >;
 typedef $$UserSettingsTableTableCreateCompanionBuilder =
     UserSettingsTableCompanion Function({
-      required String id,
+      Value<String> id,
       required CarbUnit carbUnit,
-      Value<double?> carbFactor,
       Value<bool> showFpe,
       Value<double?> fpeFactor,
       Value<int> rowid,
@@ -2370,7 +2723,6 @@ typedef $$UserSettingsTableTableUpdateCompanionBuilder =
     UserSettingsTableCompanion Function({
       Value<String> id,
       Value<CarbUnit> carbUnit,
-      Value<double?> carbFactor,
       Value<bool> showFpe,
       Value<double?> fpeFactor,
       Value<int> rowid,
@@ -2395,11 +2747,6 @@ class $$UserSettingsTableTableFilterComposer
         column: $table.carbUnit,
         builder: (column) => ColumnWithTypeConverterFilters(column),
       );
-
-  ColumnFilters<double> get carbFactor => $composableBuilder(
-    column: $table.carbFactor,
-    builder: (column) => ColumnFilters(column),
-  );
 
   ColumnFilters<bool> get showFpe => $composableBuilder(
     column: $table.showFpe,
@@ -2431,11 +2778,6 @@ class $$UserSettingsTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get carbFactor => $composableBuilder(
-    column: $table.carbFactor,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<bool> get showFpe => $composableBuilder(
     column: $table.showFpe,
     builder: (column) => ColumnOrderings(column),
@@ -2461,11 +2803,6 @@ class $$UserSettingsTableTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<CarbUnit, String> get carbUnit =>
       $composableBuilder(column: $table.carbUnit, builder: (column) => column);
-
-  GeneratedColumn<double> get carbFactor => $composableBuilder(
-    column: $table.carbFactor,
-    builder: (column) => column,
-  );
 
   GeneratedColumn<bool> get showFpe =>
       $composableBuilder(column: $table.showFpe, builder: (column) => column);
@@ -2522,30 +2859,26 @@ class $$UserSettingsTableTableTableManager
               ({
                 Value<String> id = const Value.absent(),
                 Value<CarbUnit> carbUnit = const Value.absent(),
-                Value<double?> carbFactor = const Value.absent(),
                 Value<bool> showFpe = const Value.absent(),
                 Value<double?> fpeFactor = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsTableCompanion(
                 id: id,
                 carbUnit: carbUnit,
-                carbFactor: carbFactor,
                 showFpe: showFpe,
                 fpeFactor: fpeFactor,
                 rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                required String id,
+                Value<String> id = const Value.absent(),
                 required CarbUnit carbUnit,
-                Value<double?> carbFactor = const Value.absent(),
                 Value<bool> showFpe = const Value.absent(),
                 Value<double?> fpeFactor = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsTableCompanion.insert(
                 id: id,
                 carbUnit: carbUnit,
-                carbFactor: carbFactor,
                 showFpe: showFpe,
                 fpeFactor: fpeFactor,
                 rowid: rowid,
@@ -2586,6 +2919,240 @@ typedef $$UserSettingsTableTableProcessedTableManager =
       UserSettingsTableData,
       PrefetchHooks Function()
     >;
+typedef $$TimeBasedInsulinFactorsTableTableCreateCompanionBuilder =
+    TimeBasedInsulinFactorsTableCompanion Function({
+      required String id,
+      required String userSettingsId,
+      required int startTimeMinutes,
+      required int endTimeMinutes,
+      required double insulinFactor,
+      Value<int> rowid,
+    });
+typedef $$TimeBasedInsulinFactorsTableTableUpdateCompanionBuilder =
+    TimeBasedInsulinFactorsTableCompanion Function({
+      Value<String> id,
+      Value<String> userSettingsId,
+      Value<int> startTimeMinutes,
+      Value<int> endTimeMinutes,
+      Value<double> insulinFactor,
+      Value<int> rowid,
+    });
+
+class $$TimeBasedInsulinFactorsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $TimeBasedInsulinFactorsTableTable> {
+  $$TimeBasedInsulinFactorsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userSettingsId => $composableBuilder(
+    column: $table.userSettingsId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get startTimeMinutes => $composableBuilder(
+    column: $table.startTimeMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get endTimeMinutes => $composableBuilder(
+    column: $table.endTimeMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get insulinFactor => $composableBuilder(
+    column: $table.insulinFactor,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$TimeBasedInsulinFactorsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $TimeBasedInsulinFactorsTableTable> {
+  $$TimeBasedInsulinFactorsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userSettingsId => $composableBuilder(
+    column: $table.userSettingsId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get startTimeMinutes => $composableBuilder(
+    column: $table.startTimeMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get endTimeMinutes => $composableBuilder(
+    column: $table.endTimeMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get insulinFactor => $composableBuilder(
+    column: $table.insulinFactor,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$TimeBasedInsulinFactorsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TimeBasedInsulinFactorsTableTable> {
+  $$TimeBasedInsulinFactorsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userSettingsId => $composableBuilder(
+    column: $table.userSettingsId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get startTimeMinutes => $composableBuilder(
+    column: $table.startTimeMinutes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get endTimeMinutes => $composableBuilder(
+    column: $table.endTimeMinutes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get insulinFactor => $composableBuilder(
+    column: $table.insulinFactor,
+    builder: (column) => column,
+  );
+}
+
+class $$TimeBasedInsulinFactorsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TimeBasedInsulinFactorsTableTable,
+          TimeBasedInsulinFactorsTableData,
+          $$TimeBasedInsulinFactorsTableTableFilterComposer,
+          $$TimeBasedInsulinFactorsTableTableOrderingComposer,
+          $$TimeBasedInsulinFactorsTableTableAnnotationComposer,
+          $$TimeBasedInsulinFactorsTableTableCreateCompanionBuilder,
+          $$TimeBasedInsulinFactorsTableTableUpdateCompanionBuilder,
+          (
+            TimeBasedInsulinFactorsTableData,
+            BaseReferences<
+              _$AppDatabase,
+              $TimeBasedInsulinFactorsTableTable,
+              TimeBasedInsulinFactorsTableData
+            >,
+          ),
+          TimeBasedInsulinFactorsTableData,
+          PrefetchHooks Function()
+        > {
+  $$TimeBasedInsulinFactorsTableTableTableManager(
+    _$AppDatabase db,
+    $TimeBasedInsulinFactorsTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer:
+              () => $$TimeBasedInsulinFactorsTableTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer:
+              () => $$TimeBasedInsulinFactorsTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer:
+              () => $$TimeBasedInsulinFactorsTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> userSettingsId = const Value.absent(),
+                Value<int> startTimeMinutes = const Value.absent(),
+                Value<int> endTimeMinutes = const Value.absent(),
+                Value<double> insulinFactor = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TimeBasedInsulinFactorsTableCompanion(
+                id: id,
+                userSettingsId: userSettingsId,
+                startTimeMinutes: startTimeMinutes,
+                endTimeMinutes: endTimeMinutes,
+                insulinFactor: insulinFactor,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String userSettingsId,
+                required int startTimeMinutes,
+                required int endTimeMinutes,
+                required double insulinFactor,
+                Value<int> rowid = const Value.absent(),
+              }) => TimeBasedInsulinFactorsTableCompanion.insert(
+                id: id,
+                userSettingsId: userSettingsId,
+                startTimeMinutes: startTimeMinutes,
+                endTimeMinutes: endTimeMinutes,
+                insulinFactor: insulinFactor,
+                rowid: rowid,
+              ),
+          withReferenceMapper:
+              (p0) =>
+                  p0
+                      .map(
+                        (e) => (
+                          e.readTable(table),
+                          BaseReferences(db, table, e),
+                        ),
+                      )
+                      .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$TimeBasedInsulinFactorsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $TimeBasedInsulinFactorsTableTable,
+      TimeBasedInsulinFactorsTableData,
+      $$TimeBasedInsulinFactorsTableTableFilterComposer,
+      $$TimeBasedInsulinFactorsTableTableOrderingComposer,
+      $$TimeBasedInsulinFactorsTableTableAnnotationComposer,
+      $$TimeBasedInsulinFactorsTableTableCreateCompanionBuilder,
+      $$TimeBasedInsulinFactorsTableTableUpdateCompanionBuilder,
+      (
+        TimeBasedInsulinFactorsTableData,
+        BaseReferences<
+          _$AppDatabase,
+          $TimeBasedInsulinFactorsTableTable,
+          TimeBasedInsulinFactorsTableData
+        >,
+      ),
+      TimeBasedInsulinFactorsTableData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2596,4 +3163,10 @@ class $AppDatabaseManager {
       $$MealsTableTableTableManager(_db, _db.mealsTable);
   $$UserSettingsTableTableTableManager get userSettingsTable =>
       $$UserSettingsTableTableTableManager(_db, _db.userSettingsTable);
+  $$TimeBasedInsulinFactorsTableTableTableManager
+  get timeBasedInsulinFactorsTable =>
+      $$TimeBasedInsulinFactorsTableTableTableManager(
+        _db,
+        _db.timeBasedInsulinFactorsTable,
+      );
 }

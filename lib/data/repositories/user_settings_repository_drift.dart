@@ -40,7 +40,7 @@ class UserSettingsRepositoryDrift implements IUserSettingsRepository {
   Future<void> addInsulinFactor(TimeBasedInsulinFactor factor) async {
     await _dao.addOrUpdateFactor(TimeBasedInsulinFactorsTableCompanion(
       id: Value(factor.id),
-      userSettingsId: Value('user'),
+      userSettingsId: Value(UserSettingsDao.defaultSettingsId), //kein Hardconding mit 'user'
       startTimeMinutes: Value(factor.startTime.hour * 60 + factor.startTime.minute),
       endTimeMinutes: Value(factor.endTime.hour * 60 + factor.endTime.minute),
       insulinFactor: Value(factor.insulinFactor),

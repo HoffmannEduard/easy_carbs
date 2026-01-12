@@ -2,7 +2,6 @@
 import 'package:easy_carbs/app/provider/drift_db_provider.dart';
 import 'package:easy_carbs/data/db/drift_daos/meal_dao.dart';
 import 'package:easy_carbs/data/repositories/meal_repository_drift.dart';
-import 'package:easy_carbs/domain/entities/meal.dart';
 import 'package:easy_carbs/domain/i_repo/i_meal_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,9 +16,3 @@ final mealRepositoryProvider = Provider<IMealRepository>((ref) {
   return MealRepositoryDrift(dao);
 });
 
-// StreamProvider um alle Mahlzeiten zu beobachten, wird über IRepo aufgerufen
-// ggf. über Wechsel zu AsyncNotifierProvider nachdenken, wenn mehr Logik benötigt wird
-final mealsStreamProvider = StreamProvider<List<Meal>>((ref) {
-  final repo = ref.watch(mealRepositoryProvider);
-  return repo.watchAllMeals();
-});

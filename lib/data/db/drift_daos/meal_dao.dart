@@ -166,12 +166,19 @@ class MealDao extends DatabaseAccessor<AppDatabase> with _$MealDaoMixin {
   
   // Alle Meals mit ihren Nutrition-Daten abrufen (Left Join)
   Stream<List<MealWithNutrition>> watchAllMeals() {
-    final query = select(mealsTable).join([
-      leftOuterJoin(
-        nutritionsTable,
-        nutritionsTable.id.equalsExp(mealsTable.nutritionId),
-      ),
-    ]);
+    final query = (select(mealsTable)
+      ..orderBy([
+        (t) => OrderingTerm(
+          expression: t.name.collate(Collate.noCase),
+          mode: OrderingMode.asc,
+          ),
+        ]))
+      .join([
+        leftOuterJoin(
+          nutritionsTable,
+          nutritionsTable.id.equalsExp(mealsTable.nutritionId),
+        ),
+      ]);
 
     return query.watch().map((rows) {
       return rows.map((row) {

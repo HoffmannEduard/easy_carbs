@@ -1,5 +1,5 @@
 import 'package:easy_carbs/presentation/screens/meal_detail/meal_detail_screen.dart';
-import 'package:easy_carbs/presentation/state/meals/filter_and_sort_meal_view/visible_meal_provider.dart';
+import 'package:easy_carbs/presentation/state/meals/filter_meal_view/visible_meal_provider.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_list_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

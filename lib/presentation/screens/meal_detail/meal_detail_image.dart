@@ -8,14 +8,12 @@ class MealDetailImage extends StatelessWidget {
   const MealDetailImage({
     super.key,
     required this.imagePath,
-    this.onTap
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (imagePath.startsWith('assets/')) {
-      return const SizedBox.shrink();
-    }
+    final isDefault = imagePath.startsWith('assets/');
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -23,12 +21,36 @@ class MealDetailImage extends StatelessWidget {
         onTap: onTap,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Image.file(
-            File(imagePath),
-            width: double.infinity,
-            height: 200,
-            fit: BoxFit.cover,
-          ),
+          child: isDefault
+              ? SizedBox(
+                  width: double.infinity,
+                  height: 100,
+                  child: ElevatedButton.icon(
+                    onPressed: null, // noch kein onTap, nur Optik
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[200],
+                      foregroundColor: Colors.grey[800],
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: const Icon(Icons.add_a_photo, size: 28),
+                    label: const Text(
+                      'Foto hinzufügen',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                )
+              : Image.file(
+                  File(imagePath),
+                  width: double.infinity,
+                  height: 200,
+                  fit: BoxFit.cover,
+                ),
         ),
       ),
     );

@@ -15,7 +15,7 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Easy Carbs',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
       ),
       home: const HomeScreen(),
     );

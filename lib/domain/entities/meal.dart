@@ -1,3 +1,4 @@
+import 'package:easy_carbs/app/core/app_assets.dart';
 import 'package:easy_carbs/domain/entities/carb_unit.dart';
 import 'package:easy_carbs/domain/entities/nutrition.dart';
 import 'package:easy_carbs/domain/entities/portion_unit.dart';
@@ -37,7 +38,7 @@ class Meal {
     String? imagePath,
   })  : id = id ?? const Uuid().v4(), // UUID erzeugen, wenn nicht gesetzt
         timestamp = timestamp ?? DateTime.now(),
-        imagePath = imagePath ?? 'assets/defaults/default-burger.jpg';
+        imagePath = imagePath ?? AppAssets.defaultMealImagePath;
 
   Meal copyWith({
     String? id,

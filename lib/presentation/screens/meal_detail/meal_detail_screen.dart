@@ -1,7 +1,9 @@
 import 'package:easy_carbs/domain/entities/meal.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/meal_detail_image.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_detail_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MealDetailScreen extends ConsumerStatefulWidget {
   final String mealId;
@@ -18,6 +20,8 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
   final _portionSizeController = TextEditingController();
   final _noteController = TextEditingController();
 
+  final ImagePicker _imagePicker = ImagePicker();
+
   bool _initialized = false;
 
   void _initControllers(Meal meal) {
@@ -30,6 +34,52 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
     _noteController.text = meal.note ?? '';
 
     _initialized = true;
+  }
+
+  // ----------------------------
+  // SCREEN ORCHESTRATION
+  // ----------------------------
+
+  Future<void> _onImageTapped() async {
+    final source = await _showImageSourceSelector();
+    if (source == null || !mounted) return;
+
+    final picked = await _imagePicker.pickImage(
+      source: source,
+      imageQuality: 85,
+    );
+    if (picked == null || !mounted) return;
+
+    final notifier =
+        ref.read(mealDetailNotifierProvider(widget.mealId).notifier);
+    await notifier.updateImageFromFile(picked);
+  }
+
+  Future<ImageSource?> _showImageSourceSelector() async {
+    return showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo),
+              title: const Text('Galerie'),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Kamera'),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+            ListTile(
+              title: const Text('Abbrechen'),
+              onTap: () => Navigator.pop(context, null),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -64,6 +114,12 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
             padding: const EdgeInsets.all(16),
             child: ListView(
               children: [
+
+            // --- Bild anzeigen, nur wenn es kein Default-Asset ist ---
+            MealDetailImage(
+              imagePath: meal.imagePath,
+              onTap: _onImageTapped,
+              ),
 
                 //Location
                 TextField(
@@ -149,3 +205,5 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
     super.dispose();
   }
 }
+
+

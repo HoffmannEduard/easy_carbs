@@ -1,7 +1,9 @@
-import 'package:easy_carbs/presentation/screens/meal_detail/meal_detail_screen.dart';
-import 'package:easy_carbs/presentation/state/meals/meal_list_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/meal_detail_screen.dart';
+import 'package:easy_carbs/presentation/state/meals/meal_list_notifier.dart';
+import 'package:easy_carbs/presentation/screens/add_meal/meal_image_picker.dart';
 
 class AddMealScreen extends ConsumerStatefulWidget {
   const AddMealScreen({super.key});
@@ -15,6 +17,9 @@ class _AddMealScreenState extends ConsumerState<AddMealScreen> {
   final _nameController = TextEditingController();
   final _locationController = TextEditingController();
 
+  final ImagePicker _picker = ImagePicker();
+  XFile? _selectedImage;
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -22,28 +27,52 @@ class _AddMealScreenState extends ConsumerState<AddMealScreen> {
     super.dispose();
   }
 
+  // --- Bild auswählen (UI-only) ---
+  Future<void> _pickImage(ImageSource imageSource) async {
+    final picked = await _picker.pickImage(
+      source: imageSource,
+      imageQuality: 85,
+    );
+
+    if (picked != null) {
+      setState(() {
+        _selectedImage = picked;
+      });
+    }
+  }
+
+
   Future<void> _createMeal() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final mealId = await ref
-        .read(mealListNotifierProvider.notifier)
-        .createMeal(
-          name: _nameController.text.trim(),
-          location: _locationController.text.trim().isEmpty
-              ? null
-              : _locationController.text.trim(),
-        );
+    try {
+      final mealId = await ref
+          .read(mealListNotifierProvider.notifier)
+          .createMeal(
+            name: _nameController.text.trim(),
+            location: _locationController.text.trim().isEmpty
+                ? null
+                : _locationController.text.trim(),
+            imageFile: _selectedImage,
+          );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    Navigator.pop(context);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MealDetailScreen(mealId: mealId),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => MealDetailScreen(mealId: mealId),
-      ),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Mahlzeit konnte nicht gespeichert werden'),
+        ),
+      );
+    }
   }
 
   @override
@@ -53,34 +82,50 @@ class _AddMealScreenState extends ConsumerState<AddMealScreen> {
         title: const Text('Neue Mahlzeit'),
       ),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Form(
             key: _formKey,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                //Name des Meals
+                // --- Bild ---
+                MealImagePicker(
+                  image: _selectedImage,
+                  onPickImage: _pickImage,
+                ),
+
+                const SizedBox(height: 24),
+
+                // --- Name ---
                 TextFormField(
                   controller: _nameController,
                   decoration: const InputDecoration(
                     labelText: 'Name *',
                   ),
-                  validator: (value) =>
-                      value == null || value.trim().isEmpty
-                          ? 'Name ist erforderlich'
-                          : null,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Name ist erforderlich';
+                    }
+                    return null;
+                  },
                 ),
+
                 const SizedBox(height: 16),
-                //Location des Meals
+
+                // --- Location ---
                 TextFormField(
                   controller: _locationController,
                   decoration: const InputDecoration(
                     labelText: 'Ort',
                   ),
                 ),
-                const Spacer(),
+
+                const SizedBox(height: 32),
+
+                // --- Erstellen Button ---
                 SizedBox(
-                  width: double.infinity,
+                  height: 48,
                   child: ElevatedButton(
                     onPressed: _createMeal,
                     child: const Text('Erstellen'),

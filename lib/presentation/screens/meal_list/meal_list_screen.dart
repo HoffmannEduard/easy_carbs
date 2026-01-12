@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:easy_carbs/presentation/screens/meal_detail/meal_detail_screen.dart';
 import 'package:easy_carbs/presentation/state/meals/filter_meal_view/visible_meal_provider.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_list_notifier.dart';
@@ -26,8 +28,18 @@ class MealListscreen extends ConsumerWidget {
             itemCount: meals.length,
             itemBuilder: (context, index) {
               final meal = meals[index];
+                
+                //Helper-Funktion für das Bild
+                Widget mealImage(String imagePath) {
+                  if (imagePath.startsWith('assets/')) {
+                    return Image.asset(imagePath, width: 50, height: 50, fit: BoxFit.cover,);
+                  } else {
+                    return Image.file(File(imagePath), width: 50, height: 50, fit: BoxFit.cover);
+                  }
+                }
+
               return ListTile(
-                leading: Image.asset(meal.imagePath),
+                leading: mealImage(meal.imagePath),
                 title: Text(meal.name),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

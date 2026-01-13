@@ -1,3 +1,4 @@
+import 'package:easy_carbs/app/theme/app_spacing.dart';
 import 'package:easy_carbs/presentation/screens/home/add_meal_button.dart';
 import 'package:easy_carbs/presentation/screens/home/db_viewer_button.dart';
 import 'package:easy_carbs/presentation/screens/home/search_meal_card.dart';
@@ -14,10 +15,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Center(
           child: Text("EasyCarbs",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24
-          ),)),
+          )),
           actions: [
             IconButton(
               onPressed: () {
@@ -36,12 +34,13 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             children: [
               SearchMealCard(),
-              SizedBox(height: 24), 
+              SizedBox(height: AppSpacing.spacingLg), 
               ShowAllMealsButton(),
-              SizedBox(height: 24), 
+              SizedBox(height: AppSpacing.spacingLg), 
               AddMealButton(),
               //Database nur für Testzwecke
-              SizedBox(height: 46,),
+              SizedBox(height: AppSpacing.spacingLg),
+              SizedBox(height: AppSpacing.spacingLg),
               DbViewerButton()
             ],
           ),

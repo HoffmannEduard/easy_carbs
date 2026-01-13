@@ -19,15 +19,9 @@ class AddMealButton extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: const [
-          Icon(Icons.add, color: Color.fromARGB(255, 16, 189, 16)),
-          SizedBox(width: 8),
+          Icon(Icons.add,),
           Text(
-            'Hinzufügen',
-            style: TextStyle(
-              color: Color.fromARGB(255, 16, 189, 16),
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            'Hinzufügen'
           ),
         ],
       ),

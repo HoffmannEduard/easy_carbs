@@ -20,10 +20,6 @@ class MealDetailScreen extends ConsumerWidget {
           error: (_, __) => const Text('Fehler'),
           data: (meal) => Text(
             meal.name,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
           ),
         ),
       ),

@@ -10,8 +10,7 @@ class UserSettingsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Alle Mahlzeiten",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+          "Startseite",
         ),
       ),
       body: Center(child: UsInputWidget()),

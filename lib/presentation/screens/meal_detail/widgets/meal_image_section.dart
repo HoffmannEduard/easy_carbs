@@ -1,3 +1,4 @@
+import 'package:easy_carbs/app/core/app_assets.dart';
 import 'package:easy_carbs/domain/entities/meal.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/meal_detail_image.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_detail_notifier.dart';
@@ -22,8 +23,7 @@ class MealImageSection extends ConsumerStatefulWidget {
 
 class _MealImageSectionState
     extends ConsumerState<MealImageSection> {
-  static const _defaultImage =
-      'assets/defaults/default-burger.jpg';
+  static const _defaultImage = AppAssets.defaultMealImagePath;
 
   final _picker = ImagePicker();
 

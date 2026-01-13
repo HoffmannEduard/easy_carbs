@@ -19,11 +19,6 @@ class ShowAllMealsButton extends ConsumerWidget {
               child: Center(
                 child: Text(
                   "Alle anzeigen",
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold
-                  ),
                 ),
               ),
             );

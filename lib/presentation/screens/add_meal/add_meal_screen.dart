@@ -101,7 +101,7 @@ class _AddMealScreenState extends ConsumerState<AddMealScreen> {
                 TextFormField(
                   controller: _nameController,
                   decoration: const InputDecoration(
-                    labelText: 'Name *',
+                    labelText: 'Name',
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {

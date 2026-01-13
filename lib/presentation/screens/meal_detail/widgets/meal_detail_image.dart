@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_carbs/app/core/app_assets.dart';
 import 'package:flutter/material.dart';
 
 class MealDetailImage extends StatelessWidget {
@@ -13,10 +14,10 @@ class MealDetailImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDefault = imagePath.startsWith('assets/');
+    final isDefault = imagePath == AppAssets.defaultMealImagePath;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 4),
       child: GestureDetector(
         onTap: onTap,
         child: ClipRRect(

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_carbs/app/core/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -60,7 +61,7 @@ class MealImagePicker extends StatelessWidget {
                       fit: BoxFit.cover,
                     )
                   : Image.asset(
-                      'assets/defaults/default-burger.jpg',
+                      AppAssets.defaultMealImagePath,
                       fit: BoxFit.cover,
                     ),
             ),

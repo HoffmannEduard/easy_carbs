@@ -1,9 +1,11 @@
+import 'package:easy_carbs/domain/entities/portion_unit.dart';
+import 'package:easy_carbs/presentation/screens/add_meal/widgets/meal_form_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/meal_detail_screen.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_list_notifier.dart';
-import 'package:easy_carbs/presentation/screens/add_meal/meal_image_picker.dart';
+import 'package:easy_carbs/presentation/screens/add_meal/widgets/meal_image_picker.dart';
 
 class AddMealScreen extends ConsumerStatefulWidget {
   const AddMealScreen({super.key});
@@ -16,6 +18,7 @@ class _AddMealScreenState extends ConsumerState<AddMealScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _locationController = TextEditingController();
+  PortionUnit? _portionUnit;
 
   final ImagePicker _picker = ImagePicker();
   XFile? _selectedImage;
@@ -31,7 +34,9 @@ class _AddMealScreenState extends ConsumerState<AddMealScreen> {
   Future<void> _pickImage(ImageSource imageSource) async {
     final picked = await _picker.pickImage(
       source: imageSource,
-      imageQuality: 85,
+      imageQuality: 70,
+      maxHeight: 1024,
+      maxWidth: 1024
     );
 
     if (picked != null) {
@@ -54,6 +59,7 @@ class _AddMealScreenState extends ConsumerState<AddMealScreen> {
                 ? null
                 : _locationController.text.trim(),
             imageFile: _selectedImage,
+            portionUnit: _portionUnit!,
           );
 
       if (!mounted) return;
@@ -89,7 +95,7 @@ class _AddMealScreenState extends ConsumerState<AddMealScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // --- Bild ---
+// --- Image ---
                 MealImagePicker(
                   image: _selectedImage,
                   onPickImage: _pickImage,
@@ -97,33 +103,19 @@ class _AddMealScreenState extends ConsumerState<AddMealScreen> {
 
                 const SizedBox(height: 24),
 
-                // --- Name ---
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Name',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Name ist erforderlich';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: 16),
-
-                // --- Location ---
-                TextFormField(
-                  controller: _locationController,
-                  decoration: const InputDecoration(
-                    labelText: 'Ort',
-                  ),
-                ),
-
+                MealFormFields(
+                      nameController: _nameController,
+                      locationController: _locationController,
+                      portionUnit: _portionUnit,
+                      onPortionUnitChanged: (value) {
+                        setState(() {
+                          _portionUnit = value;
+                        });
+                      },
+                    ),
                 const SizedBox(height: 32),
 
-                // --- Erstellen Button ---
+// --- Erstellen Button ---
                 SizedBox(
                   height: 48,
                   child: ElevatedButton(

@@ -1,4 +1,5 @@
 import 'package:easy_carbs/domain/entities/meal.dart';
+import 'package:easy_carbs/domain/entities/portion_unit.dart';
 import 'package:easy_carbs/domain/i_repo/i_meal_repository.dart';
 import 'package:easy_carbs/domain/services/meal_image_service.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
@@ -20,7 +21,8 @@ class MealListNotifier extends StreamNotifier<List<Meal>> {
   Future<String> createMeal({
     required String name,
     String? location,
-    XFile? imageFile
+    XFile? imageFile,
+    required PortionUnit portionUnit,
   }) async {
     final settings = await ref
       .read(userSettingsRepositoryProvider)
@@ -35,7 +37,8 @@ class MealListNotifier extends StreamNotifier<List<Meal>> {
       name: name,
       location: location,
       carbUnit: settings!.carbUnit,
-      imagePath: imagePath
+      imagePath: imagePath,
+      portionUnit: portionUnit,
     );
     await _repo.addMeal(meal);
     return meal.id;

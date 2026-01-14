@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 class AppTheme {
 
-  static const _seedColor = Color(0xFF8D6E63);
+  static const _seedColor = Colors.green;
   static const _seedColorDarkMode = Colors.blueGrey;
 
 

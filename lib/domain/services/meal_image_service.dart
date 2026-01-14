@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_carbs/app/core/app_assets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -21,7 +22,7 @@ class MealImageService {
       return savedImage.path;
     } catch (e) {
       // Fallback: default Asset
-      return 'assets/defaults/default-burger.jpg';
+      return AppAssets.defaultMealImagePath;
     }
   }
 }

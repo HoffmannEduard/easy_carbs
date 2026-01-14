@@ -8,7 +8,7 @@ extension PortionUnitExt on PortionUnit {
       case PortionUnit.piece:
         return 'Stück';
       case PortionUnit.portion:
-        return 'Portion';
+        return 'Portion(en)';
     }
   }
 }

@@ -1,10 +1,12 @@
 import 'package:easy_carbs/app/theme/app_spacing.dart';
 import 'package:easy_carbs/domain/entities/meal.dart';
 import 'package:easy_carbs/domain/entities/portion_unit.dart';
+import 'package:easy_carbs/presentation/screens/add_nutrition/add_nutrition_screen.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/be_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/fpe_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/location_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/note_section.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/widgets/nutrition_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/portion_size_section.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_detail_notifier.dart';
 import 'package:flutter/material.dart';
@@ -111,13 +113,19 @@ class _MealDetailFormState extends ConsumerState<MealDetailForm> {
 
           const SizedBox(height: AppSpacing.spacingMd),
 //Nutrition vorhanden Switch
-          SwitchListTile(
-            title: const Text('Nutrition vorhanden'),
-            value: widget.meal.nutrition != null,
-            onChanged: (value) {
-              if (!value) notifier.removeNutrition();
-            },
-          ),
+          if (widget.meal.nutrition == null)
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context, MaterialPageRoute(
+                  builder: (_) => AddNutritionScreen(mealId: widget.mealId)
+                  )
+                );
+            }, 
+            child: Text('Nährwerte hinzufügen')
+            )
+            else
+            NutritionSection(nutrition: widget.meal.nutrition!)  
         ],
       ),
     );

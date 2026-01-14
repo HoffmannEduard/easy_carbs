@@ -2,13 +2,16 @@ import 'dart:async';
 import 'package:easy_carbs/domain/entities/meal.dart';
 import 'package:easy_carbs/domain/entities/nutrition.dart';
 import 'package:easy_carbs/domain/i_repo/i_meal_repository.dart';
+import 'package:easy_carbs/domain/services/meal_image_service.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MealDetailNotifier extends FamilyAsyncNotifier<Meal, String> {
 
   late final IMealRepository _repo;
-  //Eventuell CarbUnit aus UserSettings ergänzen
+  late final MealImageService _imageService = MealImageService();
+
 
   @override
   Future<Meal> build(String mealId) async {
@@ -18,6 +21,45 @@ class MealDetailNotifier extends FamilyAsyncNotifier<Meal, String> {
     if (meal == null) throw Exception('Meal nicht gefunden');
     return meal;
   }
+
+//--------------------------
+//Image Spezifische Methoden
+//--------------------------
+  Future<void> updateImageFromFile(XFile file) async {
+    final currentMeal = state.value;
+    if (currentMeal == null) return;
+
+    try {
+      // Bild speichern und Pfad zurückbekommen
+      final imagePath = await _imageService.saveMealImage(file);
+
+      // Meal kopieren + State aktualisieren
+      final updatedMeal = currentMeal.copyWith(imagePath: imagePath);
+      state = AsyncValue.data(updatedMeal);
+
+      // Persistenz
+      await _repo.updateMeal(updatedMeal);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  Future<void> removeImage() async {
+    final currentMeal = state.value;
+    if (currentMeal == null) return;
+
+    try {
+      final updatedMeal = currentMeal.copyWith(
+        imagePath: 'assets/defaults/default-burger.jpg',
+      );
+
+      state = AsyncValue.data(updatedMeal);
+      await _repo.updateMeal(updatedMeal);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
 
   Future<void> updateName(String newMealName) async {
     final updatedMeal = state.value!.copyWith(name: newMealName);
@@ -57,12 +99,6 @@ class MealDetailNotifier extends FamilyAsyncNotifier<Meal, String> {
 
   Future<void> updateCategories(String? categories) async {
     final updatedMeal = state.value!.copyWith(categories: categories);
-    state = AsyncValue.data(updatedMeal);
-    await _repo.updateMeal(updatedMeal);
-  }
-
-  Future<void> updateImagePath(String imagePath) async {
-    final updatedMeal = state.value!.copyWith(imagePath: imagePath);
     state = AsyncValue.data(updatedMeal);
     await _repo.updateMeal(updatedMeal);
   }

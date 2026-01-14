@@ -1,8 +1,11 @@
 import 'package:easy_carbs/domain/entities/meal.dart';
+import 'package:easy_carbs/domain/entities/portion_unit.dart';
 import 'package:easy_carbs/domain/i_repo/i_meal_repository.dart';
+import 'package:easy_carbs/domain/services/meal_image_service.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:easy_carbs/presentation/state/user_settings/user_settings_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MealListNotifier extends StreamNotifier<List<Meal>> {
 
@@ -14,19 +17,28 @@ class MealListNotifier extends StreamNotifier<List<Meal>> {
     return _repo.watchAllMeals();
   }
 
-  //Create Meal, CarbUnits aus UserSettings übernehmen
+  //Create Meal, CarbUnits aus UserSettings übernehmen, Location und ImagePath ggf. aus User Input
   Future<String> createMeal({
     required String name,
     String? location,
+    XFile? imageFile,
+    required PortionUnit portionUnit,
   }) async {
     final settings = await ref
       .read(userSettingsRepositoryProvider)
       .getSettings();
 
+    String imagePath = imageFile != null
+      ? await MealImageService().saveMealImage(imageFile)
+      : 'assets/defaults/default-burger.jpg';
+      
+
     final meal = Meal(
       name: name,
       location: location,
       carbUnit: settings!.carbUnit,
+      imagePath: imagePath,
+      portionUnit: portionUnit,
     );
     await _repo.addMeal(meal);
     return meal.id;

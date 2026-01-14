@@ -1,3 +1,4 @@
+import 'package:easy_carbs/app/theme/app_spacing.dart';
 import 'package:easy_carbs/presentation/state/user_settings/user_settings_async_notifier.dart';
 import 'package:easy_carbs/domain/entities/carb_unit.dart';
 import 'package:easy_carbs/domain/entities/time_based_insulin_factor.dart';
@@ -45,14 +46,10 @@ class _UsInputWidgetState extends ConsumerState<UsInputWidget> {
                       children: const [
                         Text(
                           'Persönliche Einstellungen',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              fontStyle: FontStyle.italic),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppSpacing.spacingMd),
 
                     // ------------------- CarbUnit Toggle -------------------
                     ToggleButtons(
@@ -70,7 +67,7 @@ class _UsInputWidgetState extends ConsumerState<UsInputWidget> {
                               ))
                           .toList(),
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: AppSpacing.spacingLg),
 
                     // ------------------- InsulinFactors -------------------
                     Row(
@@ -78,7 +75,6 @@ class _UsInputWidgetState extends ConsumerState<UsInputWidget> {
                       children: [
                         const Text(
                           'Insulin Faktoren (zeitbasiert)',
-                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         ElevatedButton(
                           onPressed: () async {
@@ -97,7 +93,7 @@ class _UsInputWidgetState extends ConsumerState<UsInputWidget> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: AppSpacing.spacingMd),
 
                     // Liste aller vorhandenen Faktoren
                     Expanded(
@@ -166,9 +162,7 @@ class _UsInputWidgetState extends ConsumerState<UsInputWidget> {
                               textAlign: TextAlign.center,
                               decoration: const InputDecoration(
                                   labelText: 'FPE-Faktor',
-                                  border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(12)))),
+                                  ),
                               keyboardType: const TextInputType.numberWithOptions(
                                   decimal: true),
                             ),

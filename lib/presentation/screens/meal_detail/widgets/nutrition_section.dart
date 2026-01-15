@@ -1,62 +1,68 @@
-import 'package:easy_carbs/domain/entities/nutrition.dart';
 import 'package:flutter/material.dart';
+import 'nutrition_table.dart';
+import 'package:easy_carbs/domain/entities/nutrition.dart';
 
 class NutritionSection extends StatelessWidget {
   const NutritionSection({
     super.key,
     required this.nutrition,
+    required this.onEdit,
+    required this.onDelete,
   });
 
   final Nutrition nutrition;
-
-  TableRow _row(String label, double? value, BuildContext context) {
-    return TableRow(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Text(
-            label,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Text(
-            value != null ? value.toString() : '--',
-            textAlign: TextAlign.right,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ),
-      ],
-    );
-  }
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Nährwerte',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-
-        const SizedBox(height: 8),
-
-        Table(
-          columnWidths: const {
-            0: FlexColumnWidth(2),
-            1: FlexColumnWidth(1),
-          },
-          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+        Row(
           children: [
-            _row('Kohlenhydrate (g)', nutrition.carbs, context),
-            _row('Zucker (g)', nutrition.sugar, context),
-            _row('Fett (g)', nutrition.fat, context),
-            _row('Protein (g)', nutrition.protein, context),
+            Text('Nährwerte', style: Theme.of(context).textTheme.titleMedium),
+            const Spacer(),
+            IconButton(
+              icon: const Icon(Icons.more_vert),
+              onPressed: () => _showActions(context),
+            ),
           ],
         ),
+        const SizedBox(height: 8),
+        NutritionTable(nutrition: nutrition),
       ],
+    );
+  }
+
+  void _showActions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: const Text('Bearbeiten'),
+                onTap: () {
+                  Navigator.pop(context);
+                  onEdit();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: const Text('Löschen'),
+                onTap: () {
+                  Navigator.pop(context);
+                  onDelete();
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

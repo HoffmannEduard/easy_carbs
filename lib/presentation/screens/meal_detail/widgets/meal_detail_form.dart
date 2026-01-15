@@ -112,20 +112,54 @@ class _MealDetailFormState extends ConsumerState<MealDetailForm> {
           ),
 
           const SizedBox(height: AppSpacing.spacingMd),
-//Nutrition vorhanden Switch
-          if (widget.meal.nutrition == null)
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context, MaterialPageRoute(
-                  builder: (_) => AddNutritionScreen(mealId: widget.mealId)
-                  )
-                );
-            }, 
-            child: Text('Nährwerte hinzufügen')
-            )
+
+// Nutrition Section
+            if (widget.meal.nutrition == null)
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => AddNutritionScreen(mealId: widget.mealId),
+                      ),
+                    );
+                  },
+                  child: const Text('Nährwerte hinzufügen'),
+                ),
+              )
             else
-            NutritionSection(nutrition: widget.meal.nutrition!)  
+              NutritionSection(
+                nutrition: widget.meal.nutrition!,
+                onEdit: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => AddNutritionScreen(
+                        mealId: widget.mealId,
+                        existingNutrition: widget.meal.nutrition,
+                      ),
+                    ),
+                  );
+                },
+                onDelete: () async {
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: const Text('Nährwerte löschen?'),
+                      content: const Text('Diese Aktion kann nicht rückgängig gemacht werden.'),
+                      actions: [
+                        TextButton(child: const Text('Abbrechen'), onPressed: () => Navigator.pop(context, false)),
+                        TextButton(child: const Text('Löschen'), onPressed: () => Navigator.pop(context, true)),
+                      ],
+                    ),
+                  );
+
+                  if (confirm == true) {
+                    await notifier.removeNutrition(); // **UI rebuildt automatisch**
+                  }
+                },
+              ),
         ],
       ),
     );

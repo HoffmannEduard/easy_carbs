@@ -5,10 +5,12 @@ import 'package:easy_carbs/presentation/state/meals/meal_detail_notifier.dart';
 
 class AddNutritionScreen extends ConsumerStatefulWidget {
   final String mealId;
+  final Nutrition? existingNutrition;
 
   const AddNutritionScreen({
     super.key,
     required this.mealId,
+    this.existingNutrition,
   });
 
   @override
@@ -19,10 +21,24 @@ class AddNutritionScreen extends ConsumerStatefulWidget {
 class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final _carbsController = TextEditingController();
-  final _sugarController = TextEditingController();
-  final _fatController = TextEditingController();
-  final _proteinController = TextEditingController();
+  late final TextEditingController _carbsController;
+  late final TextEditingController _sugarController;
+  late final TextEditingController _fatController;
+  late final TextEditingController _proteinController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _carbsController = TextEditingController(
+        text: widget.existingNutrition?.carbs?.toString() ?? '');
+    _sugarController = TextEditingController(
+        text: widget.existingNutrition?.sugar?.toString() ?? '');
+    _fatController = TextEditingController(
+        text: widget.existingNutrition?.fat?.toString() ?? '');
+    _proteinController = TextEditingController(
+        text: widget.existingNutrition?.protein?.toString() ?? '');
+  }
 
   @override
   void dispose() {
@@ -43,6 +59,7 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final nutrition = Nutrition(
+      id: widget.existingNutrition?.id,
       carbs: _parseDouble(_carbsController.text),
       sugar: _parseDouble(_sugarController.text),
       fat: _parseDouble(_fatController.text),
@@ -59,9 +76,10 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isEdit = widget.existingNutrition != null;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nährwerte hinzufügen'),
+        title: Text(isEdit ? 'Nährwerte bearbeiten' : 'Nährwerte hinzufügen'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -70,14 +88,12 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-// --- Kohlenhydrate (Pflicht) ---
+// Kohlenhydrate (Pflicht)
               TextFormField(
                 controller: _carbsController,
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(
-                  labelText: 'Kohlenhydrate (g)',
-                ),
+                decoration: const InputDecoration(labelText: 'Kohlenhydrate (g)'),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Kohlenhydrate sind erforderlich';
@@ -91,14 +107,12 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
 
               const SizedBox(height: 16),
 
-// --- Zucker (optional) ---
+// Zucker
               TextFormField(
                 controller: _sugarController,
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(
-                  labelText: 'Zucker (g)',
-                ),
+                decoration: const InputDecoration(labelText: 'Zucker (g)'),
                 validator: (value) {
                   if (value != null &&
                       value.trim().isNotEmpty &&
@@ -111,14 +125,12 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
 
               const SizedBox(height: 16),
 
-// --- Fett (optional) ---
+// Fett
               TextFormField(
                 controller: _fatController,
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(
-                  labelText: 'Fett (g)',
-                ),
+                decoration: const InputDecoration(labelText: 'Fett (g)'),
                 validator: (value) {
                   if (value != null &&
                       value.trim().isNotEmpty &&
@@ -131,14 +143,12 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
 
               const SizedBox(height: 16),
 
-// --- Protein (optional) ---
+// Protein
               TextFormField(
                 controller: _proteinController,
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(
-                  labelText: 'Protein (g)',
-                ),
+                decoration: const InputDecoration(labelText: 'Protein (g)'),
                 validator: (value) {
                   if (value != null &&
                       value.trim().isNotEmpty &&
@@ -155,7 +165,7 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
                 height: 48,
                 child: ElevatedButton(
                   onPressed: _saveNutrition,
-                  child: const Text('Speichern'),
+                  child: Text(isEdit ? 'Speichern' : 'Hinzufügen'),
                 ),
               ),
             ],

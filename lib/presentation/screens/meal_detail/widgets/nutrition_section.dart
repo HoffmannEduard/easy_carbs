@@ -1,27 +1,41 @@
 import 'package:flutter/material.dart';
-import 'nutrition_table.dart';
 import 'package:easy_carbs/domain/entities/nutrition.dart';
+import 'nutrition_table.dart';
 
 class NutritionSection extends StatelessWidget {
   const NutritionSection({
     super.key,
     required this.nutrition,
+    required this.onAdd,
     required this.onEdit,
     required this.onDelete,
   });
 
-  final Nutrition nutrition;
+  final Nutrition? nutrition;
+  final VoidCallback onAdd;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
+    if (nutrition == null) {
+      return Center(
+        child: ElevatedButton(
+          onPressed: onAdd,
+          child: const Text('Nährwerte hinzufügen'),
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Text('Nährwerte', style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Nährwerte',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const Spacer(),
             IconButton(
               icon: const Icon(Icons.more_vert),
@@ -30,7 +44,7 @@ class NutritionSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        NutritionTable(nutrition: nutrition),
+        NutritionTable(nutrition: nutrition!),
       ],
     );
   }

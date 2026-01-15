@@ -1,7 +1,7 @@
+import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_carbs/domain/entities/nutrition.dart';
-import 'package:easy_carbs/presentation/state/meals/meal_detail_notifier.dart';
 
 class AddNutritionScreen extends ConsumerStatefulWidget {
   final String mealId;
@@ -67,7 +67,7 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
     );
 
     await ref
-        .read(mealDetailNotifierProvider(widget.mealId).notifier)
+        .read(mealCommandsProvider(widget.mealId))
         .addOrUpdateNutrition(nutrition);
 
     if (!mounted) return;

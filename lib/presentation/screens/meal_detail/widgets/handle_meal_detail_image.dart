@@ -1,7 +1,8 @@
 import 'package:easy_carbs/app/core/app_assets.dart';
 import 'package:easy_carbs/domain/entities/meal.dart';
+import 'package:easy_carbs/domain/services/meal_commands_service.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/meal_image_section.dart';
-import 'package:easy_carbs/presentation/state/meals/meal_detail_notifier.dart';
+import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -39,8 +40,8 @@ class _MealImageSectionState
     final action = await _showImageOptions();
     if (!mounted || action == null) return;
 
-    final notifier = ref.read(
-      mealDetailNotifierProvider(widget.mealId).notifier,
+    final command = ref.read(
+      mealCommandsProvider(widget.mealId),
     );
 
     if (action == 'gallery' || action == 'camera') {
@@ -55,12 +56,12 @@ class _MealImageSectionState
       if (!mounted) return;
 
       if (picked != null) {
-        await notifier.updateImageFromFile(picked);
+        await command.updateImageFromFile(picked);
       }
     }
 
     if (action == 'delete') {
-      await _confirmDelete(notifier);
+      await _confirmDelete(command);
     }
   }
 
@@ -101,29 +102,30 @@ class _MealImageSectionState
   }
 
   Future<void> _confirmDelete(
-    MealDetailNotifier notifier,
-  ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Foto wirklich löschen?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Abbrechen'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Löschen'),
-          ),
-        ],
-      ),
-    );
+  MealCommandsService commands,
+) async {
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: const Text('Foto wirklich löschen?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text('Abbrechen'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: const Text('Löschen'),
+        ),
+      ],
+    ),
+  );
 
-    if (!mounted) return;
+  if (!mounted) return;
 
-    if (confirmed == true) {
-      await notifier.removeImage();
-    }
+  if (confirmed == true) {
+    await commands.removeImage();
   }
+}
+
 }

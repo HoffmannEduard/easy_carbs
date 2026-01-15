@@ -8,7 +8,7 @@ import 'package:easy_carbs/presentation/screens/meal_detail/widgets/location_sec
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/note_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/nutrition_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/portion_size_section.dart';
-import 'package:easy_carbs/presentation/state/meals/meal_detail_notifier.dart';
+import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'handle_meal_detail_image.dart';
@@ -60,8 +60,7 @@ class _MealDetailFormState extends ConsumerState<MealDetailForm> {
 
   @override
   Widget build(BuildContext context) {
-    final notifier =
-        ref.read(mealDetailNotifierProvider(widget.mealId).notifier);
+    final commands = ref.read(mealCommandsProvider(widget.mealId));
 
     _initControllers(widget.meal);
 
@@ -77,7 +76,7 @@ class _MealDetailFormState extends ConsumerState<MealDetailForm> {
 //Location
           LocationSection(
             controller: _locationController,
-            onChanged: notifier.updateLocation,
+            onChanged: commands.updateLocation,
           ),
 
           const Divider(height: 8, thickness: 2),
@@ -86,7 +85,7 @@ class _MealDetailFormState extends ConsumerState<MealDetailForm> {
           PortionSizeSection(
             controller: _portionSizeController,
             unitLabel: widget.meal.portionUnit!.label,
-            onChanged: notifier.updatePortionSize,
+            onChanged: commands.updatePortionSize,
           ),
 
           const SizedBox(height: AppSpacing.spacingMd),
@@ -94,72 +93,72 @@ class _MealDetailFormState extends ConsumerState<MealDetailForm> {
           BESection(
             controller: _carbsInUnitController,
             unitLabel: widget.meal.carbUnit.name.toUpperCase(),
-            onChanged: notifier.updateCarbsInUnit,
+            onChanged: commands.updateCarbsInUnit,
           ),
 
           const SizedBox(height: AppSpacing.spacingXs),
 //FPE Section
           FPESection(
             controller: _fpeController,
-            onChanged: notifier.updateFpe,
+            onChanged: commands.updateFpe,
           ),
 
           const SizedBox(height: AppSpacing.spacingMd),
 //Note Section
           NoteSection(
             controller: _noteController,
-            onChanged: notifier.updateNote,
+            onChanged: commands.updateNote,
           ),
 
           const SizedBox(height: AppSpacing.spacingMd),
 
 // Nutrition Section
-            if (widget.meal.nutrition == null)
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => AddNutritionScreen(mealId: widget.mealId),
-                      ),
-                    );
-                  },
-                  child: const Text('Nährwerte hinzufügen'),
-                ),
-              )
-            else
-              NutritionSection(
-                nutrition: widget.meal.nutrition!,
-                onEdit: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => AddNutritionScreen(
-                        mealId: widget.mealId,
-                        existingNutrition: widget.meal.nutrition,
-                      ),
+            NutritionSection(
+              nutrition: widget.meal.nutrition,
+              onAdd: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => AddNutritionScreen(mealId: widget.mealId),
+                  ),
+                );
+              },
+              onEdit: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => AddNutritionScreen(
+                      mealId: widget.mealId,
+                      existingNutrition: widget.meal.nutrition,
                     ),
-                  );
-                },
-                onDelete: () async {
-                  final confirm = await showDialog<bool>(
-                    context: context,
-                    builder: (_) => AlertDialog(
-                      title: const Text('Nährwerte löschen?'),
-                      content: const Text('Diese Aktion kann nicht rückgängig gemacht werden.'),
-                      actions: [
-                        TextButton(child: const Text('Abbrechen'), onPressed: () => Navigator.pop(context, false)),
-                        TextButton(child: const Text('Löschen'), onPressed: () => Navigator.pop(context, true)),
-                      ],
-                    ),
-                  );
+                  ),
+                );
+              },
+              onDelete: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: const Text('Nährwerte löschen?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Abbrechen'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('Löschen',
+                        style: TextStyle(color: Colors.red)),
+                      ),
+                    ],
+                  ),
+                );
 
-                  if (confirm == true) {
-                    await notifier.removeNutrition(); // **UI rebuildt automatisch**
-                  }
-                },
-              ),
+                if (confirm == true) {
+                  await commands.removeNutrition();
+                }
+              },
+            ),
+
         ],
       ),
     );

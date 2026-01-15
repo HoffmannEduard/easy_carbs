@@ -64,7 +64,7 @@ class _AddMealScreenState extends ConsumerState<AddMealScreen> {
 
       if (!mounted) return;
 
-      Navigator.pushReplacement(
+      await Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => MealDetailScreen(mealId: mealId),

@@ -1,7 +1,6 @@
+import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../state/meals/meal_detail_notifier.dart';
 import 'widgets/meal_detail_form.dart';
 
 class MealDetailScreen extends ConsumerWidget {
@@ -11,7 +10,7 @@ class MealDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mealAsync = ref.watch(mealDetailNotifierProvider(mealId));
+    final mealAsync = ref.watch(mealByIdProvider(mealId));
 
     return Scaffold(
       appBar: AppBar(

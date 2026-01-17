@@ -17,12 +17,12 @@ class MealMapper {
       name: row.name,
       timestamp: row.timestamp,
       carbsInUnit: row.carbsInUnit,
-      carbUnit: _parseCarbUnit(row.carbUnit),
+      carbUnit: CarbUnit.values.byName(row.carbUnit),
       fpe: row.fpe,
       location: row.location,
       nutrition: nutrition,
       portionsize: row.portionsize,
-      portionUnit: row.portionUnit != null ? _parsePortionUnit(row.portionUnit!) : null,
+      portionUnit: row.portionUnit != null ? PortionUnit.values.byName(row.portionUnit!) : null,
       note: row.note,
       categories: row.categories,
       imagePath: row.imagePath,
@@ -49,21 +49,4 @@ class MealMapper {
     );
   }
 
-  // Hilfsmethoden zum Parsen der Enums
-  static CarbUnit _parseCarbUnit(String value) {
-    try {
-      return CarbUnit.values.firstWhere((e) => e.name == value);
-    } catch (e) {
-      //TODO Rückgabe bei Fehler muss noch bearbeitet werden
-      return CarbUnit.gramm;
-    }
-  }
-
-  static PortionUnit? _parsePortionUnit(String value) {
-    try {
-      return PortionUnit.values.firstWhere((e) => e.name == value);
-    } catch (e) {
-      return null;
-    }
-  }
 }

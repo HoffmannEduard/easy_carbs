@@ -5,7 +5,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
 class MealImageService {
-
   // Bild speichern + Pfad zurückgeben
   Future<String> saveMealImage(XFile image) async {
     try {
@@ -17,12 +16,21 @@ class MealImageService {
       }
 
       final fileName = '${const Uuid().v4()}.jpg';
-      final savedImage = await File(image.path).copy('${mealsDir.path}/$fileName');
-
+      final savedImage = await File(
+        image.path,
+      ).copy('${mealsDir.path}/$fileName');
       return savedImage.path;
     } catch (e) {
-      // Fallback: default Asset
       return AppAssets.defaultMealImagePath;
+    }
+  }
+
+  Future<void> deleteMealImage(String? path) async {
+    if (path == null || path == AppAssets.defaultMealImagePath) return;
+
+    final file = File(path);
+    if (await file.exists()) {
+      await file.delete();
     }
   }
 }

@@ -1,5 +1,4 @@
 import 'package:easy_carbs/presentation/screens/meal_list/meal_list_screen.dart';
-import 'package:easy_carbs/presentation/state/meals/filter_meal_view/meal_list_view_filter_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,7 +11,6 @@ class ShowAllMealsButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ElevatedButton(
               onPressed: () {
-                ref.read(mealListViewFilterProvider.notifier).reset();
                 Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const MealListscreen()));
               },

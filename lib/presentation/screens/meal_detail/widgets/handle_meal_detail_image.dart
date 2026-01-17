@@ -40,6 +40,8 @@ class HandleMealDetailImage extends ConsumerWidget {
               leading: const Icon(Icons.delete),
               title: const Text('Löschen'),
               onTap: () => Navigator.pop(context, 'delete'),
+              iconColor: Colors.red,
+              textColor: Colors.red,
             ),
           ListTile(
             title: const Text('Abbrechen'),
@@ -65,7 +67,10 @@ Future<bool?> confirmDeleteMealImage(
         ),
         TextButton(
           onPressed: () => Navigator.pop(context, true),
-          child: const Text('Löschen'),
+          child: const Text('Löschen',
+          style: TextStyle(
+            color: Colors.red
+          ),),
         ),
       ],
     ),

@@ -1,5 +1,5 @@
 import 'package:easy_carbs/app/theme/app_theme.dart';
-import 'package:easy_carbs/presentation/screens/home/home_screen.dart';
+import 'package:easy_carbs/presentation/screens/main_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,8 +17,8 @@ class MyApp extends ConsumerWidget {
       title: 'Easy Carbs',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
-      home: const HomeScreen(),
+      themeMode: ThemeMode.system,
+      home: const MainScaffold(),
     );
   }
 }

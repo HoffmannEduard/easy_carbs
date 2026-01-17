@@ -23,12 +23,6 @@ class AddMealImageSection extends ConsumerWidget {
             await notifier.pickFromGallery();
             break;
         }
-
-        if (state.error != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.error!)),
-          );
-        }
       },
     );
   }

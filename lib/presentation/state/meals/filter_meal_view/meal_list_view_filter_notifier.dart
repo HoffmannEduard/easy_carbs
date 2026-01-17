@@ -21,7 +21,7 @@ class MealListViewFilterNotifier extends Notifier<MealListViewFilter> {
 }
 
 final mealListViewFilterProvider =
-    NotifierProvider<
+    NotifierProvider.autoDispose<
         MealListViewFilterNotifier,
         MealListViewFilter>(
   MealListViewFilterNotifier.new,

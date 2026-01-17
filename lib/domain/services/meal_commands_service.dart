@@ -13,11 +13,8 @@ class MealCommandsService {
   final MealImageService _imageService;
   final String mealId;
 
-  MealCommandsService(
-    this._ref,
-    this._repo,
-    this.mealId,
-  ) : _imageService = MealImageService();
+  MealCommandsService(this._ref, this._repo, this.mealId)
+    : _imageService = MealImageService();
 
   // -------------------------------------------------
   // Aktuellen Meal aus dem Stream holen (read-only)
@@ -46,19 +43,26 @@ class MealCommandsService {
   // -------------------------------------------------
 
   Future<void> updateImageFromFile(XFile file) async {
-    final imagePath = await _imageService.saveMealImage(file);
-
-    await _updateMeal(
-      (meal) => meal.copyWith(imagePath: imagePath),
-    );
+    final currentMeal = _requireMeal();
+    try {
+      await _imageService.deleteMealImage(currentMeal.imagePath);
+      final imagePath = await _imageService.saveMealImage(file);
+      await _updateMeal((meal) => meal.copyWith(imagePath: imagePath));
+    } catch (e) {
+      throw StateError('Bild konnte nicht aktualisiert werden: $e');
+    }
   }
 
   Future<void> removeImage() async {
-    await _updateMeal(
-      (meal) => meal.copyWith(
-        imagePath: AppAssets.defaultMealImagePath,
-      ),
-    );
+    final currentMeal = _requireMeal();
+    try {
+      await _imageService.deleteMealImage(currentMeal.imagePath);
+      await _updateMeal(
+        (meal) => meal.copyWith(imagePath: AppAssets.defaultMealImagePath),
+      );
+    } catch (e) {
+      throw StateError('$e');
+    }
   }
 
   // -------------------------------------------------
@@ -66,45 +70,31 @@ class MealCommandsService {
   // -------------------------------------------------
 
   Future<void> updateName(String name) {
-    return _updateMeal(
-      (meal) => meal.copyWith(name: name),
-    );
+    return _updateMeal((meal) => meal.copyWith(name: name));
   }
 
   Future<void> updateLocation(String location) {
-    return _updateMeal(
-      (meal) => meal.copyWith(location: location),
-    );
+    return _updateMeal((meal) => meal.copyWith(location: location));
   }
 
   Future<void> updateCarbsInUnit(double? carbsInUnit) {
-    return _updateMeal(
-      (meal) => meal.copyWith(carbsInUnit: carbsInUnit),
-    );
+    return _updateMeal((meal) => meal.copyWith(carbsInUnit: carbsInUnit));
   }
 
   Future<void> updateFpe(double? fpe) {
-    return _updateMeal(
-      (meal) => meal.copyWith(fpe: fpe),
-    );
+    return _updateMeal((meal) => meal.copyWith(fpe: fpe));
   }
 
   Future<void> updatePortionSize(double? portionSize) {
-    return _updateMeal(
-      (meal) => meal.copyWith(portionsize: portionSize),
-    );
+    return _updateMeal((meal) => meal.copyWith(portionsize: portionSize));
   }
 
   Future<void> updateNote(String? note) {
-    return _updateMeal(
-      (meal) => meal.copyWith(note: note),
-    );
+    return _updateMeal((meal) => meal.copyWith(note: note));
   }
 
   Future<void> updateCategories(String? categories) {
-    return _updateMeal(
-      (meal) => meal.copyWith(categories: categories),
-    );
+    return _updateMeal((meal) => meal.copyWith(categories: categories));
   }
 
   // -------------------------------------------------

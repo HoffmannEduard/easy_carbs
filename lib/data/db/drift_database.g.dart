@@ -45,6 +45,17 @@ class $NutritionsTableTable extends NutritionsTable
     type: DriftSqlType.double,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _saturatedFatMeta = const VerificationMeta(
+    'saturatedFat',
+  );
+  @override
+  late final GeneratedColumn<double> saturatedFat = GeneratedColumn<double>(
+    'saturated_fat',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _proteinMeta = const VerificationMeta(
     'protein',
   );
@@ -56,8 +67,27 @@ class $NutritionsTableTable extends NutritionsTable
     type: DriftSqlType.double,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _weightOnePieceMeta = const VerificationMeta(
+    'weightOnePiece',
+  );
   @override
-  List<GeneratedColumn> get $columns => [id, carbs, sugar, fat, protein];
+  late final GeneratedColumn<double> weightOnePiece = GeneratedColumn<double>(
+    'weight_one_piece',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    carbs,
+    sugar,
+    fat,
+    saturatedFat,
+    protein,
+    weightOnePiece,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -93,10 +123,28 @@ class $NutritionsTableTable extends NutritionsTable
         fat.isAcceptableOrUnknown(data['fat']!, _fatMeta),
       );
     }
+    if (data.containsKey('saturated_fat')) {
+      context.handle(
+        _saturatedFatMeta,
+        saturatedFat.isAcceptableOrUnknown(
+          data['saturated_fat']!,
+          _saturatedFatMeta,
+        ),
+      );
+    }
     if (data.containsKey('protein')) {
       context.handle(
         _proteinMeta,
         protein.isAcceptableOrUnknown(data['protein']!, _proteinMeta),
+      );
+    }
+    if (data.containsKey('weight_one_piece')) {
+      context.handle(
+        _weightOnePieceMeta,
+        weightOnePiece.isAcceptableOrUnknown(
+          data['weight_one_piece']!,
+          _weightOnePieceMeta,
+        ),
       );
     }
     return context;
@@ -125,9 +173,17 @@ class $NutritionsTableTable extends NutritionsTable
         DriftSqlType.double,
         data['${effectivePrefix}fat'],
       ),
+      saturatedFat: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}saturated_fat'],
+      ),
       protein: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}protein'],
+      ),
+      weightOnePiece: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}weight_one_piece'],
       ),
     );
   }
@@ -144,13 +200,17 @@ class NutritionsTableData extends DataClass
   final double? carbs;
   final double? sugar;
   final double? fat;
+  final double? saturatedFat;
   final double? protein;
+  final double? weightOnePiece;
   const NutritionsTableData({
     required this.id,
     this.carbs,
     this.sugar,
     this.fat,
+    this.saturatedFat,
     this.protein,
+    this.weightOnePiece,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -165,8 +225,14 @@ class NutritionsTableData extends DataClass
     if (!nullToAbsent || fat != null) {
       map['fat'] = Variable<double>(fat);
     }
+    if (!nullToAbsent || saturatedFat != null) {
+      map['saturated_fat'] = Variable<double>(saturatedFat);
+    }
     if (!nullToAbsent || protein != null) {
       map['protein'] = Variable<double>(protein);
+    }
+    if (!nullToAbsent || weightOnePiece != null) {
+      map['weight_one_piece'] = Variable<double>(weightOnePiece);
     }
     return map;
   }
@@ -179,10 +245,18 @@ class NutritionsTableData extends DataClass
       sugar:
           sugar == null && nullToAbsent ? const Value.absent() : Value(sugar),
       fat: fat == null && nullToAbsent ? const Value.absent() : Value(fat),
+      saturatedFat:
+          saturatedFat == null && nullToAbsent
+              ? const Value.absent()
+              : Value(saturatedFat),
       protein:
           protein == null && nullToAbsent
               ? const Value.absent()
               : Value(protein),
+      weightOnePiece:
+          weightOnePiece == null && nullToAbsent
+              ? const Value.absent()
+              : Value(weightOnePiece),
     );
   }
 
@@ -196,7 +270,9 @@ class NutritionsTableData extends DataClass
       carbs: serializer.fromJson<double?>(json['carbs']),
       sugar: serializer.fromJson<double?>(json['sugar']),
       fat: serializer.fromJson<double?>(json['fat']),
+      saturatedFat: serializer.fromJson<double?>(json['saturatedFat']),
       protein: serializer.fromJson<double?>(json['protein']),
+      weightOnePiece: serializer.fromJson<double?>(json['weightOnePiece']),
     );
   }
   @override
@@ -207,7 +283,9 @@ class NutritionsTableData extends DataClass
       'carbs': serializer.toJson<double?>(carbs),
       'sugar': serializer.toJson<double?>(sugar),
       'fat': serializer.toJson<double?>(fat),
+      'saturatedFat': serializer.toJson<double?>(saturatedFat),
       'protein': serializer.toJson<double?>(protein),
+      'weightOnePiece': serializer.toJson<double?>(weightOnePiece),
     };
   }
 
@@ -216,13 +294,18 @@ class NutritionsTableData extends DataClass
     Value<double?> carbs = const Value.absent(),
     Value<double?> sugar = const Value.absent(),
     Value<double?> fat = const Value.absent(),
+    Value<double?> saturatedFat = const Value.absent(),
     Value<double?> protein = const Value.absent(),
+    Value<double?> weightOnePiece = const Value.absent(),
   }) => NutritionsTableData(
     id: id ?? this.id,
     carbs: carbs.present ? carbs.value : this.carbs,
     sugar: sugar.present ? sugar.value : this.sugar,
     fat: fat.present ? fat.value : this.fat,
+    saturatedFat: saturatedFat.present ? saturatedFat.value : this.saturatedFat,
     protein: protein.present ? protein.value : this.protein,
+    weightOnePiece:
+        weightOnePiece.present ? weightOnePiece.value : this.weightOnePiece,
   );
   NutritionsTableData copyWithCompanion(NutritionsTableCompanion data) {
     return NutritionsTableData(
@@ -230,7 +313,15 @@ class NutritionsTableData extends DataClass
       carbs: data.carbs.present ? data.carbs.value : this.carbs,
       sugar: data.sugar.present ? data.sugar.value : this.sugar,
       fat: data.fat.present ? data.fat.value : this.fat,
+      saturatedFat:
+          data.saturatedFat.present
+              ? data.saturatedFat.value
+              : this.saturatedFat,
       protein: data.protein.present ? data.protein.value : this.protein,
+      weightOnePiece:
+          data.weightOnePiece.present
+              ? data.weightOnePiece.value
+              : this.weightOnePiece,
     );
   }
 
@@ -241,13 +332,16 @@ class NutritionsTableData extends DataClass
           ..write('carbs: $carbs, ')
           ..write('sugar: $sugar, ')
           ..write('fat: $fat, ')
-          ..write('protein: $protein')
+          ..write('saturatedFat: $saturatedFat, ')
+          ..write('protein: $protein, ')
+          ..write('weightOnePiece: $weightOnePiece')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, carbs, sugar, fat, protein);
+  int get hashCode =>
+      Object.hash(id, carbs, sugar, fat, saturatedFat, protein, weightOnePiece);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -256,7 +350,9 @@ class NutritionsTableData extends DataClass
           other.carbs == this.carbs &&
           other.sugar == this.sugar &&
           other.fat == this.fat &&
-          other.protein == this.protein);
+          other.saturatedFat == this.saturatedFat &&
+          other.protein == this.protein &&
+          other.weightOnePiece == this.weightOnePiece);
 }
 
 class NutritionsTableCompanion extends UpdateCompanion<NutritionsTableData> {
@@ -264,14 +360,18 @@ class NutritionsTableCompanion extends UpdateCompanion<NutritionsTableData> {
   final Value<double?> carbs;
   final Value<double?> sugar;
   final Value<double?> fat;
+  final Value<double?> saturatedFat;
   final Value<double?> protein;
+  final Value<double?> weightOnePiece;
   final Value<int> rowid;
   const NutritionsTableCompanion({
     this.id = const Value.absent(),
     this.carbs = const Value.absent(),
     this.sugar = const Value.absent(),
     this.fat = const Value.absent(),
+    this.saturatedFat = const Value.absent(),
     this.protein = const Value.absent(),
+    this.weightOnePiece = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   NutritionsTableCompanion.insert({
@@ -279,7 +379,9 @@ class NutritionsTableCompanion extends UpdateCompanion<NutritionsTableData> {
     this.carbs = const Value.absent(),
     this.sugar = const Value.absent(),
     this.fat = const Value.absent(),
+    this.saturatedFat = const Value.absent(),
     this.protein = const Value.absent(),
+    this.weightOnePiece = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id);
   static Insertable<NutritionsTableData> custom({
@@ -287,7 +389,9 @@ class NutritionsTableCompanion extends UpdateCompanion<NutritionsTableData> {
     Expression<double>? carbs,
     Expression<double>? sugar,
     Expression<double>? fat,
+    Expression<double>? saturatedFat,
     Expression<double>? protein,
+    Expression<double>? weightOnePiece,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -295,7 +399,9 @@ class NutritionsTableCompanion extends UpdateCompanion<NutritionsTableData> {
       if (carbs != null) 'carbs': carbs,
       if (sugar != null) 'sugar': sugar,
       if (fat != null) 'fat': fat,
+      if (saturatedFat != null) 'saturated_fat': saturatedFat,
       if (protein != null) 'protein': protein,
+      if (weightOnePiece != null) 'weight_one_piece': weightOnePiece,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -305,7 +411,9 @@ class NutritionsTableCompanion extends UpdateCompanion<NutritionsTableData> {
     Value<double?>? carbs,
     Value<double?>? sugar,
     Value<double?>? fat,
+    Value<double?>? saturatedFat,
     Value<double?>? protein,
+    Value<double?>? weightOnePiece,
     Value<int>? rowid,
   }) {
     return NutritionsTableCompanion(
@@ -313,7 +421,9 @@ class NutritionsTableCompanion extends UpdateCompanion<NutritionsTableData> {
       carbs: carbs ?? this.carbs,
       sugar: sugar ?? this.sugar,
       fat: fat ?? this.fat,
+      saturatedFat: saturatedFat ?? this.saturatedFat,
       protein: protein ?? this.protein,
+      weightOnePiece: weightOnePiece ?? this.weightOnePiece,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -333,8 +443,14 @@ class NutritionsTableCompanion extends UpdateCompanion<NutritionsTableData> {
     if (fat.present) {
       map['fat'] = Variable<double>(fat.value);
     }
+    if (saturatedFat.present) {
+      map['saturated_fat'] = Variable<double>(saturatedFat.value);
+    }
     if (protein.present) {
       map['protein'] = Variable<double>(protein.value);
+    }
+    if (weightOnePiece.present) {
+      map['weight_one_piece'] = Variable<double>(weightOnePiece.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -349,7 +465,9 @@ class NutritionsTableCompanion extends UpdateCompanion<NutritionsTableData> {
           ..write('carbs: $carbs, ')
           ..write('sugar: $sugar, ')
           ..write('fat: $fat, ')
+          ..write('saturatedFat: $saturatedFat, ')
           ..write('protein: $protein, ')
+          ..write('weightOnePiece: $weightOnePiece, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1909,7 +2027,9 @@ typedef $$NutritionsTableTableCreateCompanionBuilder =
       Value<double?> carbs,
       Value<double?> sugar,
       Value<double?> fat,
+      Value<double?> saturatedFat,
       Value<double?> protein,
+      Value<double?> weightOnePiece,
       Value<int> rowid,
     });
 typedef $$NutritionsTableTableUpdateCompanionBuilder =
@@ -1918,7 +2038,9 @@ typedef $$NutritionsTableTableUpdateCompanionBuilder =
       Value<double?> carbs,
       Value<double?> sugar,
       Value<double?> fat,
+      Value<double?> saturatedFat,
       Value<double?> protein,
+      Value<double?> weightOnePiece,
       Value<int> rowid,
     });
 
@@ -1986,8 +2108,18 @@ class $$NutritionsTableTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<double> get saturatedFat => $composableBuilder(
+    column: $table.saturatedFat,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<double> get protein => $composableBuilder(
     column: $table.protein,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get weightOnePiece => $composableBuilder(
+    column: $table.weightOnePiece,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2046,8 +2178,18 @@ class $$NutritionsTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<double> get saturatedFat => $composableBuilder(
+    column: $table.saturatedFat,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<double> get protein => $composableBuilder(
     column: $table.protein,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get weightOnePiece => $composableBuilder(
+    column: $table.weightOnePiece,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -2073,8 +2215,18 @@ class $$NutritionsTableTableAnnotationComposer
   GeneratedColumn<double> get fat =>
       $composableBuilder(column: $table.fat, builder: (column) => column);
 
+  GeneratedColumn<double> get saturatedFat => $composableBuilder(
+    column: $table.saturatedFat,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<double> get protein =>
       $composableBuilder(column: $table.protein, builder: (column) => column);
+
+  GeneratedColumn<double> get weightOnePiece => $composableBuilder(
+    column: $table.weightOnePiece,
+    builder: (column) => column,
+  );
 
   Expression<T> mealsTableRefs<T extends Object>(
     Expression<T> Function($$MealsTableTableAnnotationComposer a) f,
@@ -2143,14 +2295,18 @@ class $$NutritionsTableTableTableManager
                 Value<double?> carbs = const Value.absent(),
                 Value<double?> sugar = const Value.absent(),
                 Value<double?> fat = const Value.absent(),
+                Value<double?> saturatedFat = const Value.absent(),
                 Value<double?> protein = const Value.absent(),
+                Value<double?> weightOnePiece = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => NutritionsTableCompanion(
                 id: id,
                 carbs: carbs,
                 sugar: sugar,
                 fat: fat,
+                saturatedFat: saturatedFat,
                 protein: protein,
+                weightOnePiece: weightOnePiece,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -2159,14 +2315,18 @@ class $$NutritionsTableTableTableManager
                 Value<double?> carbs = const Value.absent(),
                 Value<double?> sugar = const Value.absent(),
                 Value<double?> fat = const Value.absent(),
+                Value<double?> saturatedFat = const Value.absent(),
                 Value<double?> protein = const Value.absent(),
+                Value<double?> weightOnePiece = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => NutritionsTableCompanion.insert(
                 id: id,
                 carbs: carbs,
                 sugar: sugar,
                 fat: fat,
+                saturatedFat: saturatedFat,
                 protein: protein,
+                weightOnePiece: weightOnePiece,
                 rowid: rowid,
               ),
           withReferenceMapper:

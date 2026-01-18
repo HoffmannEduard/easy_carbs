@@ -17,7 +17,7 @@ class NutritionTable extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 6),
           child: Text(
             value != null ? value.toString() : '--',
-            textAlign: TextAlign.right,
+            textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
         ),
@@ -31,10 +31,11 @@ class NutritionTable extends StatelessWidget {
       columnWidths: const {0: FlexColumnWidth(2), 1: FlexColumnWidth(1)},
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       children: [
-        _row('Kohlenhydrate (g)', nutrition.carbs, context),
-        _row('Zucker (g)', nutrition.sugar, context),
-        _row('Fett (g)', nutrition.fat, context),
-        _row('Protein (g)', nutrition.protein, context),
+        _row('Kohlenhydrate', nutrition.carbs, context),
+        _row('  - Zucker', nutrition.sugar, context),
+        _row('Fett', nutrition.fat, context),
+        _row('  - ges. Fettsäuren', nutrition.saturatedFat, context),
+        _row('Eiweiß', nutrition.protein, context),
       ],
     );
   }

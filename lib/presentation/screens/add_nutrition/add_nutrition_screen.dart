@@ -1,3 +1,7 @@
+import 'package:easy_carbs/app/theme/app_spacing.dart';
+import 'package:easy_carbs/domain/entities/portion_unit.dart';
+import 'package:easy_carbs/presentation/screens/add_nutrition/widgets/nutrition_fields_section.dart';
+import 'package:easy_carbs/presentation/screens/add_nutrition/widgets/weight_per_piece_section.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,8 +18,7 @@ class AddNutritionScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<AddNutritionScreen> createState() =>
-      _AddNutritionScreenState();
+  ConsumerState<AddNutritionScreen> createState() => _AddNutritionScreenState();
 }
 
 class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
@@ -24,20 +27,32 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
   late final TextEditingController _carbsController;
   late final TextEditingController _sugarController;
   late final TextEditingController _fatController;
+  late final TextEditingController _saturatedFatController;
   late final TextEditingController _proteinController;
+  late final TextEditingController _weightOnePieceController;
 
   @override
   void initState() {
     super.initState();
 
     _carbsController = TextEditingController(
-        text: widget.existingNutrition?.carbs?.toString() ?? '');
+      text: widget.existingNutrition?.carbs?.toString() ?? '',
+    );
     _sugarController = TextEditingController(
-        text: widget.existingNutrition?.sugar?.toString() ?? '');
+      text: widget.existingNutrition?.sugar?.toString() ?? '',
+    );
     _fatController = TextEditingController(
-        text: widget.existingNutrition?.fat?.toString() ?? '');
+      text: widget.existingNutrition?.fat?.toString() ?? '',
+    );
+    _saturatedFatController = TextEditingController(
+      text: widget.existingNutrition?.saturatedFat?.toString() ?? '',
+    );
     _proteinController = TextEditingController(
-        text: widget.existingNutrition?.protein?.toString() ?? '');
+      text: widget.existingNutrition?.protein?.toString() ?? '',
+    );
+    _weightOnePieceController = TextEditingController(
+      text: widget.existingNutrition?.weightOnePiece.toString() ?? '',
+    );
   }
 
   @override
@@ -45,7 +60,9 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
     _carbsController.dispose();
     _sugarController.dispose();
     _fatController.dispose();
+    _saturatedFatController.dispose();
     _proteinController.dispose();
+    _weightOnePieceController.dispose();
     super.dispose();
   }
 
@@ -63,7 +80,9 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
       carbs: _parseDouble(_carbsController.text),
       sugar: _parseDouble(_sugarController.text),
       fat: _parseDouble(_fatController.text),
+      saturatedFat: _parseDouble(_saturatedFatController.text),
       protein: _parseDouble(_proteinController.text),
+      weightOnePiece: _parseDouble(_weightOnePieceController.text),
     );
 
     await ref
@@ -77,101 +96,63 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
   @override
   Widget build(BuildContext context) {
     final isEdit = widget.existingNutrition != null;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(isEdit ? 'Nährwerte bearbeiten' : 'Nährwerte hinzufügen'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-// Kohlenhydrate (Pflicht)
-              TextFormField(
-                controller: _carbsController,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(labelText: 'Kohlenhydrate (g)'),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Kohlenhydrate sind erforderlich';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Bitte eine gültige Zahl eingeben';
-                  }
-                  return null;
-                },
-              ),
+    final mealAsync = ref.watch(mealByIdProvider(widget.mealId));
 
-              const SizedBox(height: 16),
+    return mealAsync.when(
+      loading:
+          () =>
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (e, _) => Scaffold(body: Center(child: Text(e.toString()))),
+      data: (meal) {
+        final showWeightPerPiece = meal.portionUnit == PortionUnit.piece;
 
-// Zucker
-              TextFormField(
-                controller: _sugarController,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(labelText: 'Zucker (g)'),
-                validator: (value) {
-                  if (value != null &&
-                      value.trim().isNotEmpty &&
-                      double.tryParse(value) == null) {
-                    return 'Bitte eine gültige Zahl eingeben';
-                  }
-                  return null;
-                },
-              ),
-
-              const SizedBox(height: 16),
-
-// Fett
-              TextFormField(
-                controller: _fatController,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(labelText: 'Fett (g)'),
-                validator: (value) {
-                  if (value != null &&
-                      value.trim().isNotEmpty &&
-                      double.tryParse(value) == null) {
-                    return 'Bitte eine gültige Zahl eingeben';
-                  }
-                  return null;
-                },
-              ),
-
-              const SizedBox(height: 16),
-
-// Protein
-              TextFormField(
-                controller: _proteinController,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(labelText: 'Protein (g)'),
-                validator: (value) {
-                  if (value != null &&
-                      value.trim().isNotEmpty &&
-                      double.tryParse(value) == null) {
-                    return 'Bitte eine gültige Zahl eingeben';
-                  }
-                  return null;
-                },
-              ),
-
-              const Spacer(),
-
-              SizedBox(
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: _saveNutrition,
-                  child: Text(isEdit ? 'Speichern' : 'Hinzufügen'),
-                ),
-              ),
-            ],
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              isEdit ? 'Nährwerte bearbeiten' : 'Nährwerte hinzufügen',
+            ),
           ),
-        ),
-      ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Felder für Nährwerte (Carbs, Fett, Protein...)
+                  NutritionFieldsSection(
+                    carbsController: _carbsController,
+                    sugarController: _sugarController,
+                    fatController: _fatController,
+                    saturatedFatController: _saturatedFatController,
+                    proteinController: _proteinController,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Gewicht pro Stück Section
+                  if (showWeightPerPiece)
+                  WeightPerPieceSection(
+                    weightOnePieceController: _weightOnePieceController,
+                  ),
+
+                  const SizedBox(height: AppSpacing.spacingXl),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _saveNutrition,
+                        child: Text(isEdit ? 'Speichern' : 'Hinzufügen'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

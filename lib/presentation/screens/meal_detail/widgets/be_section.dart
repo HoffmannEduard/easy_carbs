@@ -18,13 +18,15 @@ class BESection extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
-          width: 60,
-          child: TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(hintText: '--'),
-            onChanged: (value) => onChanged(double.tryParse(value)),
+        ConstrainedBox(
+          constraints: BoxConstraints(minWidth: 50),
+          child: IntrinsicWidth(
+            child: TextField(
+              controller: controller,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(hintText: '--'),
+              onChanged: (value) => onChanged(double.tryParse(value)),
+            ),
           ),
         ),
         const SizedBox(width: AppSpacing.spacingSm),

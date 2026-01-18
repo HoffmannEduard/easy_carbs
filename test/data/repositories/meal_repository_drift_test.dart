@@ -49,7 +49,9 @@ void main() {
         carbs: 45.0,
         sugar: 5.0,
         fat: 12.0,
+        saturatedFat: 10.0,
         protein: 8.0,
+        weightOnePiece: 40.0,
       );
 
       final meal = Meal(
@@ -69,6 +71,7 @@ void main() {
       expect(meals.first.nutrition, isNotNull);
       expect(meals.first.nutrition!.carbs, 45.0);
       expect(meals.first.nutrition!.protein, 8.0);
+      expect(meals.first.nutrition!.saturatedFat, 10.0);
       expect(meals.first.carbsInUnit, 3.75);
       expect(meals.first.carbUnit, CarbUnit.be);
     });

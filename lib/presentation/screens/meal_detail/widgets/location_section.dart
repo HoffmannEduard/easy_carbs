@@ -22,6 +22,7 @@ class LocationSection extends StatelessWidget {
               prefixIcon: Icon(Icons.location_on),
               hintText: 'Location',
               contentPadding: EdgeInsets.all(8),
+              filled: false,
             ),
             onChanged: onChanged,
           ),

@@ -11,7 +11,9 @@ class NutritionMapper {
       carbs: row.carbs,
       sugar: row.sugar,
       fat: row.fat,
+      saturatedFat: row.saturatedFat,
       protein: row.protein,
+      weightOnePiece: row.weightOnePiece,
     );
   }
 
@@ -21,7 +23,9 @@ class NutritionMapper {
       carbs: Value(nutrition.carbs),
       sugar: Value(nutrition.sugar),
       fat: Value(nutrition.fat),
+      saturatedFat: Value(nutrition.saturatedFat),
       protein: Value(nutrition.protein),
+      weightOnePiece: Value(nutrition.weightOnePiece),
     );
   }
 }

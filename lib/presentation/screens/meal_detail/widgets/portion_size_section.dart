@@ -19,20 +19,19 @@ class PortionSizeSection extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox(
-          width: 80,
-          child: TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(hintText: '--'),
-            onChanged: (value) => onChanged(double.tryParse(value)),
+        ConstrainedBox(
+          constraints: BoxConstraints(minWidth: 50),
+          child: IntrinsicWidth(
+            child: TextField(
+              controller: controller,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(hintText: '--'),
+              onChanged: (value) => onChanged(double.tryParse(value)),
+            ),
           ),
         ),
         const SizedBox(width: AppSpacing.spacingSm),
-        Text(
-          unitLabel,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+        Text(unitLabel, style: Theme.of(context).textTheme.titleMedium),
       ],
     );
   }

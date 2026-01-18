@@ -8,7 +8,9 @@ class NutritionsTable extends Table {
   RealColumn get carbs => real().nullable()();
   RealColumn get sugar => real().nullable()();
   RealColumn get fat => real().nullable()();
+  RealColumn get saturatedFat => real().nullable()();
   RealColumn get protein => real().nullable()();
+  RealColumn get weightOnePiece => real().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};

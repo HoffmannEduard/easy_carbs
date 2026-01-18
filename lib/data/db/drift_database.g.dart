@@ -535,6 +535,20 @@ class $MealsTableTable extends MealsTable
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _autocalculateMeta = const VerificationMeta(
+    'autocalculate',
+  );
+  @override
+  late final GeneratedColumn<bool> autocalculate = GeneratedColumn<bool>(
+    'autocalculate',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("autocalculate" IN (0, 1))',
+    ),
+  );
   static const VerificationMeta _carbsInUnitMeta = const VerificationMeta(
     'carbsInUnit',
   );
@@ -629,6 +643,7 @@ class $MealsTableTable extends MealsTable
     name,
     imagePath,
     timestamp,
+    autocalculate,
     carbsInUnit,
     fpe,
     nutritionId,
@@ -684,6 +699,17 @@ class $MealsTableTable extends MealsTable
       );
     } else if (isInserting) {
       context.missing(_timestampMeta);
+    }
+    if (data.containsKey('autocalculate')) {
+      context.handle(
+        _autocalculateMeta,
+        autocalculate.isAcceptableOrUnknown(
+          data['autocalculate']!,
+          _autocalculateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_autocalculateMeta);
     }
     if (data.containsKey('carbs_in_unit')) {
       context.handle(
@@ -778,6 +804,11 @@ class $MealsTableTable extends MealsTable
             DriftSqlType.dateTime,
             data['${effectivePrefix}timestamp'],
           )!,
+      autocalculate:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.bool,
+            data['${effectivePrefix}autocalculate'],
+          )!,
       carbsInUnit: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}carbs_in_unit'],
@@ -825,6 +856,7 @@ class MealsTableData extends DataClass implements Insertable<MealsTableData> {
   final String name;
   final String? imagePath;
   final DateTime timestamp;
+  final bool autocalculate;
   final double? carbsInUnit;
   final double? fpe;
   final String? nutritionId;
@@ -839,6 +871,7 @@ class MealsTableData extends DataClass implements Insertable<MealsTableData> {
     required this.name,
     this.imagePath,
     required this.timestamp,
+    required this.autocalculate,
     this.carbsInUnit,
     this.fpe,
     this.nutritionId,
@@ -858,6 +891,7 @@ class MealsTableData extends DataClass implements Insertable<MealsTableData> {
       map['image_path'] = Variable<String>(imagePath);
     }
     map['timestamp'] = Variable<DateTime>(timestamp);
+    map['autocalculate'] = Variable<bool>(autocalculate);
     if (!nullToAbsent || carbsInUnit != null) {
       map['carbs_in_unit'] = Variable<double>(carbsInUnit);
     }
@@ -895,6 +929,7 @@ class MealsTableData extends DataClass implements Insertable<MealsTableData> {
               ? const Value.absent()
               : Value(imagePath),
       timestamp: Value(timestamp),
+      autocalculate: Value(autocalculate),
       carbsInUnit:
           carbsInUnit == null && nullToAbsent
               ? const Value.absent()
@@ -935,6 +970,7 @@ class MealsTableData extends DataClass implements Insertable<MealsTableData> {
       name: serializer.fromJson<String>(json['name']),
       imagePath: serializer.fromJson<String?>(json['imagePath']),
       timestamp: serializer.fromJson<DateTime>(json['timestamp']),
+      autocalculate: serializer.fromJson<bool>(json['autocalculate']),
       carbsInUnit: serializer.fromJson<double?>(json['carbsInUnit']),
       fpe: serializer.fromJson<double?>(json['fpe']),
       nutritionId: serializer.fromJson<String?>(json['nutritionId']),
@@ -954,6 +990,7 @@ class MealsTableData extends DataClass implements Insertable<MealsTableData> {
       'name': serializer.toJson<String>(name),
       'imagePath': serializer.toJson<String?>(imagePath),
       'timestamp': serializer.toJson<DateTime>(timestamp),
+      'autocalculate': serializer.toJson<bool>(autocalculate),
       'carbsInUnit': serializer.toJson<double?>(carbsInUnit),
       'fpe': serializer.toJson<double?>(fpe),
       'nutritionId': serializer.toJson<String?>(nutritionId),
@@ -971,6 +1008,7 @@ class MealsTableData extends DataClass implements Insertable<MealsTableData> {
     String? name,
     Value<String?> imagePath = const Value.absent(),
     DateTime? timestamp,
+    bool? autocalculate,
     Value<double?> carbsInUnit = const Value.absent(),
     Value<double?> fpe = const Value.absent(),
     Value<String?> nutritionId = const Value.absent(),
@@ -985,6 +1023,7 @@ class MealsTableData extends DataClass implements Insertable<MealsTableData> {
     name: name ?? this.name,
     imagePath: imagePath.present ? imagePath.value : this.imagePath,
     timestamp: timestamp ?? this.timestamp,
+    autocalculate: autocalculate ?? this.autocalculate,
     carbsInUnit: carbsInUnit.present ? carbsInUnit.value : this.carbsInUnit,
     fpe: fpe.present ? fpe.value : this.fpe,
     nutritionId: nutritionId.present ? nutritionId.value : this.nutritionId,
@@ -1001,6 +1040,10 @@ class MealsTableData extends DataClass implements Insertable<MealsTableData> {
       name: data.name.present ? data.name.value : this.name,
       imagePath: data.imagePath.present ? data.imagePath.value : this.imagePath,
       timestamp: data.timestamp.present ? data.timestamp.value : this.timestamp,
+      autocalculate:
+          data.autocalculate.present
+              ? data.autocalculate.value
+              : this.autocalculate,
       carbsInUnit:
           data.carbsInUnit.present ? data.carbsInUnit.value : this.carbsInUnit,
       fpe: data.fpe.present ? data.fpe.value : this.fpe,
@@ -1025,6 +1068,7 @@ class MealsTableData extends DataClass implements Insertable<MealsTableData> {
           ..write('name: $name, ')
           ..write('imagePath: $imagePath, ')
           ..write('timestamp: $timestamp, ')
+          ..write('autocalculate: $autocalculate, ')
           ..write('carbsInUnit: $carbsInUnit, ')
           ..write('fpe: $fpe, ')
           ..write('nutritionId: $nutritionId, ')
@@ -1044,6 +1088,7 @@ class MealsTableData extends DataClass implements Insertable<MealsTableData> {
     name,
     imagePath,
     timestamp,
+    autocalculate,
     carbsInUnit,
     fpe,
     nutritionId,
@@ -1062,6 +1107,7 @@ class MealsTableData extends DataClass implements Insertable<MealsTableData> {
           other.name == this.name &&
           other.imagePath == this.imagePath &&
           other.timestamp == this.timestamp &&
+          other.autocalculate == this.autocalculate &&
           other.carbsInUnit == this.carbsInUnit &&
           other.fpe == this.fpe &&
           other.nutritionId == this.nutritionId &&
@@ -1078,6 +1124,7 @@ class MealsTableCompanion extends UpdateCompanion<MealsTableData> {
   final Value<String> name;
   final Value<String?> imagePath;
   final Value<DateTime> timestamp;
+  final Value<bool> autocalculate;
   final Value<double?> carbsInUnit;
   final Value<double?> fpe;
   final Value<String?> nutritionId;
@@ -1093,6 +1140,7 @@ class MealsTableCompanion extends UpdateCompanion<MealsTableData> {
     this.name = const Value.absent(),
     this.imagePath = const Value.absent(),
     this.timestamp = const Value.absent(),
+    this.autocalculate = const Value.absent(),
     this.carbsInUnit = const Value.absent(),
     this.fpe = const Value.absent(),
     this.nutritionId = const Value.absent(),
@@ -1109,6 +1157,7 @@ class MealsTableCompanion extends UpdateCompanion<MealsTableData> {
     required String name,
     this.imagePath = const Value.absent(),
     required DateTime timestamp,
+    required bool autocalculate,
     this.carbsInUnit = const Value.absent(),
     this.fpe = const Value.absent(),
     this.nutritionId = const Value.absent(),
@@ -1121,13 +1170,15 @@ class MealsTableCompanion extends UpdateCompanion<MealsTableData> {
   }) : id = Value(id),
        carbUnit = Value(carbUnit),
        name = Value(name),
-       timestamp = Value(timestamp);
+       timestamp = Value(timestamp),
+       autocalculate = Value(autocalculate);
   static Insertable<MealsTableData> custom({
     Expression<String>? id,
     Expression<String>? carbUnit,
     Expression<String>? name,
     Expression<String>? imagePath,
     Expression<DateTime>? timestamp,
+    Expression<bool>? autocalculate,
     Expression<double>? carbsInUnit,
     Expression<double>? fpe,
     Expression<String>? nutritionId,
@@ -1144,6 +1195,7 @@ class MealsTableCompanion extends UpdateCompanion<MealsTableData> {
       if (name != null) 'name': name,
       if (imagePath != null) 'image_path': imagePath,
       if (timestamp != null) 'timestamp': timestamp,
+      if (autocalculate != null) 'autocalculate': autocalculate,
       if (carbsInUnit != null) 'carbs_in_unit': carbsInUnit,
       if (fpe != null) 'fpe': fpe,
       if (nutritionId != null) 'nutrition_id': nutritionId,
@@ -1162,6 +1214,7 @@ class MealsTableCompanion extends UpdateCompanion<MealsTableData> {
     Value<String>? name,
     Value<String?>? imagePath,
     Value<DateTime>? timestamp,
+    Value<bool>? autocalculate,
     Value<double?>? carbsInUnit,
     Value<double?>? fpe,
     Value<String?>? nutritionId,
@@ -1178,6 +1231,7 @@ class MealsTableCompanion extends UpdateCompanion<MealsTableData> {
       name: name ?? this.name,
       imagePath: imagePath ?? this.imagePath,
       timestamp: timestamp ?? this.timestamp,
+      autocalculate: autocalculate ?? this.autocalculate,
       carbsInUnit: carbsInUnit ?? this.carbsInUnit,
       fpe: fpe ?? this.fpe,
       nutritionId: nutritionId ?? this.nutritionId,
@@ -1207,6 +1261,9 @@ class MealsTableCompanion extends UpdateCompanion<MealsTableData> {
     }
     if (timestamp.present) {
       map['timestamp'] = Variable<DateTime>(timestamp.value);
+    }
+    if (autocalculate.present) {
+      map['autocalculate'] = Variable<bool>(autocalculate.value);
     }
     if (carbsInUnit.present) {
       map['carbs_in_unit'] = Variable<double>(carbsInUnit.value);
@@ -1246,6 +1303,7 @@ class MealsTableCompanion extends UpdateCompanion<MealsTableData> {
           ..write('name: $name, ')
           ..write('imagePath: $imagePath, ')
           ..write('timestamp: $timestamp, ')
+          ..write('autocalculate: $autocalculate, ')
           ..write('carbsInUnit: $carbsInUnit, ')
           ..write('fpe: $fpe, ')
           ..write('nutritionId: $nutritionId, ')
@@ -2397,6 +2455,7 @@ typedef $$MealsTableTableCreateCompanionBuilder =
       required String name,
       Value<String?> imagePath,
       required DateTime timestamp,
+      required bool autocalculate,
       Value<double?> carbsInUnit,
       Value<double?> fpe,
       Value<String?> nutritionId,
@@ -2414,6 +2473,7 @@ typedef $$MealsTableTableUpdateCompanionBuilder =
       Value<String> name,
       Value<String?> imagePath,
       Value<DateTime> timestamp,
+      Value<bool> autocalculate,
       Value<double?> carbsInUnit,
       Value<double?> fpe,
       Value<String?> nutritionId,
@@ -2480,6 +2540,11 @@ class $$MealsTableTableFilterComposer
 
   ColumnFilters<DateTime> get timestamp => $composableBuilder(
     column: $table.timestamp,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get autocalculate => $composableBuilder(
+    column: $table.autocalculate,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2576,6 +2641,11 @@ class $$MealsTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get autocalculate => $composableBuilder(
+    column: $table.autocalculate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<double> get carbsInUnit => $composableBuilder(
     column: $table.carbsInUnit,
     builder: (column) => ColumnOrderings(column),
@@ -2658,6 +2728,11 @@ class $$MealsTableTableAnnotationComposer
 
   GeneratedColumn<DateTime> get timestamp =>
       $composableBuilder(column: $table.timestamp, builder: (column) => column);
+
+  GeneratedColumn<bool> get autocalculate => $composableBuilder(
+    column: $table.autocalculate,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<double> get carbsInUnit => $composableBuilder(
     column: $table.carbsInUnit,
@@ -2745,6 +2820,7 @@ class $$MealsTableTableTableManager
                 Value<String> name = const Value.absent(),
                 Value<String?> imagePath = const Value.absent(),
                 Value<DateTime> timestamp = const Value.absent(),
+                Value<bool> autocalculate = const Value.absent(),
                 Value<double?> carbsInUnit = const Value.absent(),
                 Value<double?> fpe = const Value.absent(),
                 Value<String?> nutritionId = const Value.absent(),
@@ -2760,6 +2836,7 @@ class $$MealsTableTableTableManager
                 name: name,
                 imagePath: imagePath,
                 timestamp: timestamp,
+                autocalculate: autocalculate,
                 carbsInUnit: carbsInUnit,
                 fpe: fpe,
                 nutritionId: nutritionId,
@@ -2777,6 +2854,7 @@ class $$MealsTableTableTableManager
                 required String name,
                 Value<String?> imagePath = const Value.absent(),
                 required DateTime timestamp,
+                required bool autocalculate,
                 Value<double?> carbsInUnit = const Value.absent(),
                 Value<double?> fpe = const Value.absent(),
                 Value<String?> nutritionId = const Value.absent(),
@@ -2792,6 +2870,7 @@ class $$MealsTableTableTableManager
                 name: name,
                 imagePath: imagePath,
                 timestamp: timestamp,
+                autocalculate: autocalculate,
                 carbsInUnit: carbsInUnit,
                 fpe: fpe,
                 nutritionId: nutritionId,

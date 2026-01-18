@@ -34,6 +34,7 @@ class _MealDetailFormState extends ConsumerState<MealDetailForm> {
   final _portionSizeController = TextEditingController();
   final _noteController = TextEditingController();
 
+
   bool _controllersInitialized = false;
 
   void _initControllers(Meal meal) {
@@ -81,6 +82,7 @@ class _MealDetailFormState extends ConsumerState<MealDetailForm> {
 
           const Divider(height: 8, thickness: 2),
           const SizedBox(height: AppSpacing.spacingMd),
+
 //PortionSize Section
           PortionSizeSection(
             controller: _portionSizeController,
@@ -89,6 +91,23 @@ class _MealDetailFormState extends ConsumerState<MealDetailForm> {
           ),
 
           const SizedBox(height: AppSpacing.spacingMd),
+
+//Autocalculate Section
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Automatisch berechnen',
+                style: Theme.of(context).textTheme.bodyMedium,),
+                Switch(
+                  value: widget.meal.autocalculate, 
+                  onChanged: (value) {
+                    commands.toggleAutocalculate(value);
+                  }
+                  ),
+              ],
+            ),
+
+            const SizedBox(height: AppSpacing.spacingMd),
 //BE Section
           BESection(
             controller: _carbsInUnitController,

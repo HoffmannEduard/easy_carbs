@@ -12,6 +12,7 @@ class Meal {
   final DateTime timestamp;
   final CarbUnit carbUnit;
 
+  final bool autocalculate;
   final double? carbsInUnit;
   final double? fpe;
   final String? location;
@@ -27,6 +28,7 @@ class Meal {
     required this.name,
     required this.carbUnit,
     DateTime? timestamp,
+    this.autocalculate = false,
     this.carbsInUnit,
     this.fpe,
     this.location,
@@ -45,6 +47,7 @@ class Meal {
     String? name,
     DateTime? timestamp,
     CarbUnit? carbUnit,
+    bool? autocalculate,
     double? carbsInUnit,
     double? fpe,
     String? location,
@@ -60,6 +63,7 @@ class Meal {
       name: name ?? this.name,
       timestamp: timestamp ?? this.timestamp,
       carbUnit: carbUnit ?? this.carbUnit,
+      autocalculate: autocalculate ?? this.autocalculate,
       carbsInUnit: carbsInUnit ?? this.carbsInUnit,
       fpe: fpe ?? this.fpe,
       location: location ?? this.location,

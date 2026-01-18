@@ -77,6 +77,10 @@ class MealCommandsService {
     return _updateMeal((meal) => meal.copyWith(location: location));
   }
 
+  Future<void> toggleAutocalculate(bool autocalculate){
+    return _updateMeal((meal) => meal.copyWith(autocalculate: autocalculate));
+  }
+
   Future<void> updateCarbsInUnit(double? carbsInUnit) {
     return _updateMeal((meal) => meal.copyWith(carbsInUnit: carbsInUnit));
   }

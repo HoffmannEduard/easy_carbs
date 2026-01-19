@@ -1,4 +1,4 @@
-import 'package:easy_carbs/domain/services/meal_commands_service.dart';
+import 'package:easy_carbs/domain/usecases/meals/meal_commands_use_case.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_image/meal_image_action_state.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,7 +9,7 @@ class MealImageActionNotifier extends Notifier<MealImageActionState> {
 
   final String mealId;
 
-  late final MealCommandsService _commands;
+  late final MealCommandsUseCase _commands;
   late final ImagePicker _picker;
 
   @override

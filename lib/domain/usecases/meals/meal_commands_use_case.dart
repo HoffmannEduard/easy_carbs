@@ -7,13 +7,13 @@ import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
-class MealCommandsService {
+class MealCommandsUseCase {
   final Ref _ref;
   final IMealRepository _repo;
   final MealImageService _imageService;
   final String mealId;
 
-  MealCommandsService(this._ref, this._repo, this.mealId)
+  MealCommandsUseCase(this._ref, this._repo, this.mealId)
     : _imageService = MealImageService();
 
   // -------------------------------------------------

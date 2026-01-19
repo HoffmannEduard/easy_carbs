@@ -89,6 +89,10 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
         .read(mealCommandsProvider(widget.mealId))
         .addOrUpdateNutrition(nutrition);
 
+    await ref
+        .read(calculateAutomaticallyUseCaseProvider)
+        .setCarbsInUnitAndFpe(widget.mealId);
+
     if (!mounted) return;
     Navigator.pop(context);
   }

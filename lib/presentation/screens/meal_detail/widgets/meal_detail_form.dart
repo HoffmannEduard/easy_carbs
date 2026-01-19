@@ -65,120 +65,124 @@ class _MealDetailFormState extends ConsumerState<MealDetailForm> {
 
     _initControllers(widget.meal);
 
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: ListView(
-        children: [
-//Image          
-          HandleMealDetailImage(
-            meal: widget.meal,
-            mealId: widget.mealId,
-          ),
-//Location
-          LocationSection(
-            controller: _locationController,
-            onChanged: commands.updateLocation,
-          ),
-
-          const Divider(height: 8, thickness: 2),
-          const SizedBox(height: AppSpacing.spacingMd),
-
-//PortionSize Section
-          PortionSizeSection(
-            controller: _portionSizeController,
-            unitLabel: widget.meal.portionUnit!.label,
-            onChanged: commands.updatePortionSize,
-          ),
-
-          const SizedBox(height: AppSpacing.spacingMd),
-
-//Autocalculate Section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Automatisch berechnen',
-                style: Theme.of(context).textTheme.bodyMedium,),
-                Switch(
-                  value: widget.meal.autocalculate, 
-                  onChanged: (value) {
-                    commands.toggleAutocalculate(value);
-                  }
-                  ),
-              ],
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: ListView(
+          children: [
+      //Image          
+            HandleMealDetailImage(
+              meal: widget.meal,
+              mealId: widget.mealId,
             ),
-
+      //Location
+            LocationSection(
+              controller: _locationController,
+              onCommit: commands.updateLocation,
+            ),
+      
+            const Divider(height: 8, thickness: 2),
             const SizedBox(height: AppSpacing.spacingMd),
-//BE Section
-          BESection(
-            controller: _carbsInUnitController,
-            unitLabel: widget.meal.carbUnit.name.toUpperCase(),
-            onChanged: commands.updateCarbsInUnit,
-          ),
-
-          const SizedBox(height: AppSpacing.spacingXs),
-//FPE Section
-          FPESection(
-            controller: _fpeController,
-            onChanged: commands.updateFpe,
-          ),
-
-          const SizedBox(height: AppSpacing.spacingMd),
-//Note Section
-          NoteSection(
-            controller: _noteController,
-            onChanged: commands.updateNote,
-          ),
-
-          const SizedBox(height: AppSpacing.spacingMd),
-
-// Nutrition Section
-            NutritionSection(
-              nutrition: widget.meal.nutrition,
-              onAdd: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => AddNutritionScreen(mealId: widget.mealId),
-                  ),
-                );
-              },
-              onEdit: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => AddNutritionScreen(
-                      mealId: widget.mealId,
-                      existingNutrition: widget.meal.nutrition,
-                    ),
-                  ),
-                );
-              },
-              onDelete: () async {
-                final confirm = await showDialog<bool>(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text('Nährwerte löschen?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        child: const Text('Abbrechen'),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, true),
-                        child: const Text('Löschen',
-                        style: TextStyle(color: Colors.red)),
-                      ),
-                    ],
-                  ),
-                );
-
-                if (confirm == true) {
-                  await commands.removeNutrition();
-                }
-              },
+      
+      //PortionSize Section
+            PortionSizeSection(
+              controller: _portionSizeController,
+              unitLabel: widget.meal.portionUnit!.label,
+              onCommit: commands.updatePortionSize,
             ),
-
-        ],
+      
+            const SizedBox(height: AppSpacing.spacingMd),
+      
+      //Autocalculate Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Automatisch berechnen',
+                  style: Theme.of(context).textTheme.bodyMedium,),
+                  Switch(
+                    value: widget.meal.autocalculate, 
+                    onChanged: (value) {
+                      commands.toggleAutocalculate(value);
+                    }
+                    ),
+                ],
+              ),
+      
+              const SizedBox(height: AppSpacing.spacingMd),
+      //BE Section
+            BESection(
+              controller: _carbsInUnitController,
+              unitLabel: widget.meal.carbUnit.name.toUpperCase(),
+              onCommit: commands.updateCarbsInUnit,
+            ),
+      
+            const SizedBox(height: AppSpacing.spacingXs),
+      //FPE Section
+            FPESection(
+              controller: _fpeController,
+              onCommit: commands.updateFpe,
+            ),
+      
+            const SizedBox(height: AppSpacing.spacingMd),
+      //Note Section
+            NoteSection(
+              controller: _noteController,
+              onChanged: commands.updateNote,
+            ),
+      
+            const SizedBox(height: AppSpacing.spacingMd),
+      
+      // Nutrition Section
+              NutritionSection(
+                nutrition: widget.meal.nutrition,
+                onAdd: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => AddNutritionScreen(mealId: widget.mealId),
+                    ),
+                  );
+                },
+                onEdit: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => AddNutritionScreen(
+                        mealId: widget.mealId,
+                        existingNutrition: widget.meal.nutrition,
+                      ),
+                    ),
+                  );
+                },
+                onDelete: () async {
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: const Text('Nährwerte löschen?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text('Abbrechen'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          child: const Text('Löschen',
+                          style: TextStyle(color: Colors.red)),
+                        ),
+                      ],
+                    ),
+                  );
+      
+                  if (confirm == true) {
+                    await commands.removeNutrition();
+                  }
+                },
+              ),
+      
+          ],
+        ),
       ),
     );
   }

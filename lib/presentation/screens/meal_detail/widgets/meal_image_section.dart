@@ -49,7 +49,7 @@ class MealImageSection extends StatelessWidget {
               : Image.file(
                   File(imagePath),
                   width: double.infinity,
-                  height: 200,
+                  height: 250,
                   fit: BoxFit.cover,
                 ),
         ),

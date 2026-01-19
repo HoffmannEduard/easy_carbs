@@ -6,12 +6,17 @@ class PortionSizeSection extends StatelessWidget {
     super.key,
     required this.controller,
     required this.unitLabel,
-    required this.onChanged,
+    required this.onCommit,
   });
 
   final TextEditingController controller;
   final String unitLabel;
-  final ValueChanged<double?> onChanged;
+  final ValueChanged<double?> onCommit;
+
+  void _commit() {
+    final text = controller.text.trim();
+    onCommit(text.isEmpty ? null : double.tryParse(text));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +25,22 @@ class PortionSizeSection extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ConstrainedBox(
-          constraints: BoxConstraints(minWidth: 50),
+          constraints: const BoxConstraints(minWidth: 50),
           child: IntrinsicWidth(
             child: TextField(
               controller: controller,
               keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.done,
               decoration: const InputDecoration(hintText: '--'),
-              onChanged: (value) => onChanged(double.tryParse(value)),
+
+              // Enter/Done
+              onSubmitted: (_) {
+                _commit();
+                FocusScope.of(context).unfocus();
+              },
+
+              // Fokus weg / Editing abgeschlossen
+              onEditingComplete: _commit,
             ),
           ),
         ),

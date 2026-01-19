@@ -6,12 +6,17 @@ class BESection extends StatelessWidget {
     super.key,
     required this.controller,
     required this.unitLabel,
-    required this.onChanged,
+    required this.onCommit,
   });
 
   final TextEditingController controller;
   final String unitLabel;
-  final ValueChanged<double?> onChanged;
+  final ValueChanged<double?> onCommit;
+
+  void _commit() {
+    final text = controller.text.trim();
+    onCommit(text.isEmpty ? null : double.tryParse(text));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +30,19 @@ class BESection extends StatelessWidget {
               controller: controller,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(hintText: '--'),
-              onChanged: (value) => onChanged(double.tryParse(value)),
+              textInputAction: TextInputAction.done,
+
+              // Enter/Done
+              onSubmitted: (_) {
+                _commit();
+                FocusScope.of(context).unfocus();
+              },
+
+              // Fokus weg / Editing abgeschlossen
+              onEditingComplete: _commit,
+            ),),
             ),
-          ),
-        ),
+          
         const SizedBox(width: AppSpacing.spacingSm),
         Text(
           unitLabel,

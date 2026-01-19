@@ -5,11 +5,16 @@ class FPESection extends StatelessWidget {
   const FPESection({
     super.key,
     required this.controller,
-    required this.onChanged,
+    required this.onCommit,
   });
 
   final TextEditingController controller;
-  final ValueChanged<double?> onChanged;
+  final ValueChanged<double?> onCommit;
+
+  void _commit() {
+    final text = controller.text.trim();
+    onCommit(text.isEmpty ? null : double.tryParse(text));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +28,19 @@ class FPESection extends StatelessWidget {
               controller: controller,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(hintText: '--'),
-              onChanged: (value) => onChanged(double.tryParse(value)),
+              textInputAction: TextInputAction.done
+              ,
+              // Enter/Done
+              onSubmitted: (_) {
+                _commit();
+                FocusScope.of(context).unfocus();
+              },
+
+              // Fokus weg / Editing abgeschlossen
+              onEditingComplete: _commit,
+            ),
             ),
           ),
-        ),
         const SizedBox(width: AppSpacing.spacingSm),
         Text('FPE', style: Theme.of(context).textTheme.titleMedium),
       ],

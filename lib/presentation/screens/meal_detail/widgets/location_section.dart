@@ -4,11 +4,15 @@ class LocationSection extends StatelessWidget {
   const LocationSection({
     super.key,
     required this.controller,
-    required this.onChanged,
+    required this.onCommit,
   });
 
   final TextEditingController controller;
-  final ValueChanged<String> onChanged;
+  final ValueChanged<String> onCommit;
+
+  void _commit() {
+    onCommit(controller.text.trim());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +28,18 @@ class LocationSection extends StatelessWidget {
               contentPadding: EdgeInsets.all(8),
               filled: false,
             ),
-            onChanged: onChanged,
+            textInputAction: TextInputAction.done,
+            // Enter/Done
+              onSubmitted: (_) {
+                _commit();
+                FocusScope.of(context).unfocus();
+              },
+
+              // Fokus weg / Editing abgeschlossen
+              onEditingComplete: _commit,
+            ),
           ),
         ),
-      ),
-    );
+      );
   }
 }

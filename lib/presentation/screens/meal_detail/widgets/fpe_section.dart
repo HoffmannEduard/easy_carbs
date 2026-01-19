@@ -6,13 +6,15 @@ class FPESection extends StatelessWidget {
     super.key,
     required this.controller,
     required this.onCommit,
+    required this.readonly,
   });
 
   final TextEditingController controller;
   final ValueChanged<double?> onCommit;
+  final bool readonly;
 
   void _commit() {
-    final text = controller.text.trim();
+    final text = controller.text.trim().replaceAll(',', '.');
     onCommit(text.isEmpty ? null : double.tryParse(text));
   }
 
@@ -26,18 +28,21 @@ class FPESection extends StatelessWidget {
           child: IntrinsicWidth(
             child: TextField(
               controller: controller,
+              readOnly: readonly,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(hintText: '--'),
+              decoration: InputDecoration(
+                hintText: '--',
+                filled: !readonly),
               textInputAction: TextInputAction.done
               ,
               // Enter/Done
-              onSubmitted: (_) {
+              onSubmitted: readonly ? null : (_) {
                 _commit();
                 FocusScope.of(context).unfocus();
               },
 
               // Fokus weg / Editing abgeschlossen
-              onEditingComplete: _commit,
+              onEditingComplete: readonly ? null : _commit,
             ),
             ),
           ),

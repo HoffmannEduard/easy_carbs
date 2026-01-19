@@ -17,7 +17,7 @@ class MyApp extends ConsumerWidget {
       title: 'Easy Carbs',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
       home: const MainScaffold(),
     );
   }

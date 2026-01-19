@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:easy_carbs/app/core/app_assets.dart';
+import 'package:easy_carbs/domain/entities/carb_unit.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/meal_detail_screen.dart';
 import 'package:easy_carbs/presentation/state/meals/filter_meal_view/visible_meal_provider.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_list_notifier.dart';
@@ -41,9 +42,9 @@ class MealListscreen extends ConsumerWidget {
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('${meal.carbsInUnit} BE'),
-                    if (meal.nutrition?.carbs != null)
-                      Text('${meal.nutrition!.carbs} g Carbs')
+                    if (meal.location != null)
+                      Text(meal.location!),
+                    Text('${meal.carbsInUnit} ${meal.carbUnit.label} * ${meal.fpe} FPE * ${meal.portionsize}'),
                   ],
                 ),
                 onTap: () {

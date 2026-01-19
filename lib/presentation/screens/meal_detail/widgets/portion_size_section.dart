@@ -14,7 +14,7 @@ class PortionSizeSection extends StatelessWidget {
   final ValueChanged<double?> onCommit;
 
   void _commit() {
-    final text = controller.text.trim();
+    final text = controller.text.trim().replaceAll(',', '.');
     onCommit(text.isEmpty ? null : double.tryParse(text));
   }
 

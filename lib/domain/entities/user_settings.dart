@@ -1,10 +1,10 @@
-import 'time_based_insulin_factor.dart';
+import 'package:easy_carbs/domain/entities/fixed_insulin_factors.dart';
 import 'carb_unit.dart';
 
 class UserSettings {
   final String id;
   final CarbUnit carbUnit;
-  final List<TimeBasedInsulinFactor> insulinFactors;
+  final FixedInsulinFactors insulinFactors;
   final bool showFpe;
   final double? fpeFactor;
 
@@ -19,7 +19,7 @@ class UserSettings {
   UserSettings copyWith({
     String? id,
     CarbUnit? carbUnit,
-    List<TimeBasedInsulinFactor>? insulinFactors,
+    FixedInsulinFactors? insulinFactors,
     bool? showFpe,
     double? fpeFactor,
   }) {

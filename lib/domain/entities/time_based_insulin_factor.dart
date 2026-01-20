@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 
 class TimeBasedInsulinFactor {
-  final String id;
-  final TimeOfDay startTime;
-  final TimeOfDay endTime;
+  final String id; // 'morning'|'midday'|'evening'|'night'
+  final TimeOfDay startTime; // Grenze
+  final TimeOfDay endTime;   // Start des nächsten Blocks (night wrap)
   final double insulinFactor;
 
   TimeBasedInsulinFactor({
-    String? id,
+    required this.id,
     required this.startTime,
     required this.endTime,
     required this.insulinFactor,
-  }) : id = id ?? const Uuid().v4();
+  });
 
   TimeBasedInsulinFactor copyWith({
     String? id,

@@ -1,4 +1,3 @@
-
 import 'package:easy_carbs/presentation/screens/home/home_screen.dart';
 import 'package:easy_carbs/presentation/screens/meal_list/meal_list_screen.dart';
 import 'package:easy_carbs/presentation/screens/user_settings/user_settings_screen.dart';
@@ -36,6 +35,7 @@ void initState() {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (int index) {
+          FocusManager.instance.primaryFocus?.unfocus();
           setState(() {
             _selectedIndex = index;
           });

@@ -1,7 +1,9 @@
 import 'package:easy_carbs/domain/entities/carb_unit.dart';
+import 'package:easy_carbs/domain/entities/insulin_block_id.dart';
 import 'package:easy_carbs/domain/entities/user_settings.dart';
-import 'package:easy_carbs/domain/entities/time_based_insulin_factor.dart';
+import 'package:easy_carbs/domain/services/fixed_insulin_schedule.dart';
 import 'package:easy_carbs/presentation/state/user_settings/user_settings_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class UserSettingsAsyncNotifier extends AsyncNotifier<UserSettings> {
@@ -9,15 +11,13 @@ class UserSettingsAsyncNotifier extends AsyncNotifier<UserSettings> {
 
   @override
   Future<UserSettings> build() async {
-    // Stream abonnieren oder Settings laden
     final settings = await _repo.getSettings();
-    if (settings != null) return settings;
+    if (settings != null) return _ensureNormalized(settings);
 
-    // Default Settings ohne InsulinFactors
     final defaultSettings = UserSettings(
-      id: 'user', // einzige Instanz
+      id: 'user',
       carbUnit: CarbUnit.be,
-      insulinFactors: [],
+      insulinFactors: FixedInsulinSchedule.defaults(),
       showFpe: true,
       fpeFactor: null,
     );
@@ -26,81 +26,36 @@ class UserSettingsAsyncNotifier extends AsyncNotifier<UserSettings> {
     return defaultSettings;
   }
 
-  /// Toggle ShowFpe
-  Future<void> toggleShowFpe(bool value) async {
-    final current = state.value;
-    if (current == null) return;
-
-    final updated = current.copyWith(showFpe: value);
-    await _repo.saveSettings(updated);
-    state = AsyncData(updated);
+  UserSettings _ensureNormalized(UserSettings s) {
+    final normalized = FixedInsulinSchedule.normalize(s.insulinFactors);
+    return s.copyWith(insulinFactors: normalized);
   }
 
-  /// Setze CarbUnit
-  Future<void> setCarbUnit(CarbUnit unit) async {
-    final current = state.value;
-    if (current == null) return;
+  Future<void> toggleShowFpe(bool value) async => _update((s) => s.copyWith(showFpe: value));
+  Future<void> setCarbUnit(CarbUnit unit) async => _update((s) => s.copyWith(carbUnit: unit));
+  Future<void> setFpeFactor(double? fpeFactor) async => _update((s) => s.copyWith(fpeFactor: fpeFactor));
 
-    final updated = current.copyWith(carbUnit: unit);
-    await _repo.saveSettings(updated);
-    state = AsyncData(updated);
+  Future<void> setBlockStart(InsulinBlockId id, TimeOfDay start) async {
+    await _update((s) => s.copyWith(insulinFactors: FixedInsulinSchedule.setStart(s.insulinFactors, id, start)));
   }
 
-  /// Setze FPE-Faktor
-  Future<void> setFpeFactor(double? fpeFactor) async {
-    final current = state.value;
-    if (current == null) return;
-
-    final updated = current.copyWith(fpeFactor: fpeFactor);
-    await _repo.saveSettings(updated);
-    state = AsyncData(updated);
+  Future<void> setBlockEnd(InsulinBlockId id, TimeOfDay end) async {
+    await _update((s) => s.copyWith(insulinFactors: FixedInsulinSchedule.setEnd(s.insulinFactors, id, end)));
   }
 
-  /// InsulinFactors ersetzen (z. B. beim Bearbeiten der Liste)
-  Future<void> setInsulinFactors(List<TimeBasedInsulinFactor> factors) async {
-    final current = state.value;
-    if (current == null) return;
-
-    final updated = current.copyWith(insulinFactors: factors);
-    await _repo.saveSettings(updated);
-    state = AsyncData(updated);
+  Future<void> setBlockFactor(InsulinBlockId id, double factor) async {
+    await _update((s) => s.copyWith(insulinFactors: FixedInsulinSchedule.setFactor(s.insulinFactors, id, factor)));
   }
 
-  /// Einen einzelnen InsulinFactor hinzufügen oder aktualisieren
-  Future<void> addOrUpdateInsulinFactor(TimeBasedInsulinFactor factor) async {
+  Future<void> _update(UserSettings Function(UserSettings) cb) async {
     final current = state.value;
     if (current == null) return;
 
-    // Existierende Faktoren ersetzen, falls ID schon vorhanden
-    final updatedFactors = List<TimeBasedInsulinFactor>.from(current.insulinFactors);
-    final index = updatedFactors.indexWhere((f) => f.id == factor.id);
-    if (index >= 0) {
-      updatedFactors[index] = factor;
-    } else {
-      updatedFactors.add(factor);
-    }
-
-    final updated = current.copyWith(insulinFactors: updatedFactors);
-    await _repo.saveSettings(updated);
-    state = AsyncData(updated);
-  }
-
-  /// Einen InsulinFactor löschen
-  Future<void> deleteInsulinFactor(String factorId) async {
-    final current = state.value;
-    if (current == null) return;
-
-    final updatedFactors =
-        current.insulinFactors.where((f) => f.id != factorId).toList();
-
-    final updated = current.copyWith(insulinFactors: updatedFactors);
+    final updated = _ensureNormalized(cb(current));
     await _repo.saveSettings(updated);
     state = AsyncData(updated);
   }
 }
 
-// ================= Provider =================
-
 final userSettingsNotifierProvider =
-    AsyncNotifierProvider<UserSettingsAsyncNotifier, UserSettings>(
-        () => UserSettingsAsyncNotifier());
+    AsyncNotifierProvider<UserSettingsAsyncNotifier, UserSettings>(() => UserSettingsAsyncNotifier());

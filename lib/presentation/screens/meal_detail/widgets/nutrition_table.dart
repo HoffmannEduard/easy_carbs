@@ -27,16 +27,24 @@ class NutritionTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Table(
-      columnWidths: const {0: FlexColumnWidth(2), 1: FlexColumnWidth(1)},
-      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-      children: [
-        _row('Kohlenhydrate', nutrition.carbs, context),
-        _row('  - Zucker', nutrition.sugar, context),
-        _row('Fett', nutrition.fat, context),
-        _row('  - ges. Fettsäuren', nutrition.saturatedFat, context),
-        _row('Eiweiß', nutrition.protein, context),
-      ],
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(8),
+        
+      ),
+      child: Table(
+        columnWidths: const {0: FlexColumnWidth(2), 1: FlexColumnWidth(1)},
+        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+        children: [
+          _row('Kohlenhydrate', nutrition.carbs, context),
+          _row('  - Zucker', nutrition.sugar, context),
+          _row('Fett', nutrition.fat, context),
+          _row('  - ges. Fettsäuren', nutrition.saturatedFat, context),
+          _row('Eiweiß', nutrition.protein, context),
+        ],
+      ),
     );
   }
 }

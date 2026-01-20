@@ -69,16 +69,25 @@ class MealCommandsUseCase {
   // Basisfelder (alles über updateMeal)
   // -------------------------------------------------
 
+  Future<void> toggleAutocalculate(bool autocalculate) async {
+  final meal = _requireMeal();
+  if (autocalculate) {
+    if (meal.portionsize == null || meal.nutrition == null) {
+      throw StateError('Portionsgröße und Nährwerte hinzufügen');
+    }
+  }
+  await _repo.updateMeal(
+    meal.copyWith(autocalculate: autocalculate),
+  );
+}
+
+
   Future<void> updateName(String name) {
     return _updateMeal((meal) => meal.copyWith(name: name));
   }
 
   Future<void> updateLocation(String location) {
     return _updateMeal((meal) => meal.copyWith(location: location));
-  }
-
-  Future<void> toggleAutocalculate(bool autocalculate){
-    return _updateMeal((meal) => meal.copyWith(autocalculate: autocalculate));
   }
 
   Future<void> updateCarbsInUnit(double? carbsInUnit) {

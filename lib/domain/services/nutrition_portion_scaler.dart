@@ -10,8 +10,8 @@ class NutritionPortionScaler {
     required double portionSize,
   }) {
 
-    if (portionSize <= 0) {
-      throw StateError('Portionsgröße muss > 0 sein');
+    if (portionSize < 0) {
+      throw StateError('Portionsgröße muss >= 0 sein');
     }
 
     switch (unit) {

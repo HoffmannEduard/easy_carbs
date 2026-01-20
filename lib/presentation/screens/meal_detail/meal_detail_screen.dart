@@ -3,6 +3,7 @@ import 'package:easy_carbs/app/utils/format_extensions.dart';
 import 'package:easy_carbs/domain/entities/meal.dart';
 import 'package:easy_carbs/domain/entities/portion_unit.dart';
 import 'package:easy_carbs/presentation/screens/add_nutrition/add_nutrition_screen.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/widgets/auto_calculate_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/be_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/fpe_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/handle_meal_detail_image.dart';
@@ -86,83 +87,76 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
               padding: const EdgeInsets.all(8),
               child: ListView(
                 children: [
-                  // Image
+
+// Image
                   HandleMealDetailImage(meal: meal, mealId: widget.mealId),
 
-                  // Location
+
+// Location
                   LocationSection(
                     controller: _locationController,
                     onCommit: commands.updateLocation,
                   ),
-
                   const Divider(height: 8, thickness: 2),
                   const SizedBox(height: AppSpacing.spacingMd),
 
-                  // PortionSize
+
+// PortionSize
                   PortionSizeSection(
                     controller: _portionSizeController,
                     unitLabel: meal.portionUnit!.label,
                     onCommit: (value) async {
-                      if (value == null) return;
-
                     await commands.updatePortionSize(value);
+                      if (value == null || value == 0) {
+                        await commands.toggleAutocalculate(false);
+                      }
+                      if (meal.autocalculate) {
                     await autocalc.setCarbsInUnitAndFpe(widget.mealId);
-                    
+                      }
                     },
                   ),
-
                   const SizedBox(height: AppSpacing.spacingMd),
 
-                  // Autocalculate Switch
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Automatisch berechnen',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      Switch(
-                        value: meal.autocalculate,
-                        onChanged: (value) async {
-                          await commands.toggleAutocalculate(value);
-                          if (value) {
-                            await autocalc.setCarbsInUnitAndFpe(widget.mealId);
-                          }
-                        },
-                      ),
-                    ],
-                  ),
 
+// Autocalculate Switch
+                  AutoCalculateSection(
+                    meal: meal, 
+                    onToggleAutocalculate: (value) =>
+                      commands.toggleAutocalculate(value), 
+                    onRunAutocalc: () =>
+                      autocalc.setCarbsInUnitAndFpe(widget.mealId)
+                    ),
                   const SizedBox(height: AppSpacing.spacingMd),
 
-                  // BE/KE
+
+// BE/KE
                   BESection(
                     controller: _carbsInUnitController,
                     readonly: meal.autocalculate,
                     unitLabel: meal.carbUnit.name.toUpperCase(),
                     onCommit: commands.updateCarbsInUnit,
                   ),
-
                   const SizedBox(height: AppSpacing.spacingXs),
 
-                  // FPE
+
+// FPE
                   FPESection(
                     controller: _fpeController,
                     readonly: meal.autocalculate,
                     onCommit: commands.updateFpe,
                   ),
-
                   const SizedBox(height: AppSpacing.spacingMd),
 
-                  // Note
+
+// Note
                   NoteSection(
                     controller: _noteController,
                     onChanged: commands.updateNote,
                   ),
-
                   const SizedBox(height: AppSpacing.spacingMd),
 
-                  // Nutrition
+
+// Nutrition
                   NutritionSection(
                     nutrition: meal.nutrition,
                     onAdd: () {
@@ -210,10 +204,10 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
                       );
 
                       if (confirm == true) {
-                        await commands.removeNutrition();
                         if (meal.autocalculate) {
-                          await autocalc.setCarbsInUnitAndFpe(widget.mealId);
+                          commands.toggleAutocalculate(false);
                         }
+                        await commands.removeNutrition();
                       }
                     },
                   ),

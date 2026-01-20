@@ -38,9 +38,6 @@ class PortionSizeSection extends StatelessWidget {
                 _commit();
                 FocusScope.of(context).unfocus();
               },
-
-              // Fokus weg / Editing abgeschlossen
-              onEditingComplete: _commit,
             ),
           ),
         ),

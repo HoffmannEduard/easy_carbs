@@ -44,6 +44,7 @@ class _AutocalculateSectionState extends State<AutoCalculateSection> {
         Switch(
           value: meal.autocalculate,
           onChanged: (value) async {
+            FocusManager.instance.primaryFocus?.unfocus();
             // Ausschalten → direkt
             if (!value) {
               try {

@@ -1,16 +1,17 @@
 import 'package:easy_carbs/app/theme/app_spacing.dart';
-import 'package:easy_carbs/presentation/screens/user_settings/widgets/insulin_blocks_card.dart';
+import 'package:easy_carbs/presentation/screens/insulin_factor_edit/insulin_factor_edit_screen.dart';
+import 'package:easy_carbs/presentation/screens/user_settings/widgets/carb_unit_toggle.dart';
 import 'package:easy_carbs/presentation/screens/user_settings/widgets/us_fpe_section.dart';
 import 'package:easy_carbs/presentation/state/user_settings/user_settings_async_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'widgets/carb_unit_toggle.dart';
+import 'widgets/insulin_factors_table.dart';
 
 class UserSettingsScreen extends ConsumerStatefulWidget {
   const UserSettingsScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _UserSettingsScreenState();
+  ConsumerState<UserSettingsScreen> createState() => _UserSettingsScreenState();
 }
 
 class _UserSettingsScreenState extends ConsumerState<UserSettingsScreen> {
@@ -41,17 +42,27 @@ class _UserSettingsScreenState extends ConsumerState<UserSettingsScreen> {
 
               return ListView(
                 children: [
+// Choose CarbUnit Section
                   CarbUnitToggle(
                     selected: settings.carbUnit,
-                    onSelected: (unit) => ref
-                        .read(userSettingsNotifierProvider.notifier)
-                        .setCarbUnit(unit),
+                    onSelected: (unit) =>
+                        ref.read(userSettingsNotifierProvider.notifier).setCarbUnit(unit),
                   ),
                   const SizedBox(height: AppSpacing.spacingLg),
 
-                  InsulinBlocksCard(insulinFactors: settings.insulinFactors),
+//Insulin Faktor + Zeit Tabelle
+                  InsulinFactorsTable(
+                    insulinFactors: settings.insulinFactors,
+                    onEdit: () {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const InsulinFactorsEditScreen()),
+                      );
+                    },
+                  ),
                   const SizedBox(height: AppSpacing.spacingLg),
 
+//FPE Faktor Section
                   UsFpeSection(
                     showFpe: settings.showFpe,
                     controller: _fpeFactorController,
@@ -59,7 +70,7 @@ class _UserSettingsScreenState extends ConsumerState<UserSettingsScreen> {
                         .read(userSettingsNotifierProvider.notifier)
                         .toggleShowFpe(value),
                     onSave: () {
-                      final value = double.tryParse(_fpeFactorController.text);
+                      final value = double.tryParse(_fpeFactorController.text.replaceAll(',', '.'));
                       if (value == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Bitte gültige Zahl eingeben')),

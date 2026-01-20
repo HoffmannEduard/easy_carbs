@@ -40,56 +40,67 @@ class _InsulinBlocksCardState extends ConsumerState<InsulinBlocksCard> {
   Widget build(BuildContext context) {
     final normalized = FixedInsulinSchedule.normalize(widget.insulinFactors);
 
-    // WICHTIG: Nur initialisieren, wenn leer. Niemals überschreiben.
+    // einmalig initialisieren
     for (final id in InsulinBlockIdX.ordered) {
       final ctrl = _factorControllers[id]!;
       if (ctrl.text.isEmpty) {
-        final factor = normalized.byId(id).insulinFactor;
-        ctrl.text = factor.toString();
+        ctrl.text = normalized.byId(id).insulinFactor.toString();
       }
     }
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Insulin Faktoren', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 12),
+            Text(
+              'Insulin-Faktoren',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 24),
 
             ...InsulinBlockIdX.ordered.map((id) {
               final f = normalized.byId(id);
-              final endInclusive = FixedInsulinSchedule.displayEndInclusive(f.endTime);
+              final endInclusive =
+                  FixedInsulinSchedule.displayEndInclusive(f.endTime);
 
               return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.only(bottom: 36),
                 child: InsulinBlockRow(
                   title: id.label,
-                  showNightHint: id == InsulinBlockId.night,
+                  isNight: id == InsulinBlockId.night,
                   start: f.startTime,
                   endInclusive: endInclusive,
-
-                  // Controller kommt von außen
                   factorController: _factorControllers[id]!,
-
                   onPickStart: () async {
-                    final picked = await show24hTimePicker(context: context, initialTime: f.startTime);
+                    final picked = await show24hTimePicker(
+                      context: context,
+                      initialTime: f.startTime,
+                    );
                     if (picked != null) {
-                      await ref.read(userSettingsNotifierProvider.notifier).setBlockStart(id, picked);
+                      ref
+                          .read(userSettingsNotifierProvider.notifier)
+                          .setBlockStart(id, picked);
                     }
                   },
                   onPickEnd: () async {
-                    final picked = await show24hTimePicker(context: context, initialTime: endInclusive);
+                    final picked = await show24hTimePicker(
+                      context: context,
+                      initialTime: endInclusive,
+                    );
                     if (picked != null) {
-                      await ref.read(userSettingsNotifierProvider.notifier).setBlockEnd(id, picked);
+                      ref
+                          .read(userSettingsNotifierProvider.notifier)
+                          .setBlockEnd(id, picked);
                     }
                   },
-
-                  // Commit-only: Speichern erst wenn der Nutzer fertig ist
-                  onCommitFactor: (value) async {
-                    if (value == null) return;
-                    await ref.read(userSettingsNotifierProvider.notifier).setBlockFactor(id, value);
+                  onCommitFactor: (value) {
+                    if (value != null) {
+                      ref
+                          .read(userSettingsNotifierProvider.notifier)
+                          .setBlockFactor(id, value);
+                    }
                   },
                 ),
               );
@@ -100,3 +111,4 @@ class _InsulinBlocksCardState extends ConsumerState<InsulinBlocksCard> {
     );
   }
 }
+

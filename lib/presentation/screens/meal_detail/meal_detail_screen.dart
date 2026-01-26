@@ -107,7 +107,7 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
                     unitLabel: meal.portionUnit!.label,
                     onCommit: (value) async {
                     await commands.updatePortionSize(value);
-                      if (value == null || value == 0) {
+                      if (value == 0) {
                         await commands.toggleAutocalculate(false);
                       }
                       if (meal.autocalculate) {

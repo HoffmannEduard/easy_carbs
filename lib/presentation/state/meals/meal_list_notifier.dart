@@ -39,6 +39,7 @@ class MealListNotifier extends StreamNotifier<List<Meal>> {
       carbUnit: settings!.carbUnit,
       imagePath: imagePath,
       portionUnit: portionUnit,
+      portionsize: _defaultPortionSizeFor(portionUnit)
     );
     await _repo.addMeal(meal);
     return meal.id;
@@ -47,6 +48,17 @@ class MealListNotifier extends StreamNotifier<List<Meal>> {
   Future<void> deleteMeal(String id) async {
     await _repo.deleteMeal(id);
   }
+
+  double _defaultPortionSizeFor(PortionUnit unit) {
+  switch (unit) {
+    case PortionUnit.gramm:
+      return 100.0;
+    case PortionUnit.piece:
+    case PortionUnit.portion:
+      return 1.0;
+  }
+}
+
 
 }
 

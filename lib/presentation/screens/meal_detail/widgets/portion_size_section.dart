@@ -33,7 +33,7 @@ class _PortionSizeSectionState extends State<PortionSizeSection> {
       }
     });
 
-    // Initialer Referenzwert, damit wir nicht sofort "changed" sind.
+    // Initialer Referenzwert
     _lastCommittedText = widget.controller.text;
   }
 
@@ -41,7 +41,7 @@ class _PortionSizeSectionState extends State<PortionSizeSection> {
   void didUpdateWidget(covariant PortionSizeSection oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Falls du den Controller austauschst, musst du den Commit-Cache aktualisieren.
+    // Falls Controller austauscht wird, Commit-Cache aktualisieren.
     if (oldWidget.controller != widget.controller) {
       _lastCommittedText = widget.controller.text;
     }
@@ -87,7 +87,7 @@ class _PortionSizeSectionState extends State<PortionSizeSection> {
                 FocusScope.of(context).unfocus();
               },
 
-              // Optional zusätzlich: Tap außerhalb (falls verfügbar)
+              // Commit wenn Tap außerhalb 
               onTapOutside: (_) {
                 _commitIfChanged();
                 FocusScope.of(context).unfocus();

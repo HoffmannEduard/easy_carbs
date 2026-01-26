@@ -5,12 +5,14 @@ import 'package:easy_carbs/domain/entities/portion_unit.dart';
 import 'package:easy_carbs/presentation/screens/add_nutrition/add_nutrition_screen.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/auto_calculate_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/be_section.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/widgets/insulin_units_card.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/fpe_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/handle_meal_detail_image.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/location_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/note_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/nutrition_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/portion_size_section.dart';
+import 'package:easy_carbs/presentation/state/meals/meal_detail/meal_insulin_units_provider.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -80,6 +82,9 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
             _fpeController.text = meal.fpe.to1dp();
           }
 
+          final insulinAsync = ref.watch(mealInsulinUnitsProvider(widget.mealId));
+
+
           return Listener(
             behavior: HitTestBehavior.translucent,
             onPointerDown: (_) => FocusManager.instance.primaryFocus?.unfocus(),
@@ -130,21 +135,46 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
 
 
 // BE/KE
-                  BESection(
-                    controller: _carbsInUnitController,
-                    readonly: meal.autocalculate,
-                    unitLabel: meal.carbUnit.name.toUpperCase(),
-                    onCommit: commands.updateCarbsInUnit,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: BESection(
+                          controller: _carbsInUnitController,
+                          readonly: meal.autocalculate,
+                          unitLabel: meal.carbUnit.name.toUpperCase(),
+                          onCommit: commands.updateCarbsInUnit,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      insulinAsync.when(
+                        loading: () => const SizedBox.shrink(),
+                        error: (_, __) => const SizedBox.shrink(),
+                        data: (ins) => InsulinUnitsCard(insulinUnits: ins.carbsUnits),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: AppSpacing.spacingXs),
 
 
 // FPE
-                  FPESection(
-                    controller: _fpeController,
-                    readonly: meal.autocalculate,
-                    onCommit: commands.updateFpe,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FPESection(
+                          controller: _fpeController,
+                          readonly: meal.autocalculate,
+                          onCommit: commands.updateFpe,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      insulinAsync.when(
+                        loading: () => const SizedBox.shrink(),
+                        error: (_, __) => const SizedBox.shrink(),
+                        data: (ins) => InsulinUnitsCard(insulinUnits: ins.fpeUnits),
+                      ),
+                    ],
                   ),
+
                   const SizedBox(height: AppSpacing.spacingMd),
 
 

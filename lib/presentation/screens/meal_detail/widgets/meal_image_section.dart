@@ -25,7 +25,7 @@ class MealImageSection extends StatelessWidget {
           child: isDefault
               ? SizedBox(
                   width: double.infinity,
-                  height: 100,
+                  height: 75,
                   child: ElevatedButton.icon(
                     onPressed: null, // noch kein onTap, nur Optik
                     style: ElevatedButton.styleFrom(

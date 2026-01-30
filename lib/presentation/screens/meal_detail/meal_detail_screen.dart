@@ -9,6 +9,7 @@ import 'package:easy_carbs/presentation/screens/meal_detail/widgets/insulin_unit
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/fpe_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/handle_meal_detail_image.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/location_section.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/widgets/name_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/note_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/nutrition_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/portion_size_section.dart';
@@ -26,6 +27,7 @@ class MealDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
+  final _nameController = TextEditingController();
   final _carbsInUnitController = TextEditingController();
   final _fpeController = TextEditingController();
   final _locationController = TextEditingController();
@@ -41,6 +43,7 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
     _carbsInUnitController.text = meal.carbsInUnit.to1dp();
     _fpeController.text = meal.fpe.to1dp();
     }
+    _nameController.text = meal.name;
     _locationController.text = meal.location ?? '';
     _portionSizeController.text = meal.portionsize.to1dp();
     _noteController.text = meal.note ?? '';
@@ -50,6 +53,7 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
 
   @override
   void dispose() {
+    _nameController.dispose();
     _carbsInUnitController.dispose();
     _fpeController.dispose();
     _locationController.dispose();
@@ -66,11 +70,7 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: mealAsync.when(
-          loading: () => const Text('Lade Mahlzeit…'),
-          error: (_, __) => const Text('Fehler'),
-          data: (meal) => Text(meal.name),
-        ),
+        title: Text('Alle Mahlzeiten'),
       ),
       body: mealAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -95,6 +95,12 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
 
 // Image
                   HandleMealDetailImage(meal: meal, mealId: widget.mealId),
+
+// NameSection
+                  NameSection(
+                    controller: _nameController,
+                    onCommit: commands.updateName,
+                  ),
 
 
 // Location

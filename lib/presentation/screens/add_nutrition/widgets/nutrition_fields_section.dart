@@ -26,7 +26,27 @@ class NutritionFieldsSection extends StatelessWidget {
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 16),
+// Fat
+        TextFormField(
+          controller: fatController,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: const InputDecoration(labelText: 'Fett'),
+          validator: _optionalNumberValidator,
+        ),
 
+        const SizedBox(height: 16),
+
+// Saturated Fat
+        TextFormField(
+          controller: saturatedFatController,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: const InputDecoration(labelText: 'ges. Fettsäuren'),
+          validator: _optionalNumberValidator,
+        ),
+
+        const SizedBox(height: 16),
+
+// Carbs
         TextFormField(
           controller: carbsController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -44,6 +64,7 @@ class NutritionFieldsSection extends StatelessWidget {
 
         const SizedBox(height: 16),
 
+// Sugar
         TextFormField(
           controller: sugarController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -53,24 +74,8 @@ class NutritionFieldsSection extends StatelessWidget {
 
         const SizedBox(height: 16),
 
-        TextFormField(
-          controller: fatController,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: const InputDecoration(labelText: 'Fett'),
-          validator: _optionalNumberValidator,
-        ),
-
-        const SizedBox(height: 16),
-
-        TextFormField(
-          controller: saturatedFatController,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: const InputDecoration(labelText: 'ges. Fettsäuren'),
-          validator: _optionalNumberValidator,
-        ),
-
-        const SizedBox(height: 16),
-
+        
+// Protein
         TextFormField(
           controller: proteinController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),

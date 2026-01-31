@@ -13,7 +13,7 @@ class WeightPerPieceSection extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'Gewicht je Stück (Gramm)',
+          'Gewicht je Stück in Gramm',
           style: Theme.of(context).textTheme.titleMedium,
         ),
 
@@ -22,7 +22,7 @@ class WeightPerPieceSection extends StatelessWidget {
         TextFormField(
           controller: weightOnePieceController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: const InputDecoration(labelText: 'Stück'),
+          decoration: const InputDecoration(labelText: 'Gramm/Stück'),
           validator: (value) {
             if (value != null &&
                 value.trim().isNotEmpty &&

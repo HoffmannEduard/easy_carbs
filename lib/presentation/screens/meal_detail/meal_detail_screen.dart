@@ -5,6 +5,7 @@ import 'package:easy_carbs/domain/entities/portion_unit.dart';
 import 'package:easy_carbs/presentation/screens/add_nutrition/add_nutrition_screen.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/auto_calculate_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/be_section.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/widgets/delete_meal_button.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/insulin_units_card.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/fpe_section.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/handle_meal_detail_image.dart';
@@ -221,19 +222,20 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
                         context: context,
                         builder:
                             (_) => AlertDialog(
-                              title: const Text('Nährwerte löschen?'),
+                              title: const Text('Nährwerte endgültig löschen?'),
                               actions: [
                                 TextButton(
                                   onPressed:
                                       () => Navigator.pop(context, false),
                                   child: const Text('Abbrechen'),
                                 ),
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: const Text(
-                                    'Löschen',
-                                    style: TextStyle(color: Colors.red),
+                                FilledButton(
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: Theme.of(context).colorScheme.error,
+                                    foregroundColor: Theme.of(context).colorScheme.onError,
                                   ),
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: const Text('Löschen'),
                                 ),
                               ],
                             ),
@@ -247,6 +249,16 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
                       }
                     },
                   ),
+
+                  const SizedBox(height: AppSpacing.spacingMd),
+
+// Delete Meal 
+                DeleteMealButton(
+                  onDelete: () async {
+                    await commands.deleteMeal();
+                  }
+                  )
+
                 ],
               ),
             ),

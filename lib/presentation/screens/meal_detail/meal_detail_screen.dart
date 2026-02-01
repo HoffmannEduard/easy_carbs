@@ -114,18 +114,21 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
 
 
 // PortionSize
-                  PortionSizeSection(
-                    controller: _portionSizeController,
-                    unitLabel: meal.portionUnit!.label,
-                    onCommit: (value) async {
-                    await commands.updatePortionSize(value);
-                      if (value == 0) {
-                        await commands.toggleAutocalculate(false);
-                      }
-                      if (meal.autocalculate) {
-                    await autocalc.setCarbsInUnitAndFpe(widget.mealId);
-                      }
-                    },
+                  Padding(
+                    padding: const EdgeInsets.all(.0),
+                    child: PortionSizeSection(
+                      controller: _portionSizeController,
+                      unitLabel: meal.portionUnit!.label,
+                      onCommit: (value) async {
+                      await commands.updatePortionSize(value);
+                        if (value == 0) {
+                          await commands.toggleAutocalculate(false);
+                        }
+                        if (meal.autocalculate) {
+                      await autocalc.setCarbsInUnitAndFpe(widget.mealId);
+                        }
+                      },
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.spacingMd),
 

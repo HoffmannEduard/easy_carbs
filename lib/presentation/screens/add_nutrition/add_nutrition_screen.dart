@@ -67,7 +67,7 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
   }
 
   double? _parseDouble(String value) {
-    final trimmed = value.trim();
+    final trimmed = value.trim().replaceAll(',', '.');
     if (trimmed.isEmpty) return null;
     return double.tryParse(trimmed);
   }

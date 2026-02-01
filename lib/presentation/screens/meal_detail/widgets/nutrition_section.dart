@@ -33,7 +33,7 @@ class NutritionSection extends StatelessWidget {
         Row(
           children: [
             Text(
-              'Nährwerte',
+              'Nährwerte (100 Gr.)',
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const Spacer(),
@@ -43,7 +43,7 @@ class NutritionSection extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 2),
         NutritionTable(nutrition: nutrition!),
       ],
     );

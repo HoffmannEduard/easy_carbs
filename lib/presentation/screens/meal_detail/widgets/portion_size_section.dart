@@ -67,37 +67,77 @@ class _PortionSizeSectionState extends State<PortionSizeSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 50),
-          child: IntrinsicWidth(
-            child: TextField(
-              controller: widget.controller,
-              focusNode: _focusNode,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              textInputAction: TextInputAction.done,
-              decoration: const InputDecoration(hintText: '--'),
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
 
-              // Commit wenn User bestätigt (Done/Enter)
-              onSubmitted: (_) {
-                _commitIfChanged();
-                FocusScope.of(context).unfocus();
-              },
+    // Statisch, nicht fokusabhängig
+    final bg = cs.surfaceContainerHigh;
+    final fg = cs.onSurfaceVariant;
+    final border = cs.outlineVariant;
 
-              // Commit wenn Tap außerhalb 
-              onTapOutside: (_) {
-                _commitIfChanged();
-                FocusScope.of(context).unfocus();
-              },
-            ),
-          ),
+    return InkWell(
+      onTap: () => _focusNode.requestFocus(),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        curve: Curves.easeOut,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: border, width: 1),
         ),
-        const SizedBox(width: AppSpacing.spacingSm),
-        Text(widget.unitLabel, style: Theme.of(context).textTheme.titleMedium),
-      ],
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.edit, size: 16, color: fg),
+            const SizedBox(width: 6),
+      
+            ConstrainedBox(
+              constraints: const BoxConstraints(minWidth: 56),
+              child: IntrinsicWidth(
+                child: TextField(
+                  controller: widget.controller,
+                  focusNode: _focusNode,
+                  textAlign: TextAlign.center,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  textInputAction: TextInputAction.done,
+                  style: theme.textTheme.titleMedium?.copyWith(color: fg),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: '--',
+                    border: InputBorder.none,
+                    filled: false,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 6,
+                    ),
+                    hintStyle: theme.textTheme.titleMedium?.copyWith(
+                      color: fg.withAlpha(140),
+                    ),
+                  ),
+                  onSubmitted: (_) {
+                    _commitIfChanged();
+                    FocusScope.of(context).unfocus();
+                  },
+                  onTapOutside: (_) {
+                    _commitIfChanged();
+                    FocusScope.of(context).unfocus();
+                  },
+                ),
+              ),
+            ),
+      
+            const SizedBox(width: AppSpacing.spacingSm),
+            Text(
+              widget.unitLabel,
+              style: theme.textTheme.titleMedium?.copyWith(color: fg),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

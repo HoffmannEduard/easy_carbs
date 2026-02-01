@@ -26,7 +26,8 @@ class NutritionFieldsSection extends StatelessWidget {
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 16),
-// Fat
+
+        // Fett
         TextFormField(
           controller: fatController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -36,7 +37,7 @@ class NutritionFieldsSection extends StatelessWidget {
 
         const SizedBox(height: 16),
 
-// Saturated Fat
+        // gesättigte Fettsäuren
         TextFormField(
           controller: saturatedFatController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -46,7 +47,7 @@ class NutritionFieldsSection extends StatelessWidget {
 
         const SizedBox(height: 16),
 
-// Carbs
+        // Kohlenhydrate (Pflichtfeld)
         TextFormField(
           controller: carbsController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -55,7 +56,7 @@ class NutritionFieldsSection extends StatelessWidget {
             if (value == null || value.trim().isEmpty) {
               return 'Kohlenhydrate sind erforderlich';
             }
-            if (double.tryParse(value) == null) {
+            if (double.tryParse(value.trim().replaceAll(',', '.')) == null) {
               return 'Bitte eine gültige Zahl eingeben';
             }
             return null;
@@ -64,7 +65,7 @@ class NutritionFieldsSection extends StatelessWidget {
 
         const SizedBox(height: 16),
 
-// Sugar
+        // Zucker
         TextFormField(
           controller: sugarController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -74,8 +75,7 @@ class NutritionFieldsSection extends StatelessWidget {
 
         const SizedBox(height: 16),
 
-        
-// Protein
+        // Protein
         TextFormField(
           controller: proteinController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -86,10 +86,11 @@ class NutritionFieldsSection extends StatelessWidget {
     );
   }
 
+  /// Optionales Zahlenfeld: leer erlaubt, sonst Zahl mit , oder .
   static String? _optionalNumberValidator(String? value) {
-    if (value != null &&
-        value.trim().isNotEmpty &&
-        double.tryParse(value) == null) {
+    if (value == null || value.trim().isEmpty) return null;
+
+    if (double.tryParse(value.trim().replaceAll(',', '.')) == null) {
       return 'Bitte eine gültige Zahl eingeben';
     }
     return null;

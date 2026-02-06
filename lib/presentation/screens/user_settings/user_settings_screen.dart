@@ -42,14 +42,6 @@ class _UserSettingsScreenState extends ConsumerState<UserSettingsScreen> {
 
               return ListView(
                 children: [
-// Choose CarbUnit Section
-                  CarbUnitToggle(
-                    selected: settings.carbUnit,
-                    onSelected: (unit) =>
-                        ref.read(userSettingsNotifierProvider.notifier).setCarbUnit(unit),
-                  ),
-                  const SizedBox(height: AppSpacing.spacingLg),
-
 //Insulin Faktor + Zeit Tabelle
                   InsulinFactorsTable(
                     insulinFactors: settings.insulinFactors,
@@ -81,6 +73,15 @@ class _UserSettingsScreenState extends ConsumerState<UserSettingsScreen> {
                       FocusScope.of(context).unfocus();
                     },
                   ),
+                  
+// Choose CarbUnit Section
+                  CarbUnitToggle(
+                    selected: settings.carbUnit,
+                    onSelected: (unit) =>
+                        ref.read(userSettingsNotifierProvider.notifier).setCarbUnit(unit),
+                  ),
+                  const SizedBox(height: AppSpacing.spacingLg),
+
                 ],
               );
             },

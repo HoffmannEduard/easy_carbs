@@ -96,6 +96,7 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
 
 // Image
                   HandleMealDetailImage(meal: meal, mealId: widget.mealId),
+                  const SizedBox(height: AppSpacing.spacingMd),
 
 // NameSection
                   NameSection(
@@ -253,7 +254,7 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
                     },
                   ),
 
-                  const SizedBox(height: AppSpacing.spacingMd),
+                  const SizedBox(height: AppSpacing.spacingXl),
 
 // Delete Meal 
                 DeleteMealButton(

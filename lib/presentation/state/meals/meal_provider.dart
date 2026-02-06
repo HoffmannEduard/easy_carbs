@@ -44,6 +44,13 @@ final mealByIdProvider =
   );
 });
 
+//Anzahl der Meals
+final mealCountAsyncProvider = Provider<AsyncValue<int>>((ref) {
+  final mealsAsync = ref.watch(mealListNotifierProvider);
+  return mealsAsync.whenData((meals) => meals.length);
+});
+
+
 
 // MealCommandsProvider updated Meals über Repo,
 // Änderungen über Stream zurückgegeben

@@ -11,7 +11,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Center(child: Text("EasyCarbs"))),
+      appBar: AppBar(title: Center(child: Text("Have a nice Meal!"))),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -19,9 +19,14 @@ class HomeScreen extends StatelessWidget {
             children: [
               SearchMealCard(),
               SizedBox(height: AppSpacing.spacingLg),
-              ShowAllMealsButton(),
-              SizedBox(height: AppSpacing.spacingLg),
-              AddMealButton(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ShowAllMealsButton(),
+                  SizedBox(width: AppSpacing.spacingXl),
+                  AddMealButton(),
+                ],
+              ),
               //Database nur für Testzwecke
               SizedBox(height: AppSpacing.spacingLg),
               SizedBox(height: AppSpacing.spacingLg),

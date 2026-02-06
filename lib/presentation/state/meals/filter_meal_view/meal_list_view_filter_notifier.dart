@@ -2,26 +2,23 @@ import 'package:easy_carbs/presentation/state/meals/filter_meal_view/meal_list_v
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MealListViewFilterNotifier extends Notifier<MealListViewFilter> {
-
   @override
   MealListViewFilter build() {
-    return const MealListViewFilter(
-      searchQuery: '',
-    );
+    return const MealListViewFilter(searchQuery: '');
   }
 
   void setSearchQuery(String query) {
-    state = state.copyWith(searchQuery: query);
+    state = state.copyWith(searchQuery: query.trim());
   }
 
   void reset() {
     state = const MealListViewFilter(searchQuery: '');
   }
-
 }
 
+
 final mealListViewFilterProvider =
-    NotifierProvider.autoDispose<
+    NotifierProvider<
         MealListViewFilterNotifier,
         MealListViewFilter>(
   MealListViewFilterNotifier.new,

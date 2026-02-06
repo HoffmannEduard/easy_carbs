@@ -21,7 +21,7 @@ class ShowAllMealsButton extends ConsumerWidget {
       child: SizedBox(
         height: 100,
         child: OutlinedButton(
-          onPressed: () => ref.read(selectedTabProvider.notifier).state = 1,
+          onPressed: () => ref.read(selectedTabProvider.notifier).setTab(1),
           style: OutlinedButton.styleFrom(
             side: BorderSide(
               color: cs.onSurface

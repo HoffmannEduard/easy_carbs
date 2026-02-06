@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_carbs/presentation/state/meals/filter_meal_view/meal_list_view_filter_notifier.dart';
 
 class MealSearchBar extends ConsumerStatefulWidget {
-  const MealSearchBar({super.key});
+  const MealSearchBar({super.key, this.onSubmitted});
+
+  final VoidCallback? onSubmitted;
 
   @override
   ConsumerState<MealSearchBar> createState() => _MealSearchBarState();
@@ -39,6 +41,7 @@ class _MealSearchBarState extends ConsumerState<MealSearchBar> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: SearchBar(
+        elevation: WidgetStatePropertyAll(2),
         controller: _controller,
         hintText: 'Suchen…',
         leading: const Icon(Icons.search),
@@ -60,6 +63,7 @@ class _MealSearchBarState extends ConsumerState<MealSearchBar> {
         onSubmitted: (value) {
           ref.read(mealListViewFilterProvider.notifier).setSearchQuery(value);
           FocusManager.instance.primaryFocus?.unfocus();
+          widget.onSubmitted?.call();
         },
       ),
     );

@@ -27,7 +27,7 @@ class MainScaffold extends ConsumerWidget {
         selectedIndex: selectedIndex,
         onDestinationSelected: (index) {
           FocusManager.instance.primaryFocus?.unfocus();
-          ref.read(selectedTabProvider.notifier).state = index;
+          ref.read(selectedTabProvider.notifier).setTab(index);
         },
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home), label: 'Home'),

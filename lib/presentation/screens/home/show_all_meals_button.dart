@@ -1,4 +1,4 @@
-import 'package:easy_carbs/presentation/screens/meal_list/meal_list_screen.dart';
+import 'package:easy_carbs/app/provider/tab_provider.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,14 +21,7 @@ class ShowAllMealsButton extends ConsumerWidget {
       child: SizedBox(
         height: 100,
         child: OutlinedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => MealListscreen(),
-              ),
-            );
-          },
+          onPressed: () => ref.read(selectedTabProvider.notifier).state = 1,
           style: OutlinedButton.styleFrom(
             side: BorderSide(
               color: cs.onSurface

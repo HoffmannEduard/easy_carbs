@@ -1,44 +1,33 @@
+import 'package:easy_carbs/app/provider/tab_provider.dart';
 import 'package:easy_carbs/presentation/screens/home/home_screen.dart';
 import 'package:easy_carbs/presentation/screens/meal_list/meal_list_screen.dart';
 import 'package:easy_carbs/presentation/screens/user_settings/user_settings_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MainScaffold extends StatefulWidget {
-
+class MainScaffold extends ConsumerWidget {
   const MainScaffold({super.key});
 
   @override
-  State<MainScaffold> createState() => _MainScaffoldState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedIndex = ref.watch(selectedTabProvider);
 
-class _MainScaffoldState extends State<MainScaffold> {
-  int _selectedIndex = 0;
-  late final List<Widget> _screens;
+    final screens = const [
+      HomeScreen(),
+      MealListscreen(),
+      UserSettingsScreen(),
+    ];
 
-@override
-void initState() {
-  super.initState();
-  _screens = [
-    HomeScreen(),
-    MealListscreen(),
-    UserSettingsScreen()
-  ];
-}
-
-  @override
-  Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       body: IndexedStack(
-        index: _selectedIndex,
-        children: _screens,
+        index: selectedIndex,
+        children: screens,
       ),
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (int index) {
+        selectedIndex: selectedIndex,
+        onDestinationSelected: (index) {
           FocusManager.instance.primaryFocus?.unfocus();
-          setState(() {
-            _selectedIndex = index;
-          });
+          ref.read(selectedTabProvider.notifier).state = index;
         },
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
@@ -46,6 +35,6 @@ void initState() {
           NavigationDestination(icon: Icon(Icons.account_circle), label: 'Profil'),
         ],
       ),
-      );
+    );
   }
 }

@@ -42,7 +42,18 @@ class _UserSettingsScreenState extends ConsumerState<UserSettingsScreen> {
 
               return ListView(
                 children: [
-//Insulin Faktor + Zeit Tabelle
+// Toggle ShowInsulin
+                  SwitchListTile(
+                    title: const Text('Insulin anzeigen'),
+                    subtitle: const Text('Blendet Insulin-Felder bei Mahlzeiten ein oder aus'),
+                    value: settings.showInsulin,
+                    onChanged: (value) {
+                      ref.read(userSettingsNotifierProvider.notifier).toggleShowInsulin(value);
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.spacingLg),
+// Insulin Faktor + Zeit Tabelle
+                  if (settings.showInsulin) 
                   InsulinFactorsTable(
                     insulinFactors: settings.insulinFactors,
                     onEdit: () {
@@ -54,13 +65,10 @@ class _UserSettingsScreenState extends ConsumerState<UserSettingsScreen> {
                   ),
                   const SizedBox(height: AppSpacing.spacingLg),
 
-//FPE Faktor Section
+// FPE Faktor Section
+                  if (settings.showInsulin)
                   UsFpeSection(
-                    showFpe: settings.showFpe,
                     controller: _fpeFactorController,
-                    onToggle: (value) => ref
-                        .read(userSettingsNotifierProvider.notifier)
-                        .toggleShowFpe(value),
                     onSave: () {
                       final value = double.tryParse(_fpeFactorController.text.replaceAll(',', '.'));
                       if (value == null) {
@@ -74,7 +82,7 @@ class _UserSettingsScreenState extends ConsumerState<UserSettingsScreen> {
                     },
                   ),
                   
-// Choose CarbUnit Section
+// Wähle CarbUnit Section
                   CarbUnitToggle(
                     selected: settings.carbUnit,
                     onSelected: (unit) =>

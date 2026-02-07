@@ -44,7 +44,7 @@ class UserSettingsMapper {
       id: settingsData.id,
       carbUnit: settingsData.carbUnit,
       insulinFactors: normalized,
-      showFpe: settingsData.showFpe,
+      showInsulin: settingsData.showFpe,
       fpeFactor: settingsData.fpeFactor,
     );
   }
@@ -55,7 +55,7 @@ class UserSettingsMapper {
     final settingsCompanion = UserSettingsTableCompanion(
       id: Value(settings.id),
       carbUnit: Value(settings.carbUnit),
-      showFpe: Value(settings.showFpe),
+      showFpe: Value(settings.showInsulin),
       fpeFactor: Value(settings.fpeFactor),
     );
 

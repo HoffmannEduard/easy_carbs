@@ -7,7 +7,7 @@ class CalculateFpeInsulinUnitsUseCase {
     required UserSettings settings,
     required double? fpe, // nullable
   }) {
-    if (!settings.showFpe) return null;
+    if (!settings.showInsulin) return null;
 
     final factor = settings.fpeFactor;
     if (factor == null) return null;

@@ -57,7 +57,7 @@ void main() {
         id: 'user',
         carbUnit: CarbUnit.be,
         insulinFactors: factors,
-        showFpe: false,
+        showInsulin: false,
         fpeFactor: null,
       );
 
@@ -66,7 +66,7 @@ void main() {
       final loaded = await repository.getSettings();
       expect(loaded, isNotNull);
       expect(loaded!.carbUnit, CarbUnit.be);
-      expect(loaded.showFpe, false);
+      expect(loaded.showInsulin, false);
 
       expect(loaded.insulinFactors.morning.id, InsulinBlockId.morning.key);
       expect(loaded.insulinFactors.midday.id, InsulinBlockId.midday.key);
@@ -106,14 +106,14 @@ void main() {
         id: 'user',
         carbUnit: CarbUnit.be,
         insulinFactors: factors,
-        showFpe: false,
+        showInsulin: false,
         fpeFactor: null,
       );
       await repository.saveSettings(settings);
 
       final updated = settings.copyWith(
         carbUnit: CarbUnit.be,
-        showFpe: true,
+        showInsulin: true,
         fpeFactor: 1.2,
       );
 
@@ -122,7 +122,7 @@ void main() {
       final result = await repository.getSettings();
       expect(result!.id, settings.id);
       expect(result.carbUnit, CarbUnit.be);
-      expect(result.showFpe, true);
+      expect(result.showInsulin, true);
       expect(result.fpeFactor, 1.2);
     });
 
@@ -158,7 +158,7 @@ void main() {
         id: 'user',
         carbUnit: CarbUnit.be,
         insulinFactors: factors,
-        showFpe: false,
+        showInsulin: false,
         fpeFactor: null,
       );
       await repository.saveSettings(settings);
@@ -208,7 +208,7 @@ void main() {
         id: 'user',
         carbUnit: CarbUnit.be,
         insulinFactors: factors,
-        showFpe: false,
+        showInsulin: false,
         fpeFactor: null,
       );
       await repository.saveSettings(settings);
@@ -265,7 +265,7 @@ void main() {
         id: 'user',
         carbUnit: CarbUnit.be,
         insulinFactors: factors,
-        showFpe: false,
+        showInsulin: false,
         fpeFactor: null,
       );
       await repository.saveSettings(settings);
@@ -318,7 +318,7 @@ void main() {
           id: 'user',
           carbUnit: CarbUnit.be,
           insulinFactors: factors1,
-          showFpe: false,
+          showInsulin: false,
           fpeFactor: null,
         ),
       );
@@ -332,14 +332,14 @@ void main() {
           id: 'user',
           carbUnit: CarbUnit.be,
           insulinFactors: factors2,
-          showFpe: true,
+          showInsulin: true,
           fpeFactor: null,
         ),
       );
 
       final result = await repository.getSettings();
       expect(result!.carbUnit, CarbUnit.be);
-      expect(result.showFpe, true);
+      expect(result.showInsulin, true);
     });
   });
 }

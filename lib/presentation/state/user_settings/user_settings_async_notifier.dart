@@ -18,7 +18,7 @@ class UserSettingsAsyncNotifier extends AsyncNotifier<UserSettings> {
       id: 'user',
       carbUnit: CarbUnit.be,
       insulinFactors: FixedInsulinSchedule.defaults(),
-      showFpe: true,
+      showInsulin: true,
       fpeFactor: null,
     );
 
@@ -31,8 +31,10 @@ class UserSettingsAsyncNotifier extends AsyncNotifier<UserSettings> {
     return s.copyWith(insulinFactors: normalized);
   }
 
-  Future<void> toggleShowFpe(bool value) async => _update((s) => s.copyWith(showFpe: value));
+  Future<void> toggleShowInsulin(bool value) async => _update((s) => s.copyWith(showInsulin: value));
+
   Future<void> setCarbUnit(CarbUnit unit) async => _update((s) => s.copyWith(carbUnit: unit));
+
   Future<void> setFpeFactor(double? fpeFactor) async => _update((s) => s.copyWith(fpeFactor: fpeFactor));
 
   Future<void> setBlockStart(InsulinBlockId id, TimeOfDay start) async {

@@ -5,14 +5,14 @@ class UserSettings {
   final String id;
   final CarbUnit carbUnit;
   final FixedInsulinFactors insulinFactors;
-  final bool showFpe;
+  final bool showInsulin;
   final double? fpeFactor;
 
   UserSettings({
     String? id,
     required this.carbUnit,
     required this.insulinFactors,
-    required this.showFpe,
+    required this.showInsulin,
     this.fpeFactor,
   }) : id = id ?? 'user';
 
@@ -20,14 +20,14 @@ class UserSettings {
     String? id,
     CarbUnit? carbUnit,
     FixedInsulinFactors? insulinFactors,
-    bool? showFpe,
+    bool? showInsulin,
     double? fpeFactor,
   }) {
     return UserSettings(
       id: id ?? this.id,
       carbUnit: carbUnit ?? this.carbUnit,
       insulinFactors: insulinFactors ?? this.insulinFactors,
-      showFpe: showFpe ?? this.showFpe,
+      showInsulin: showInsulin ?? this.showInsulin,
       fpeFactor: fpeFactor ?? this.fpeFactor,
     );
   }

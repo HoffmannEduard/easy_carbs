@@ -16,6 +16,7 @@ import 'package:easy_carbs/presentation/screens/meal_detail/widgets/nutrition_se
 import 'package:easy_carbs/presentation/screens/meal_detail/widgets/portion_size_section.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_detail/meal_insulin_units_provider.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
+import 'package:easy_carbs/presentation/state/user_settings/user_settings_async_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -41,8 +42,8 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
     if (_controllersInitialized) return;
 
     if (!meal.autocalculate) {
-    _carbsInUnitController.text = meal.carbsInUnit.to1dp();
-    _fpeController.text = meal.fpe.to1dp();
+      _carbsInUnitController.text = meal.carbsInUnit.to1dp();
+      _fpeController.text = meal.fpe.to1dp();
     }
     _nameController.text = meal.name;
     _locationController.text = meal.location ?? '';
@@ -68,11 +69,18 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
     final mealAsync = ref.watch(mealByIdProvider(widget.mealId));
     final commands = ref.read(mealCommandsProvider(widget.mealId));
     final autocalc = ref.read(calculateAutomaticallyUseCaseProvider);
+    final showInsulin = ref.watch(
+      userSettingsNotifierProvider.select(
+        (s) => s.asData?.value.showInsulin ?? false,
+      ),);
+    final insulinAsync = showInsulin
+    ? ref.watch(mealInsulinUnitsProvider(widget.mealId))
+    : null;
+
+
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Alle Mahlzeiten'),
-      ),
+      appBar: AppBar(title: Text('Alle Mahlzeiten')),
       body: mealAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text(e.toString())),
@@ -83,8 +91,7 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
             _fpeController.text = meal.fpe.to1dp();
           }
 
-          final insulinAsync = ref.watch(mealInsulinUnitsProvider(widget.mealId));
-
+          
 
           return Listener(
             behavior: HitTestBehavior.translucent,
@@ -93,19 +100,17 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
               padding: const EdgeInsets.all(8),
               child: ListView(
                 children: [
-
-// Image
+                  // Image
                   HandleMealDetailImage(meal: meal, mealId: widget.mealId),
                   const SizedBox(height: AppSpacing.spacingMd),
 
-// NameSection
+                  // NameSection
                   NameSection(
                     controller: _nameController,
                     onCommit: commands.updateName,
                   ),
 
-
-// Location
+                  // Location
                   LocationSection(
                     controller: _locationController,
                     onCommit: commands.updateLocation,
@@ -113,39 +118,36 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
                   const Divider(height: 8, thickness: 2),
                   const SizedBox(height: AppSpacing.spacingMd),
 
-
-// PortionSize
+                  // PortionSize
                   Padding(
                     padding: const EdgeInsets.all(.0),
                     child: PortionSizeSection(
                       controller: _portionSizeController,
                       unitLabel: meal.portionUnit!.label,
                       onCommit: (value) async {
-                      await commands.updatePortionSize(value);
+                        await commands.updatePortionSize(value);
                         if (value == 0) {
                           await commands.toggleAutocalculate(false);
                         }
                         if (meal.autocalculate) {
-                      await autocalc.setCarbsInUnitAndFpe(widget.mealId);
+                          await autocalc.setCarbsInUnitAndFpe(widget.mealId);
                         }
                       },
                     ),
                   ),
                   const SizedBox(height: AppSpacing.spacingMd),
 
-
-// Autocalculate Switch
+                  // Autocalculate Switch
                   AutoCalculateSection(
-                    meal: meal, 
-                    onToggleAutocalculate: (value) =>
-                      commands.toggleAutocalculate(value), 
-                    onRunAutocalc: () =>
-                      autocalc.setCarbsInUnitAndFpe(widget.mealId)
-                    ),
+                    meal: meal,
+                    onToggleAutocalculate:
+                        (value) => commands.toggleAutocalculate(value),
+                    onRunAutocalc:
+                        () => autocalc.setCarbsInUnitAndFpe(widget.mealId),
+                  ),
                   const SizedBox(height: AppSpacing.spacingMd),
 
-
-// BE/KE
+                  // BE/KE
                   Row(
                     children: [
                       Expanded(
@@ -157,17 +159,19 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      insulinAsync.when(
+                      if (showInsulin)
+                      insulinAsync!.when(
                         loading: () => const SizedBox.shrink(),
                         error: (_, __) => const SizedBox.shrink(),
-                        data: (ins) => InsulinUnitsCard(insulinUnits: ins.carbsUnits),
+                        data:
+                            (ins) =>
+                                InsulinUnitsCard(insulinUnits: ins.carbsUnits),
                       ),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.spacingXs),
 
-
-// FPE
+                  // FPE
                   Row(
                     children: [
                       Expanded(
@@ -178,26 +182,27 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      insulinAsync.when(
+                      if (showInsulin)
+                      insulinAsync!.when(
                         loading: () => const SizedBox.shrink(),
                         error: (_, __) => const SizedBox.shrink(),
-                        data: (ins) => InsulinUnitsCard(insulinUnits: ins.fpeUnits),
+                        data:
+                            (ins) =>
+                                InsulinUnitsCard(insulinUnits: ins.fpeUnits),
                       ),
                     ],
                   ),
 
                   const SizedBox(height: AppSpacing.spacingMd),
 
-
-// Note
+                  // Note
                   NoteSection(
                     controller: _noteController,
                     onChanged: commands.updateNote,
                   ),
                   const SizedBox(height: AppSpacing.spacingMd),
 
-
-// Nutrition
+                  // Nutrition
                   NutritionSection(
                     nutrition: meal.nutrition,
                     onAdd: () {
@@ -235,8 +240,10 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
                                 ),
                                 FilledButton(
                                   style: FilledButton.styleFrom(
-                                    backgroundColor: Theme.of(context).colorScheme.error,
-                                    foregroundColor: Theme.of(context).colorScheme.onError,
+                                    backgroundColor:
+                                        Theme.of(context).colorScheme.error,
+                                    foregroundColor:
+                                        Theme.of(context).colorScheme.onError,
                                   ),
                                   onPressed: () => Navigator.pop(context, true),
                                   child: const Text('Löschen'),
@@ -256,13 +263,12 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
 
                   const SizedBox(height: AppSpacing.spacingXl),
 
-// Delete Meal 
-                DeleteMealButton(
-                  onDelete: () async {
-                    await commands.deleteMeal();
-                  }
-                  )
-
+                  // Delete Meal
+                  DeleteMealButton(
+                    onDelete: () async {
+                      await commands.deleteMeal();
+                    },
+                  ),
                 ],
               ),
             ),

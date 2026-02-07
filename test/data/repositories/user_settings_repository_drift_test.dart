@@ -55,7 +55,7 @@ void main() {
 
       final settings = UserSettings(
         id: 'user',
-        carbUnit: CarbUnit.gramm,
+        carbUnit: CarbUnit.be,
         insulinFactors: factors,
         showFpe: false,
         fpeFactor: null,
@@ -65,7 +65,7 @@ void main() {
 
       final loaded = await repository.getSettings();
       expect(loaded, isNotNull);
-      expect(loaded!.carbUnit, CarbUnit.gramm);
+      expect(loaded!.carbUnit, CarbUnit.be);
       expect(loaded.showFpe, false);
 
       expect(loaded.insulinFactors.morning.id, InsulinBlockId.morning.key);
@@ -104,7 +104,7 @@ void main() {
 
       final settings = UserSettings(
         id: 'user',
-        carbUnit: CarbUnit.gramm,
+        carbUnit: CarbUnit.be,
         insulinFactors: factors,
         showFpe: false,
         fpeFactor: null,
@@ -156,7 +156,7 @@ void main() {
 
       final settings = UserSettings(
         id: 'user',
-        carbUnit: CarbUnit.gramm,
+        carbUnit: CarbUnit.be,
         insulinFactors: factors,
         showFpe: false,
         fpeFactor: null,
@@ -206,7 +206,7 @@ void main() {
 
       final settings = UserSettings(
         id: 'user',
-        carbUnit: CarbUnit.gramm,
+        carbUnit: CarbUnit.be,
         insulinFactors: factors,
         showFpe: false,
         fpeFactor: null,
@@ -263,7 +263,7 @@ void main() {
 
       final settings = UserSettings(
         id: 'user',
-        carbUnit: CarbUnit.gramm,
+        carbUnit: CarbUnit.be,
         insulinFactors: factors,
         showFpe: false,
         fpeFactor: null,
@@ -273,7 +273,7 @@ void main() {
       await Future.delayed(const Duration(milliseconds: 50));
 
       expect(updates.length, greaterThanOrEqualTo(2));
-      expect(updates.last!.carbUnit, CarbUnit.gramm);
+      expect(updates.last!.carbUnit, CarbUnit.be);
 
       await sub.cancel();
     });
@@ -316,7 +316,7 @@ void main() {
       await repository.saveSettings(
         UserSettings(
           id: 'user',
-          carbUnit: CarbUnit.gramm,
+          carbUnit: CarbUnit.be,
           insulinFactors: factors1,
           showFpe: false,
           fpeFactor: null,

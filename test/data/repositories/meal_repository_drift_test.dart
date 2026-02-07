@@ -30,7 +30,7 @@ void main() {
     
     test('addMeal - Meal nur mit Name (ohne Nutrition)', () async {
       // Arrange (Vorbereitung)
-      final meal = Meal(name: 'Pizza Margherita', carbUnit: CarbUnit.gramm);
+      final meal = Meal(name: 'Pizza Margherita', carbUnit: CarbUnit.be);
 
       // Act (Aktion)
       await repository.addMeal(meal);
@@ -78,7 +78,7 @@ void main() {
 
     test('addOrUpdateNutrition - Nutrition nachträglich hinzufügen', () async {
       // Arrange: Meal ohne Nutrition erstellen
-      final meal = Meal(name: 'Pizza Margherita', carbUnit: CarbUnit.gramm);
+      final meal = Meal(name: 'Pizza Margherita', carbUnit: CarbUnit.be);
       await repository.addMeal(meal);
 
       // Act: Nutrition nachträglich hinzufügen
@@ -100,7 +100,7 @@ void main() {
     test('addOrUpdateNutrition - Bestehende Nutrition aktualisieren', () async {
       // Arrange: Meal mit Nutrition erstellen
       final nutrition = Nutrition(carbs: 45.0, fat: 12.0);
-      final meal = Meal(name: 'Pizza', nutrition: nutrition, carbUnit: CarbUnit.gramm);
+      final meal = Meal(name: 'Pizza', nutrition: nutrition, carbUnit: CarbUnit.be);
       await repository.addMeal(meal);
 
       // Act: Nutrition aktualisieren
@@ -121,7 +121,7 @@ void main() {
 
     test('updateMeal - Meal-Daten aktualisieren', () async {
       // Arrange
-      final meal = Meal(name: 'Pizza', carbUnit: CarbUnit.gramm);
+      final meal = Meal(name: 'Pizza', carbUnit: CarbUnit.be);
       await repository.addMeal(meal);
 
       // Act: Meal aktualisieren
@@ -146,7 +146,7 @@ void main() {
     test('deleteMeal - Meal löschen (inkl. Nutrition)', () async {
       // Arrange
       final nutrition = Nutrition(carbs: 45.0);
-      final meal = Meal(name: 'Pizza', nutrition: nutrition, carbUnit: CarbUnit.gramm);
+      final meal = Meal(name: 'Pizza', nutrition: nutrition, carbUnit: CarbUnit.be);
       await repository.addMeal(meal);
 
       // Verify meal exists
@@ -168,7 +168,7 @@ void main() {
     test('removeNutrition - Nutrition von Meal entfernen', () async {
       // Arrange
       final nutrition = Nutrition(carbs: 45.0);
-      final meal = Meal(name: 'Pizza', nutrition: nutrition, carbUnit: CarbUnit.gramm);
+      final meal = Meal(name: 'Pizza', nutrition: nutrition, carbUnit: CarbUnit.be);
       await repository.addMeal(meal);
 
       // Act
@@ -192,10 +192,10 @@ void main() {
       await Future.delayed(const Duration(milliseconds: 50));
 
       // Act
-      await repository.addMeal(Meal(name: 'Pizza', carbUnit: CarbUnit.gramm));
+      await repository.addMeal(Meal(name: 'Pizza', carbUnit: CarbUnit.be));
       await Future.delayed(const Duration(milliseconds: 50));
       
-      await repository.addMeal(Meal(name: 'Pasta', carbUnit: CarbUnit.gramm));
+      await repository.addMeal(Meal(name: 'Pasta', carbUnit: CarbUnit.be));
       await Future.delayed(const Duration(milliseconds: 50));
 
       // Assert
@@ -217,9 +217,9 @@ void main() {
 
     test('Multiple Meals mit und ohne Nutrition', () async {
       // Arrange
-      final meal1 = Meal(name: 'Pizza', nutrition: Nutrition(carbs: 45.0), carbUnit: CarbUnit.gramm);
-      final meal2 = Meal(name: 'Salat', carbUnit: CarbUnit.gramm); // Ohne Nutrition
-      final meal3 = Meal(name: 'Pasta', carbUnit: CarbUnit.gramm, nutrition: Nutrition(carbs: 60.0));
+      final meal1 = Meal(name: 'Pizza', nutrition: Nutrition(carbs: 45.0), carbUnit: CarbUnit.be);
+      final meal2 = Meal(name: 'Salat', carbUnit: CarbUnit.be); // Ohne Nutrition
+      final meal3 = Meal(name: 'Pasta', carbUnit: CarbUnit.be, nutrition: Nutrition(carbs: 60.0));
 
       // Act
       await repository.addMeal(meal1);
@@ -279,7 +279,7 @@ void main() {
     test('Timestamp wird automatisch gesetzt', () async {
       // Arrange
       final beforeCreation = DateTime.now();
-      final meal = Meal(name: 'Pizza', carbUnit: CarbUnit.gramm);
+      final meal = Meal(name: 'Pizza', carbUnit: CarbUnit.be);
 
       // Act
       await repository.addMeal(meal);
@@ -293,7 +293,7 @@ void main() {
 
     test('Default imagePath wird gesetzt', () async {
       // Arrange & Act
-      final meal = Meal(name: 'Pizza', carbUnit: CarbUnit.gramm);
+      final meal = Meal(name: 'Pizza', carbUnit: CarbUnit.be);
       await repository.addMeal(meal);
 
       // Assert

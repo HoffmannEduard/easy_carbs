@@ -18,7 +18,8 @@ class CarbUnitToggle extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Kohlenhydrat-Einheit'),
+        Text('Kohlenhydrat-Einheit',
+        style: Theme.of(context).textTheme.titleMedium,),
         const SizedBox(height: 8),
         ToggleButtons(
           isSelected: isSelected,

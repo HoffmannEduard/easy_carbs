@@ -1,21 +1,49 @@
+import 'dart:async';
 import 'package:easy_carbs/app/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 
-class FPESection extends StatelessWidget {
+class FPESection extends StatefulWidget {
   const FPESection({
     super.key,
     required this.controller,
     required this.onCommit,
     required this.readonly,
+    this.debounce = const Duration(milliseconds: 350),
   });
 
   final TextEditingController controller;
-  final ValueChanged<double?> onCommit;
+  final Future<void> Function(double? value) onCommit; 
   final bool readonly;
+  final Duration debounce;
 
-  void _commit() {
-    final text = controller.text.trim().replaceAll(',', '.');
-    onCommit(text.isEmpty ? null : double.tryParse(text));
+  @override
+  State<FPESection> createState() => _FPESectionState();
+}
+
+class _FPESectionState extends State<FPESection> {
+  Timer? _timer;
+
+  double? _parse() {
+    final text = widget.controller.text.trim().replaceAll(',', '.');
+    if (text.isEmpty) return null;
+    return double.tryParse(text);
+  }
+
+  void _scheduleCommit(String _) {
+    _timer?.cancel();
+    _timer = Timer(widget.debounce, () {
+      widget.onCommit(_parse());
+    });
+  }
+
+  Future<void> _commitNow() async {
+    await widget.onCommit(_parse());
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -24,28 +52,32 @@ class FPESection extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         ConstrainedBox(
-          constraints: BoxConstraints(minWidth: 50),
+          constraints: const BoxConstraints(minWidth: 50),
           child: IntrinsicWidth(
             child: TextField(
-              controller: controller,
-              readOnly: readonly,
-              keyboardType: TextInputType.number,
+              textAlign: TextAlign.center,
+              controller: widget.controller,
+              readOnly: widget.readonly,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
               decoration: InputDecoration(
                 hintText: '--',
-                filled: !readonly),
-              textInputAction: TextInputAction.done
-              ,
-              // Enter/Done
-              onSubmitted: readonly ? null : (_) {
-                _commit();
-                FocusScope.of(context).unfocus();
-              },
+                filled: !widget.readonly,
+              ),
+              textInputAction: TextInputAction.done,
 
-              // Fokus weg / Editing abgeschlossen
-              onEditingComplete: readonly ? null : _commit,
-            ),
+              // Live speichern (debounced)
+              onChanged: widget.readonly ? null : _scheduleCommit,
+
+              // Done => sofort commit
+              onSubmitted: widget.readonly
+                  ? null
+                  : (_) async {
+                      _timer?.cancel();
+                      await _commitNow();
+                    },
             ),
           ),
+        ),
         const SizedBox(width: AppSpacing.spacingSm),
         Text('FPE', style: Theme.of(context).textTheme.titleMedium),
       ],

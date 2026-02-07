@@ -1,23 +1,52 @@
+import 'dart:async';
 import 'package:easy_carbs/app/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 
-class BESection extends StatelessWidget {
+class BESection extends StatefulWidget {
   const BESection({
     super.key,
     required this.controller,
     required this.unitLabel,
     required this.onCommit,
     required this.readonly,
+    this.debounce = const Duration(milliseconds: 350),
   });
 
   final TextEditingController controller;
   final String unitLabel;
-  final ValueChanged<double?> onCommit;
+  final Future<void> Function(double? value) onCommit; 
   final bool readonly;
+  final Duration debounce;
 
-  void _commit() {
-    final text = controller.text.trim().replaceAll(',', '.');
-    onCommit(text.isEmpty ? null : double.tryParse(text));
+  @override
+  State<BESection> createState() => _BESectionState();
+}
+
+class _BESectionState extends State<BESection> {
+  Timer? _timer;
+
+  double? _parse() {
+    final text = widget.controller.text.trim().replaceAll(',', '.');
+    if (text.isEmpty) return null;
+    return double.tryParse(text);
+  }
+
+  Future<void> _commitNow() async {
+    final value = _parse();
+    await widget.onCommit(value);
+  }
+
+  void _scheduleCommit(String _) {
+    _timer?.cancel();
+    _timer = Timer(widget.debounce, () {
+      widget.onCommit(_parse());
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -26,34 +55,31 @@ class BESection extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         ConstrainedBox(
-          constraints: BoxConstraints(minWidth: 50),
+          constraints: const BoxConstraints(minWidth: 50),
           child: IntrinsicWidth(
             child: TextField(
-              controller: controller,
-              readOnly: readonly,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                hintText: '--',
-                filled: !readonly,
-                ),
+              textAlign: TextAlign.center,
+              controller: widget.controller,
+              readOnly: widget.readonly,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(hintText: '--', filled: !widget.readonly),
               textInputAction: TextInputAction.done,
 
-              // Enter/Done
-              onSubmitted: readonly ? null : (_) {
-                _commit();
-                FocusScope.of(context).unfocus();
-              },
+              // Live commit (debounced)
+              onChanged: widget.readonly ? null : _scheduleCommit,
 
-              // Fokus weg / Editing abgeschlossen
-              onEditingComplete: readonly ? null : _commit,
-            ),),
+              // Done => sofort commit
+              onSubmitted: widget.readonly
+                  ? null
+                  : (_) async {
+                      _timer?.cancel();
+                      await _commitNow();
+                    },
             ),
-          
-        const SizedBox(width: AppSpacing.spacingSm),
-        Text(
-          unitLabel,
-          style: Theme.of(context).textTheme.titleMedium,
+          ),
         ),
+        const SizedBox(width: AppSpacing.spacingSm),
+        Text(widget.unitLabel, style: Theme.of(context).textTheme.titleMedium),
       ],
     );
   }

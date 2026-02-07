@@ -16,6 +16,7 @@ class UserSettingsScreen extends ConsumerStatefulWidget {
 
 class _UserSettingsScreenState extends ConsumerState<UserSettingsScreen> {
   final _fpeFactorController = TextEditingController();
+  bool _fpeInitialized = false;
 
   @override
   void dispose() {
@@ -28,7 +29,7 @@ class _UserSettingsScreenState extends ConsumerState<UserSettingsScreen> {
     final settingsAsync = ref.watch(userSettingsNotifierProvider);
 
     return GestureDetector(
-      behavior: HitTestBehavior.opaque,
+      behavior: HitTestBehavior.translucent,
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(title: const Text('Persönliche Einstellungen')),
@@ -38,11 +39,14 @@ class _UserSettingsScreenState extends ConsumerState<UserSettingsScreen> {
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (err, st) => Center(child: Text('$err')),
             data: (settings) {
-              _fpeFactorController.text = settings.fpeFactor?.toString() ?? '';
+              if (!_fpeInitialized) {
+                _fpeFactorController.text = settings.fpeFactor?.toString() ?? '';
+                _fpeInitialized = true;
+              }
 
               return ListView(
                 children: [
-// Toggle ShowInsulin
+                  // Toggle ShowInsulin
                   SwitchListTile(
                     title: const Text('Insulin anzeigen'),
                     subtitle: const Text('Blendet Insulin-Felder bei Mahlzeiten ein oder aus'),
@@ -52,44 +56,40 @@ class _UserSettingsScreenState extends ConsumerState<UserSettingsScreen> {
                     },
                   ),
                   const SizedBox(height: AppSpacing.spacingLg),
-// Insulin Faktor + Zeit Tabelle
-                  if (settings.showInsulin) 
-                  InsulinFactorsTable(
-                    insulinFactors: settings.insulinFactors,
-                    onEdit: () {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const InsulinFactorsEditScreen()),
-                      );
-                    },
-                  ),
+
+                  // Insulin Faktor Tabelle
+                  if (settings.showInsulin)
+                    InsulinFactorsTable(
+                      insulinFactors: settings.insulinFactors,
+                      onEdit: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const InsulinFactorsEditScreen()),
+                        );
+                      },
+                    ),
                   const SizedBox(height: AppSpacing.spacingLg),
 
-// FPE Faktor Section
+                  // FPE Section
                   if (settings.showInsulin)
-                  UsFpeSection(
-                    controller: _fpeFactorController,
-                    onSave: () {
-                      final value = double.tryParse(_fpeFactorController.text.replaceAll(',', '.'));
-                      if (value == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Bitte gültige Zahl eingeben')),
-                        );
-                        return;
-                      }
-                      ref.read(userSettingsNotifierProvider.notifier).setFpeFactor(value);
-                      FocusScope.of(context).unfocus();
-                    },
-                  ),
-                  
-// Wähle CarbUnit Section
+                    UsFpeSection(
+                      controller: _fpeFactorController,
+                      onCommit: (value) {
+                        if (value == null && _fpeFactorController.text.trim().isNotEmpty) {
+                          return;
+                        }
+                        ref.read(userSettingsNotifierProvider.notifier).setFpeFactor(value);
+                      },
+                    ),
+
+                  const SizedBox(height: AppSpacing.spacingLg),
+
                   CarbUnitToggle(
                     selected: settings.carbUnit,
                     onSelected: (unit) =>
                         ref.read(userSettingsNotifierProvider.notifier).setCarbUnit(unit),
                   ),
                   const SizedBox(height: AppSpacing.spacingLg),
-
                 ],
               );
             },

@@ -205,6 +205,7 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
                   // Nutrition
                   NutritionSection(
                     nutrition: meal.nutrition,
+                    portionUnit: meal.portionUnit!,
                     onAdd: () {
                       Navigator.push(
                         context,

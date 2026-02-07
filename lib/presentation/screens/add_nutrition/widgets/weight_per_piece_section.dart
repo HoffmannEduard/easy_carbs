@@ -3,14 +3,23 @@ import 'package:flutter/material.dart';
 class WeightPerPieceSection extends StatelessWidget {
   final TextEditingController weightOnePieceController;
 
+  /// Optionaler FocusNode für "Next"-Navigation
+  final FocusNode? focusNode;
+
+  /// Optionaler Callback wenn DONE gedrückt wird
+  final VoidCallback? onSubmitted;
+
   const WeightPerPieceSection({
     super.key,
     required this.weightOnePieceController,
+    this.focusNode,
+    this.onSubmitted,
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Gewicht je Stück in Gramm',
@@ -21,14 +30,26 @@ class WeightPerPieceSection extends StatelessWidget {
 
         TextFormField(
           controller: weightOnePieceController,
+          focusNode: focusNode,
+          textInputAction: TextInputAction.done,
+          onFieldSubmitted: (_) {
+            FocusScope.of(context).unfocus();
+            onSubmitted?.call();
+          },
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           decoration: const InputDecoration(labelText: 'Gramm/Stück'),
           validator: (value) {
-            if (value != null &&
-                value.trim().isNotEmpty &&
-                double.tryParse(value) == null) {
+            final trimmed = value?.trim() ?? '';
+            if (trimmed.isEmpty) return null;
+
+            final parsed = double.tryParse(trimmed.replaceAll(',', '.'));
+            if (parsed == null) {
               return 'Bitte eine gültige Zahl eingeben';
             }
+            if (parsed <= 0) {
+              return 'Bitte > 0 eingeben';
+            }
+
             return null;
           },
         ),

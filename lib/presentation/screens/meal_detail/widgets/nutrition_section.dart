@@ -1,3 +1,4 @@
+import 'package:easy_carbs/domain/entities/portion_unit.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_carbs/domain/entities/nutrition.dart';
 import 'nutrition_table.dart';
@@ -9,12 +10,14 @@ class NutritionSection extends StatelessWidget {
     required this.onAdd,
     required this.onEdit,
     required this.onDelete,
+    required this.portionUnit,
   });
 
   final Nutrition? nutrition;
   final VoidCallback onAdd;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final PortionUnit portionUnit;
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +35,8 @@ class NutritionSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(
-              'Nährwerte (100 Gr.)',
+            Text(portionUnit == PortionUnit.portion?
+              'Nährwerte je Portion' : 'Nährwerte je 100 Gramm',
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const Spacer(),

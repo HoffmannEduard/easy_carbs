@@ -1,11 +1,11 @@
 import 'package:easy_carbs/app/theme/app_spacing.dart';
 import 'package:easy_carbs/domain/entities/portion_unit.dart';
+import 'package:easy_carbs/domain/entities/nutrition.dart';
 import 'package:easy_carbs/presentation/screens/add_nutrition/widgets/nutrition_fields_section.dart';
 import 'package:easy_carbs/presentation/screens/add_nutrition/widgets/weight_per_piece_section.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:easy_carbs/domain/entities/nutrition.dart';
 
 class AddNutritionScreen extends ConsumerStatefulWidget {
   final String mealId;
@@ -31,6 +31,14 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
   late final TextEditingController _proteinController;
   late final TextEditingController _weightOnePieceController;
 
+  // FocusNodes für "Next"
+  late final FocusNode _fatFocus;
+  late final FocusNode _satFatFocus;
+  late final FocusNode _carbsFocus;
+  late final FocusNode _sugarFocus;
+  late final FocusNode _proteinFocus;
+  late final FocusNode _weightPieceFocus;
+
   @override
   void initState() {
     super.initState();
@@ -51,8 +59,15 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
       text: widget.existingNutrition?.protein?.toString() ?? '',
     );
     _weightOnePieceController = TextEditingController(
-      text: widget.existingNutrition?.weightOnePiece.toString() ?? '',
+      text: widget.existingNutrition?.weightOnePiece?.toString() ?? '',
     );
+
+    _fatFocus = FocusNode();
+    _satFatFocus = FocusNode();
+    _carbsFocus = FocusNode();
+    _sugarFocus = FocusNode();
+    _proteinFocus = FocusNode();
+    _weightPieceFocus = FocusNode();
   }
 
   @override
@@ -63,6 +78,14 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
     _saturatedFatController.dispose();
     _proteinController.dispose();
     _weightOnePieceController.dispose();
+
+    _fatFocus.dispose();
+    _satFatFocus.dispose();
+    _carbsFocus.dispose();
+    _sugarFocus.dispose();
+    _proteinFocus.dispose();
+    _weightPieceFocus.dispose();
+
     super.dispose();
   }
 
@@ -85,9 +108,7 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
       weightOnePiece: _parseDouble(_weightOnePieceController.text),
     );
 
-    await ref
-        .read(mealCommandsProvider(widget.mealId))
-        .addOrUpdateNutrition(nutrition);
+    await ref.read(mealCommandsProvider(widget.mealId)).addOrUpdateNutrition(nutrition);
 
     await ref
         .read(calculateAutomaticallyUseCaseProvider)
@@ -103,18 +124,14 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
     final mealAsync = ref.watch(mealByIdProvider(widget.mealId));
 
     return mealAsync.when(
-      loading:
-          () =>
-              const Scaffold(body: Center(child: CircularProgressIndicator())),
+      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(body: Center(child: Text(e.toString()))),
       data: (meal) {
         final showWeightPerPiece = meal.portionUnit == PortionUnit.piece;
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(
-              isEdit ? 'Nährwerte bearbeiten' : 'Nährwerte hinzufügen',
-            ),
+            title: Text(isEdit ? 'Nährwerte bearbeiten' : 'Nährwerte hinzufügen'),
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -123,22 +140,34 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Felder für Nährwerte (Carbs, Fett, Protein...)
                   NutritionFieldsSection(
+                    portionUnit: meal.portionUnit!,
                     carbsController: _carbsController,
                     sugarController: _sugarController,
                     fatController: _fatController,
                     saturatedFatController: _saturatedFatController,
                     proteinController: _proteinController,
+
+                    fatFocus: _fatFocus,
+                    saturatedFatFocus: _satFatFocus,
+                    carbsFocus: _carbsFocus,
+                    sugarFocus: _sugarFocus,
+                    proteinFocus: _proteinFocus,
+
+                    // Wenn "piece", spring nach Protein direkt ins Gewicht-Feld,
+                    // sonst DONE + optional speichern.
+                    nextFocusAfterProtein: showWeightPerPiece ? _weightPieceFocus : null,
+                    onDone: showWeightPerPiece ? null : _saveNutrition,
                   ),
 
                   const SizedBox(height: 16),
 
-                  // Gewicht pro Stück Section
                   if (showWeightPerPiece)
-                  WeightPerPieceSection(
-                    weightOnePieceController: _weightOnePieceController,
-                  ),
+                    WeightPerPieceSection(
+                      weightOnePieceController: _weightOnePieceController,
+                      focusNode: _weightPieceFocus,
+                      onSubmitted: _saveNutrition,
+                    ),
 
                   const SizedBox(height: AppSpacing.spacingXl),
 

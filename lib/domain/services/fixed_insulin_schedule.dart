@@ -128,7 +128,7 @@ class FixedInsulinSchedule {
   }
 
   /// Startzeit eines Blocks ändern.
-  /// Hinweis: Nacht-Ende ist morningStart, daher ist "Ende Nacht ändern" = setEnd(night,...).
+  /// Nacht-Ende ist morningStart
   static FixedInsulinFactors setStart(FixedInsulinFactors factors, InsulinBlockId id, TimeOfDay newStart) {
     final updated = switch (id) {
       InsulinBlockId.morning => factors.copyWith(morning: factors.morning.copyWith(startTime: newStart)),

@@ -7,6 +7,10 @@ import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+/// Bündelt schreibende Aktionen (Commands) rund um eine Mahlzeit.
+/// Liest den aktuellen Zustand über Riverpod [mealByIdProvider] und
+/// persistiert Änderungen über das [IMealRepository].
+/// Bildoperationen werden über [MealImageService] gekapselt.
 class MealCommandsUseCase {
   final Ref _ref;
   final IMealRepository _repo;
@@ -16,9 +20,8 @@ class MealCommandsUseCase {
   MealCommandsUseCase(this._ref, this._repo, this.mealId)
     : _imageService = MealImageService();
 
-  // -------------------------------------------------
-  // Aktuellen Meal aus dem Stream holen (read-only)
-  // -------------------------------------------------
+  /// Liefert die aktuell geladene Mahlzeit aus dem Provider oder wirft einen Fehler.
+  /// Wird genutzt, um alle Commands auf einer konsistenten Basis auszuführen.
   Meal _requireMeal() {
     final mealAsync = _ref.read(mealByIdProvider(mealId));
     final meal = mealAsync.value;
@@ -29,9 +32,7 @@ class MealCommandsUseCase {
     return meal;
   }
 
-  // -------------------------------------------------
-  // Zentrale Update-Hilfe für Meal-Felder
-  // -------------------------------------------------
+  /// Wendet eine Transformation auf die aktuelle Mahlzeit an und speichert sie.
   Future<void> _updateMeal(Meal Function(Meal meal) transform) async {
     final current = _requireMeal();
     final updated = transform(current);
@@ -41,7 +42,8 @@ class MealCommandsUseCase {
   // -------------------------------------------------
   // Image
   // -------------------------------------------------
-
+  /// Ersetzt das Mahlzeitenbild durch [file] und aktualisiert den gespeicherten Pfad.
+  /// Löscht zuvor ein vorhandenes Bild.
   Future<void> updateImageFromFile(XFile file) async {
     final currentMeal = _requireMeal();
     try {
@@ -53,6 +55,7 @@ class MealCommandsUseCase {
     }
   }
 
+  /// Entfernt das Mahlzeitenbild und setzt den Pfad auf das Standardbild.
   Future<void> removeImage() async {
     final currentMeal = _requireMeal();
     try {
@@ -69,6 +72,7 @@ class MealCommandsUseCase {
   // Basisfelder (alles über updateMeal)
   // -------------------------------------------------
 
+  /// Aktiviert/Deaktiviert die automatische Berechnung (BE/KE & FPE).
   Future<void> toggleAutocalculate(bool autocalculate) async {
   final meal = _requireMeal();
   if (autocalculate) {
@@ -80,7 +84,6 @@ class MealCommandsUseCase {
     meal.copyWith(autocalculate: autocalculate),
   );
 }
-
 
   Future<void> updateName(String name) {
     return _updateMeal((meal) => meal.copyWith(name: name));

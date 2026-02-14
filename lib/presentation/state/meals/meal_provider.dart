@@ -10,6 +10,7 @@ import 'package:easy_carbs/domain/usecases/meals/calculate_automatically_use_cas
 import 'package:easy_carbs/domain/usecases/meals/meal_commands_use_case.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_list_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 final mealDaoProvider = Provider<MealDao>((ref) {
   final db = ref.watch(driftDbProvider);
@@ -77,3 +78,11 @@ final calculateAutomaticallyUseCaseProvider =
   return CalculateAutomaticallyUseCase(repo, scaler, calc);
 });
 
+// Zuletzt angesehnes Meal
+final lastViewedMealIdProvider = StateProvider<String?>((ref) => null);
+
+final lastViewedMealProvider = Provider((ref) {
+  final id = ref.watch(lastViewedMealIdProvider);
+  if (id == null) return null;
+  return ref.watch(mealByIdProvider(id)); 
+});

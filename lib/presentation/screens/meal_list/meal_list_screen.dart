@@ -2,6 +2,7 @@ import 'package:easy_carbs/presentation/screens/meal_detail/meal_detail_screen.d
 import 'package:easy_carbs/presentation/screens/meal_list/widgets/meal_card.dart';
 import 'package:easy_carbs/presentation/screens/meal_list/widgets/meal_search_bar.dart';
 import 'package:easy_carbs/presentation/state/meals/filter_meal_view/visible_meal_provider.dart';
+import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -39,6 +40,7 @@ class MealListscreen extends ConsumerWidget {
                               Navigator.push(context, 
                               MaterialPageRoute(builder: (_) => MealDetailScreen(mealId: meal.id))
                               );
+                              ref.read(lastViewedMealIdProvider.notifier).state = meal.id;
                             },
                             );
                         },

@@ -68,10 +68,6 @@ class MealImagePicker extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          'Bild antippen, um es auszuwählen',
-          style: TextStyle(color: Colors.grey),
-        ),
       ],
     );
   }

@@ -22,7 +22,7 @@ class HomeScreen extends ConsumerWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // 🔹 Oberer Inhalt
+          // Oberer Inhalt
           Column(
             children: [
               MealSearchBar(
@@ -52,7 +52,7 @@ class HomeScreen extends ConsumerWidget {
             ],
           ),
 
-          // 🔹 Unterer Bereich
+          // Unterer Bereich
           if (lastViewedId != null)
             Padding(
               padding: const EdgeInsets.all(16),

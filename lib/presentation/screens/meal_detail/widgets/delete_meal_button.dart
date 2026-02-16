@@ -23,7 +23,6 @@ class _DeleteMealButtonState extends State<DeleteMealButton> {
       barrierDismissible: true,
       builder: (dialogCtx) => AlertDialog(
         title: const Text('Mahlzeit endgültig löschen?'),
-        //content: const Text('Mahlzeit wird unwiederruflich entfernt'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogCtx).pop(false),
@@ -76,12 +75,7 @@ class _DeleteMealButtonState extends State<DeleteMealButton> {
                       width: 18,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : Row(
-                    children: const [
-                      Icon(Icons.delete),
-                      Text('Mahlzeit löschen'),
-                    ],
-                  ),
+                  : Icon(Icons.delete),
             ),
       ),
     );

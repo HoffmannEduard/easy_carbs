@@ -39,3 +39,4 @@ flutter:
   
   assets:
     - assets/defaults/default-burger.jpg
+    - assets/defaults/ec-default.jpg

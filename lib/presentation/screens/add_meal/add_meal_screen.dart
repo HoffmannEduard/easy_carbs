@@ -1,6 +1,7 @@
 import 'package:easy_carbs/domain/entities/portion_unit.dart';
 import 'package:easy_carbs/presentation/screens/add_meal/widgets/meal_form_fields.dart';
 import 'package:easy_carbs/presentation/state/meals/meal_image/add_meal_image_notifier.dart';
+import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/meal_detail_screen.dart';
@@ -53,6 +54,7 @@ class _AddMealScreenState extends ConsumerState<AddMealScreen> {
           builder: (_) => MealDetailScreen(mealId: mealId),
         ),
       );
+      ref.read(lastViewedMealIdProvider.notifier).state = mealId;
     } catch (e) {
       if (!mounted) return;
 

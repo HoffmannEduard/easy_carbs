@@ -267,7 +267,11 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
                   // Delete Meal
                   DeleteMealButton(
                     onDelete: () async {
+                      final lastViewedId = ref.read(lastViewedMealIdProvider);
                       await commands.deleteMeal();
+                      if (lastViewedId == meal.id) {
+                        ref.read(lastViewedMealIdProvider.notifier).state = null;
+                      }
                     },
                   ),
                 ],

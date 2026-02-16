@@ -22,36 +22,19 @@ class MealImageSection extends StatelessWidget {
         onTap: onTap,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: isDefault
-              ? SizedBox(
-                  width: double.infinity,
-                  height: 75,
-                  child: ElevatedButton.icon(
-                    onPressed: null, // noch kein onTap, nur Optik
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[200],
-                      foregroundColor: Colors.grey[800],
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    icon: const Icon(Icons.add_a_photo, size: 28),
-                    label: const Text(
-                      'Foto hinzufügen',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+          child: SizedBox(
+            width: double.infinity,
+            height: 250,
+            child: isDefault
+                ? Image.asset(
+                    AppAssets.defaultMealImagePath,
+                    fit: BoxFit.cover,
+                  )
+                : Image.file(
+                    File(imagePath),
+                    fit: BoxFit.cover,
                   ),
-                )
-              : Image.file(
-                  File(imagePath),
-                  width: double.infinity,
-                  height: 250,
-                  fit: BoxFit.cover,
-                ),
+          ),
         ),
       ),
     );

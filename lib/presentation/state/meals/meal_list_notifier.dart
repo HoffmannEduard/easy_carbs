@@ -1,3 +1,4 @@
+import 'package:easy_carbs/app/core/app_assets.dart';
 import 'package:easy_carbs/domain/entities/meal.dart';
 import 'package:easy_carbs/domain/entities/portion_unit.dart';
 import 'package:easy_carbs/domain/i_repo/i_meal_repository.dart';
@@ -30,7 +31,7 @@ class MealListNotifier extends StreamNotifier<List<Meal>> {
 
     String imagePath = imageFile != null
       ? await MealImageService().saveMealImage(imageFile)
-      : 'assets/defaults/default-burger.jpg';
+      : AppAssets.defaultMealImagePath;
       
 
     final meal = Meal(

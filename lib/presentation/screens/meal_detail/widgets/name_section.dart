@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+/// Eingabefeld für den Namen einer Mahlzeit.
+///
+/// - Übergibt den getrimmten Text über [onCommit].
+/// - Commit erfolgt bei "Done" oder beim Verlassen des Feldes.
 class NameSection extends StatelessWidget {
   const NameSection({
     super.key,

@@ -1,6 +1,10 @@
 import 'package:easy_carbs/domain/entities/carb_unit.dart';
 import 'package:flutter/material.dart';
 
+/// Toggle-Komponente zur Auswahl der Kohlenhydrateinheit (BE oder KE).
+///
+/// Der aktuell ausgewählte Wert wird über [selected] gesteuert.
+/// Änderungen werden über [onSelected] nach außen delegiert.
 class CarbUnitToggle extends StatelessWidget {
   final CarbUnit selected;
   final ValueChanged<CarbUnit> onSelected;

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// Eingabebereich für den globalen FPE-Faktor in den Einstellungen.
+///
+/// - Übergibt den geparsten Wert (oder `null`) über [onCommit].
 class UsFpeSection extends StatelessWidget {
   const UsFpeSection({
     super.key,

@@ -6,6 +6,11 @@ import 'package:easy_carbs/domain/entities/meal.dart';
 import 'package:easy_carbs/domain/entities/portion_unit.dart';
 import 'package:flutter/material.dart';
 
+/// Karten-Widget zur kompakten Darstellung einer Mahlzeit.
+///
+/// - Vorschaubild
+/// - Name und optional Location
+/// - BE/KE, optional FPE sowie Portionsangabe
 class MealCard extends StatelessWidget {
   final Meal meal;
   final VoidCallback? onTap;

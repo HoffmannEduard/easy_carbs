@@ -1,3 +1,4 @@
+/// Wertobjekt für Filtereinstellungen der Mahlzeitenlisten-Ansicht.
 class MealListViewFilter {
   final String searchQuery;
 

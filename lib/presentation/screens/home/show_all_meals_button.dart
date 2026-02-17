@@ -3,6 +3,10 @@ import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Button zur Navigation in die Mahlzeitenliste.
+///
+/// Zeigt zusätzlich die aktuelle Anzahl gespeicherter Mahlzeiten
+/// über [mealCountAsyncProvider] an. Beim Klick wird über [selectedTabProvider] zur Listen-Ansicht gewechselt.
 class ShowAllMealsButton extends ConsumerWidget {
   const ShowAllMealsButton({super.key});
 

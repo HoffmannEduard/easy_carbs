@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
 import 'nutritions_table.dart';
 
-// Database Tabelle für Mahlzeiten -> erstellt die Tabelle in der Datenbank (Drift)
-// Erstellt auch die MealsTableData und MealsTableCompanion Klassen
+/// Database Tabelle für Mahlzeiten -> erstellt die Tabelle in der Datenbank (Drift)
+/// Erstellt auch die MealsTableData und MealsTableCompanion Klassen
 
 class MealsTable extends Table {
   TextColumn get id => text()();

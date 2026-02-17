@@ -6,19 +6,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_carbs/domain/services/insulin_factor_resolver.dart';
 
+/// Provider für die Auflösung des zeitabhängigen Insulinfaktors.
 final insulinFactorResolverProvider =
     Provider<InsulinFactorResolver>((ref) => const InsulinFactorResolver());
 
-
+/// Provider für den Use Case zur Berechnung der Insulineinheiten für BE/KE.
 final calculateCarbsInsulinUnitsProvider =
     Provider((ref) => CalculateCarbsInsulinUnitsUseCase(ref.read(insulinFactorResolverProvider)));
 
-
+/// Provider für den Use Case zur Berechnung der Insulineinheiten für FPE.
 final calculateFpeInsulinUnitsProvider =
     Provider((ref) => const CalculateFpeInsulinUnitsUseCase());
 
 
-// Liefert Uhrzeit und aktualisiert sich jede Minute
+/// Streamt die aktuelle Uhrzeit (Stunden/Minuten) und aktualisiert sich jede Minute.
+/// Wird auto-disposed, da die Uhrzeit nur bei aktiver UI benötigt wird.
 final currentTimeProvider = StreamProvider.autoDispose<TimeOfDay>((ref) {
   final controller = StreamController<TimeOfDay>();
 

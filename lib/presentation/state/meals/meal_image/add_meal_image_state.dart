@@ -1,5 +1,6 @@
 import 'package:image_picker/image_picker.dart';
 
+/// Zustand für die Bildauswahl beim Anlegen einer Mahlzeit.
 class AddMealImageState {
   final XFile? image;
   final bool isPicking;

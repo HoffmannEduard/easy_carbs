@@ -2,6 +2,11 @@ import 'dart:async';
 import 'package:easy_carbs/app/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 
+/// Eingabebereich für BE/KE-Wert einer Mahlzeit.
+///
+/// - Änderungen werden debounced gespeichert (350 ms), um zu häufige Writes zu vermeiden.
+/// - Bei "Done" wird sofort gespeichert.
+/// - Im Readonly-Modus sind Eingabe und Callbacks deaktiviert.
 class BESection extends StatefulWidget {
   const BESection({
     super.key,

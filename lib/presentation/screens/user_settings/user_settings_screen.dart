@@ -7,6 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'widgets/insulin_factors_table.dart';
 
+/// Screen zur Verwaltung der persönlichen Benutzereinstellungen.
+///
+/// - Aktivieren/Deaktivieren der Insulinanzeige
+/// - Navigation zur Bearbeitung der zeitabhängigen Insulinfaktoren
+/// - Setzen des FPE-Faktors
+/// - Auswahl der Kohlenhydrateinheit (BE/KE)
+///
+/// Änderungen werden über [UserSettingsAsyncNotifier] persistiert.
 class UserSettingsScreen extends ConsumerStatefulWidget {
   const UserSettingsScreen({super.key});
 
@@ -39,6 +47,8 @@ class _UserSettingsScreenState extends ConsumerState<UserSettingsScreen> {
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (err, st) => Center(child: Text('$err')),
             data: (settings) {
+              // Controller nur einmalig mit gespeichertem Wert befüllen,
+              // um Nutzereingaben bei Rebuilds nicht zu überschreiben
               if (!_fpeInitialized) {
                 _fpeFactorController.text = settings.fpeFactor?.toString() ?? '';
                 _fpeInitialized = true;

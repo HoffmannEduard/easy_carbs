@@ -5,12 +5,12 @@ import 'package:easy_carbs/domain/entities/nutrition.dart';
 import 'package:easy_carbs/domain/entities/portion_unit.dart';
 import 'package:easy_carbs/domain/entities/carb_unit.dart';
 
-// Mapper um zwischen Drift-Daten und Meal-Entitäten zu konvertieren
-// Werden in der Repository-Layer (MealRepositoryDrift) verwendet
+/// Mapper um zwischen Drift-Daten und Meal-Entitäten zu konvertieren
+/// Werden in der Repository-Layer (MealRepositoryDrift) verwendet
 
 class MealMapper {
-  // Konvertiert von Drift zu Meal Entity
-  // nutrition muss separat übergeben werden (wird per Join geholt)
+  /// Konvertiert von Drift zu Meal Entity
+  /// nutrition muss separat übergeben werden (wird per Join geholt)
   static Meal fromDrift(MealsTableData row, {Nutrition? nutrition}) {
     return Meal(
       id: row.id,
@@ -30,8 +30,8 @@ class MealMapper {
     );
   }
 
-  // Konvertiert von Meal Entity zu Drift Companion
-  // Speichert nur die Meal-Daten, Nutrition muss separat gespeichert werden
+  /// Konvertiert von Meal Entity zu Drift Companion
+  /// Speichert nur die Meal-Daten, Nutrition muss separat gespeichert werden
   static MealsTableCompanion toDrift(Meal meal) {
     return MealsTableCompanion(
       id: Value(meal.id),

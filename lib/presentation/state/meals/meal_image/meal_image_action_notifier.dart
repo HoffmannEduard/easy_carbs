@@ -4,6 +4,11 @@ import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+/// Notifier für Bildaktionen einer bestehenden Mahlzeit.
+/// Kapselt:
+/// - Auswahl eines neuen Bildes (Galerie/Kamera)
+/// - Löschen des aktuellen Bildes
+/// - Fehler- und Busy-Zustand
 class MealImageActionNotifier extends Notifier<MealImageActionState> {
   MealImageActionNotifier(this.mealId);
 
@@ -28,6 +33,8 @@ class MealImageActionNotifier extends Notifier<MealImageActionState> {
     await _pick(ImageSource.camera);
   }
 
+  /// Entfernt das aktuelle Bild der Mahlzeit.
+  /// Setzt bei Erfolg den Zustand zurück,
   Future<void> deleteImage() async {
     state = state.copyWith(isBusy: true, error: null);
 
@@ -39,6 +46,11 @@ class MealImageActionNotifier extends Notifier<MealImageActionState> {
     }
   }
 
+
+  /// Methode zur Bildauswahl und Aktualisierung.
+  /// - Setzt `isBusy` während der Verarbeitung.
+  /// - Skaliert das Bild (max. 1024px, Qualität 70).
+  /// - Aktualisiert die Mahlzeit über [MealCommandsUseCase].
   Future<void> _pick(ImageSource source) async {
     state = state.copyWith(isBusy: true, error: null);
 

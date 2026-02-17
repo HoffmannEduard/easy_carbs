@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_carbs/presentation/state/meals/filter_meal_view/meal_list_view_filter_notifier.dart';
 
+/// Suchleiste zur Filterung der Mahlzeitenliste.
+///
+/// - Bindet die Eingabe an [mealListViewFilterProvider].
+/// - Synchronisiert UI und Filterzustand.
+/// - Optionaler Callback [onSubmitted] ermöglicht Navigation nach abgeschlossener Suche (Für Startseite).
 class MealSearchBar extends ConsumerStatefulWidget {
   const MealSearchBar({super.key, this.onSubmitted});
 
@@ -30,7 +35,7 @@ class _MealSearchBarState extends ConsumerState<MealSearchBar> {
   Widget build(BuildContext context) {
     final filter = ref.watch(mealListViewFilterProvider);
 
-    // Sync: wenn Filter extern resettet wird, soll die UI folgen
+    /// UI mit Filterzustand synchronisieren
     if (_controller.text != filter.searchQuery) {
       _controller.text = filter.searchQuery;
       _controller.selection = TextSelection.fromPosition(

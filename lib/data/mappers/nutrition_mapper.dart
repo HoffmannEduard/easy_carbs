@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:easy_carbs/data/db/drift_database.dart';
 import 'package:easy_carbs/domain/entities/nutrition.dart';
 
-// Mapper um zwischen Drift-Daten und Nutrition-Entitäten zu konvertieren
+/// Mapper um zwischen Drift-Daten und Nutrition-Entitäten zu konvertieren
 
 class NutritionMapper {
   static Nutrition fromDrift(NutritionsTableData row) {

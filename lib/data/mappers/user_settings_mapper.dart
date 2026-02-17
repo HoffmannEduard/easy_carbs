@@ -7,7 +7,11 @@ import 'package:easy_carbs/domain/entities/user_settings.dart';
 import 'package:easy_carbs/domain/services/fixed_insulin_schedule.dart';
 import 'package:flutter/material.dart';
 
+/// Mapper zwischen Drift-Datenmodellen und Domänen-Entity [UserSettings].
 class UserSettingsMapper {
+  /// Erstellt [UserSettings] aus Drift-Tabellenzeilen.
+  /// Fehlende Factor-Rows werden mit Default-Werten ersetzt.
+  /// Endzeiten werden anschließend über [FixedInsulinSchedule.normalize] abgeleitet.
   static UserSettings fromDrift(
     UserSettingsTableData settingsData,
     List<TimeBasedInsulinFactorsTableData> factorRows,
@@ -49,6 +53,7 @@ class UserSettingsMapper {
     );
   }
 
+  /// Wandelt [UserSettings] in Drift-Companions um.
   static Map<String, dynamic> toDrift(UserSettings settings) {
     final normalized = FixedInsulinSchedule.normalize(settings.insulinFactors);
 

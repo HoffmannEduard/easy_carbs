@@ -3,6 +3,10 @@ import 'package:easy_carbs/presentation/state/user_settings/user_settings_async_
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Screen zur Bearbeitung der zeitabhängigen Insulinfaktoren.
+///
+/// Lädt die aktuellen Einstellungen über [userSettingsNotifierProvider]
+/// und delegiert die Darstellung sowie Bearbeitung der vier Zeitblöcke an [InsulinBlocksCard].
 class InsulinFactorsEditScreen extends ConsumerWidget {
   const InsulinFactorsEditScreen({super.key});
 

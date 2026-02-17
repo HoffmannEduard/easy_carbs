@@ -11,9 +11,12 @@ class UserSettingsDao extends DatabaseAccessor<AppDatabase>
 
   UserSettingsDao(super.db);
 
+  /// Feste ID für den einzigen Settings-Datensatz der App.
   static const defaultSettingsId = 'user';
 
   // ================= INSERT/UPDATE =================
+  /// Speichert Einstellungen und ersetzt zugehörige Insulinfaktoren atomar.
+  /// Wird innerhalb einer Transaktion ausgeführt.
   Future<void> saveSettings(
       UserSettingsTableCompanion settings,
       List<TimeBasedInsulinFactorsTableCompanion> insulinFactors,
@@ -33,10 +36,12 @@ class UserSettingsDao extends DatabaseAccessor<AppDatabase>
     });
   }
 
+  /// Fügt einen einzelnen Insulinfaktor ein oder aktualisiert ihn.
   Future<void> addOrUpdateFactor(TimeBasedInsulinFactorsTableCompanion factor) async {
     await into(timeBasedInsulinFactorsTable).insertOnConflictUpdate(factor);
   }
 
+  /// Löscht einen Insulinfaktor anhand seiner ID.
   Future<int> deleteFactor(String factorId) async {
     return await (delete(timeBasedInsulinFactorsTable)
       ..where((tbl) => tbl.id.equals(factorId)))
@@ -44,6 +49,7 @@ class UserSettingsDao extends DatabaseAccessor<AppDatabase>
   }
 
   // ================= SELECT =================
+  /// Lädt Einstellungen inklusive aller zugehörigen Insulinfaktoren.
   Future<UserSettingsWithFactors?> getSettings() async {
     final rows = await _selectWithFactors().get();
     if (rows.isEmpty) return null;
@@ -60,6 +66,7 @@ class UserSettingsDao extends DatabaseAccessor<AppDatabase>
     );
   }
 
+  /// Beobachtet Einstellungen inklusive Insulinfaktoren als Stream.
   Stream<UserSettingsWithFactors?> watchSettings() {
     return _selectWithFactors().watch().map((rows) {
       if (rows.isEmpty) return null;

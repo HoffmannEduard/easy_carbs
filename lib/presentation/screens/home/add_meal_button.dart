@@ -2,6 +2,9 @@ import 'package:easy_carbs/presentation/screens/add_meal/add_meal_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Button zur Navigation zum [AddMealScreen].
+///
+/// Wird auf der Startseite als prominente Aktion dargestellt.
 class AddMealButton extends ConsumerWidget {
   const AddMealButton({super.key});
 

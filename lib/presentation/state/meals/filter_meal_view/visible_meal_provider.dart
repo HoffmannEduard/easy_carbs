@@ -3,6 +3,10 @@ import 'package:easy_carbs/presentation/state/meals/filter_meal_view/meal_list_v
 import 'package:easy_carbs/presentation/state/meals/meal_list_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Liefert die sichtbaren Mahlzeiten basierend auf aktuellem Filter.
+/// Kombiniert:
+/// - den Stream aller Mahlzeiten ([mealListNotifierProvider])
+/// - den aktuellen Filterzustand ([mealListViewFilterProvider])
 final visibleMealsProvider = Provider<AsyncValue<List<Meal>>>((ref) {
   final mealStream = ref.watch(mealListNotifierProvider);
   final filter = ref.watch(mealListViewFilterProvider);

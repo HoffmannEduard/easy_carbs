@@ -2,6 +2,12 @@ import 'package:easy_carbs/domain/entities/carb_unit.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_carbs/domain/entities/meal.dart';
 
+/// Abschnitt zur Aktivierung der automatischen BE/FPE-Berechnung.
+///
+/// - Aktivierung nur möglich, wenn Portionsgröße und Nährwerte vorhanden sind.
+/// - Bestehende Werte werden bei Aktivierung ggf. nach Bestätigung überschrieben.
+///
+/// Fehler werden als SnackBar angezeigt.
 class AutoCalculateSection extends StatefulWidget {
   const AutoCalculateSection({
     super.key,

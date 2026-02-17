@@ -20,6 +20,18 @@ import 'package:easy_carbs/presentation/state/user_settings/user_settings_async_
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Detailansicht einer Mahlzeit.
+///
+/// Zeigt und bearbeitet:
+/// - Basisdaten (Name, Ort, Notiz, Portion)
+/// - BE/KE und FPE (manuell oder automatisch berechnet)
+/// - optionale Insulineinheiten (abhängig von UserSettings)
+///
+/// Datenfluss:
+/// - Laden der Mahlzeit über [mealByIdProvider]
+/// - Schreiben über [mealCommandsProvider]
+/// - Autocalc über [calculateAutomaticallyUseCaseProvider]
+/// - Insulinanzeige/Berechnung über [userSettingsNotifierProvider] und [mealInsulinUnitsProvider]
 class MealDetailScreen extends ConsumerStatefulWidget {
   final String mealId;
   const MealDetailScreen({super.key, required this.mealId});
@@ -38,6 +50,8 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
 
   bool _controllersInitialized = false;
 
+  /// Initialisiert TextController einmalig aus dem geladenen [Meal].
+  /// Bei aktivem Autocalc werden die berechneten Werte im build aktualisiert.
   void _initControllers(Meal meal) {
     if (_controllersInitialized) return;
 

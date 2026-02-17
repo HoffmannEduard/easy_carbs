@@ -1,6 +1,15 @@
 import 'package:easy_carbs/app/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 
+/// Eingabekomponente zur Bearbeitung der Portionsgröße.
+///
+/// Eigenschaften:
+/// - Commit erfolgt nur bei tatsächlicher Wertänderung.
+/// - Speicherung bei:
+///     - Fokusverlust
+///     - "Done"-Action
+///     - Tap außerhalb des Feldes
+/// - Verhindert unnötige Repository-/State-Updates durch internen Vergleich mit dem zuletzt committeten Textwert.
 class PortionSizeSection extends StatefulWidget {
   const PortionSizeSection({
     super.key,

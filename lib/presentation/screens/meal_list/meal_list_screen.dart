@@ -6,6 +6,11 @@ import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Screen zur Anzeige aller gespeicherten Mahlzeiten.
+///
+/// - Verwendet [visibleMealsProvider] zur Kombination aus Mahlzeiten-Stream und aktivem Suchfilter.
+/// - Navigiert bei Auswahl einer Mahlzeit zum [MealDetailScreen].
+/// - Speichert die zuletzt angesehene Mahlzeit über [lastViewedMealIdProvider].
 class MealListscreen extends ConsumerWidget {
   const MealListscreen({super.key});
 

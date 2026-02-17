@@ -8,6 +8,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'insulin_block_row.dart';
 
+/// Card zur Bearbeitung der vier zeitabhängigen Insulinblöcke.
+///
+/// - Zeigt Start-/Endzeiten sowie den Insulinfaktor pro Block.
+/// - Normalisiert die Zeitgrenzen über [FixedInsulinSchedule].
+/// - Änderungen werden direkt über [UserSettingsAsyncNotifier] persistiert.
+/// - Verwendet lokale TextEditingController für Faktor-Eingaben.
 class InsulinBlocksCard extends ConsumerStatefulWidget {
   final FixedInsulinFactors insulinFactors;
 

@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:easy_carbs/domain/entities/nutrition.dart';
 import 'nutrition_table.dart';
 
+/// Abschnitt zur Anzeige und Verwaltung der Nährwerte einer Mahlzeit.
+///
+/// - Wenn keine Nährwerte vorhanden sind, wird ein "Hinzufügen"-Button angezeigt.
+/// - Andernfalls werden die Werte tabellarisch dargestellt.
+/// - Bearbeiten/Löschen erfolgt über ein Aktions-BottomSheet.
 class NutritionSection extends StatelessWidget {
   const NutritionSection({
     super.key,
@@ -52,6 +57,8 @@ class NutritionSection extends StatelessWidget {
     );
   }
 
+  /// Zeigt ein BottomSheet mit Aktionen (Bearbeiten/Löschen)
+  /// und delegiert die Auswahl über die entsprechenden Callbacks.
   void _showActions(BuildContext context) {
     showModalBottomSheet(
       context: context,

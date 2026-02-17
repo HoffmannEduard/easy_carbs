@@ -3,6 +3,11 @@ import 'package:easy_carbs/domain/entities/insulin_block_id.dart';
 import 'package:easy_carbs/domain/services/fixed_insulin_schedule.dart';
 import 'package:flutter/material.dart';
 
+/// Übersichtstabelle zur Anzeige der aktuellen Insulin-Zeitblöcke.
+///
+/// - Zeigt für jeden Block Zeitbereich und Insulinfaktor.
+/// - Normalisiert die Zeitgrenzen über [FixedInsulinSchedule].
+/// - Bietet über [onEdit] eine Navigation zur Bearbeitungsansicht.
 class InsulinFactorsTable extends StatelessWidget {
   final FixedInsulinFactors insulinFactors;
   final VoidCallback onEdit;
@@ -41,7 +46,7 @@ class InsulinFactorsTable extends StatelessWidget {
               final endInclusive = FixedInsulinSchedule.displayEndInclusive(f.endTime);
 
               final range =
-                  '${FixedInsulinSchedule.formatGerman(f.startTime)} – ${FixedInsulinSchedule.formatGerman(endInclusive)}';
+                  '${FixedInsulinSchedule.formatGerman(f.startTime)} - ${FixedInsulinSchedule.formatGerman(endInclusive)}';
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 10),

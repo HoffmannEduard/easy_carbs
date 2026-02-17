@@ -1,6 +1,10 @@
 import 'package:easy_carbs/app/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 
+/// Anzeige der berechneten Insulineinheiten (IE).
+///
+/// - Zeigt einen formatierten Wert mit einer Nachkommastelle.
+/// - Bei `null` wird ein Platzhalter ("--") dargestellt.
 class InsulinUnitsCard extends StatelessWidget {
   final double? insulinUnits;
 

@@ -5,6 +5,14 @@ import 'package:easy_carbs/presentation/screens/user_settings/user_settings_scre
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Zentrales Scaffold der App mit Bottom-Navigation.
+///
+/// - Home
+/// - Mahlzeitenliste
+/// - Benutzereinstellungen
+///
+/// Die Navigation wird über [selectedTabProvider] gesteuert.
+/// Ein [IndexedStack] sorgt dafür, dass die einzelnen Screens ihren Zustand beim Tab-Wechsel behalten.
 class MainScaffold extends ConsumerWidget {
   const MainScaffold({super.key});
 

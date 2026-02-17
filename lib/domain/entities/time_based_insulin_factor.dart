@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
+/// Repräsentiert einen zeitabhängigen Insulinfaktor innerhalb eines Tages.
 class TimeBasedInsulinFactor {
-  final String id; // 'morning'|'midday'|'evening'|'night'
-  final TimeOfDay startTime; // Grenze
-  final TimeOfDay endTime;   // Start des nächsten Blocks (night wrap)
+  /// Ein Block ist durch eine Startzeit und eine Endzeit definiert.
+  /// Die Endzeit entspricht intern der Startzeit des nächsten Blocks
+  final String id; 
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;  
   final double insulinFactor;
 
   TimeBasedInsulinFactor({

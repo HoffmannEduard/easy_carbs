@@ -4,6 +4,11 @@ import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:easy_carbs/presentation/state/user_settings/user_settings_async_notifier.dart';
 import 'package:easy_carbs/presentation/state/insulin/insulin_usecases_provider.dart';
 
+/// Aggregiertes Ergebnis der Insulinberechnung für eine Mahlzeit.
+/// Enthält:
+/// - Insulineinheiten für BE/KE
+/// - Insulineinheiten für FPE
+/// - die zugrunde liegende Uhrzeit
 class MealInsulinUnits {
   final double? carbsUnits; // IE für BE/KE
   final double? fpeUnits;   // IE für FPE
@@ -16,18 +21,21 @@ class MealInsulinUnits {
   });
 }
 
+/// Provider zur Berechnung der Insulineinheiten für eine konkrete Mahlzeit, anhand
+/// - der ausgewählten Mahlzeit
+/// - der aktuellen Benutzereinstellungen
+/// - der aktuellen Uhrzeit
+/// Gibt ein [AsyncValue] zurück, um Lade- und Fehlerzustände korrekt abzubilden.
 final mealInsulinUnitsProvider =
     Provider.family<AsyncValue<MealInsulinUnits>, String>((ref, mealId) {
   final mealAsync = ref.watch(mealByIdProvider(mealId));
   final settingsAsync = ref.watch(userSettingsNotifierProvider);
   final nowAsync = ref.watch(currentTimeProvider); // StreamProvider -> AsyncValue<TimeOfDay>
 
-  // Wenn irgendein Teil lädt: overall loading
   if (mealAsync.isLoading || settingsAsync.isLoading || nowAsync.isLoading) {
     return const AsyncValue.loading();
   }
 
-  // Wenn irgendwo Fehler: gib den ersten Fehler zurück
   final mealErr = mealAsync.asError;
   if (mealErr != null) return AsyncValue.error(mealErr.error, mealErr.stackTrace);
 
@@ -37,7 +45,6 @@ final mealInsulinUnitsProvider =
   final nowErr = nowAsync.asError;
   if (nowErr != null) return AsyncValue.error(nowErr.error, nowErr.stackTrace);
 
-  // Jetzt sind alle data
   final meal = mealAsync.value!;
   final settings = settingsAsync.value!;
   final now = nowAsync.value!;

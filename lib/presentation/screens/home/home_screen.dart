@@ -10,6 +10,10 @@ import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Startseite der App mit Schnellaktionen und zuletzt angesehener Mahlzeit.
+///
+/// - Stellt Navigation/Shortcuts bereit (Suchen, alle Mahlzeiten, neue Mahlzeit).
+/// - Zeigt optional die zuletzt angesehene Mahlzeit über [lastViewedMealIdProvider].
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 

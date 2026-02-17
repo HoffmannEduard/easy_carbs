@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+/// Eingabefeld für einen Insulinfaktor.
+///
+/// - Übergibt den geparsten Wert (oder `null`) über [onCommit].
+/// - Commit erfolgt bei "Done" oder Abschluss der Bearbeitung.
 class InsulinFactorField extends StatelessWidget {
   const InsulinFactorField({
     super.key,

@@ -5,6 +5,12 @@ import 'package:easy_carbs/presentation/state/meals/meal_image/meal_image_action
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Verbindet die Bildanzeige einer Mahlzeit mit den möglichen Bildaktionen.
+///
+/// - Öffnet Auswahl-Modal (Galerie, Kamera, Löschen)
+/// - Bestätigt Löschvorgänge
+/// - Delegiert Aktionen an [mealImageActionProvider]
+/// - Zeigt Fehler als SnackBar an
 class HandleMealDetailImage extends ConsumerWidget {
   const HandleMealDetailImage({
     super.key,

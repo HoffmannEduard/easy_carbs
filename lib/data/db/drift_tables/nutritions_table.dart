@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 
-// Database Tabelle für Nährwerte -> erstellt die Tabelle in der Datenbank (Drift)
-// Erstellt auch die NutritionsTableData und NutritionsTableCompanion Klassen
+/// Database Tabelle für Nährwerte -> erstellt die Tabelle in der Datenbank (Drift)
+/// Erstellt auch die NutritionsTableData und NutritionsTableCompanion Klassen
 
 class NutritionsTable extends Table {
   TextColumn get id => text()();

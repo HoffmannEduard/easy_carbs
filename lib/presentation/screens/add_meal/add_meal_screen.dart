@@ -8,6 +8,10 @@ import 'package:easy_carbs/presentation/screens/meal_detail/meal_detail_screen.d
 import 'package:easy_carbs/presentation/state/meals/meal_list_notifier.dart';
 import 'package:easy_carbs/presentation/screens/add_meal/widgets/add_meal_image_section.dart';
 
+/// Screen zum Anlegen einer neuen Mahlzeit.
+///
+/// Enthält ein Formular für Basisdaten (Name, Ort, Portionseinheit) sowie
+/// eine optionale Bildauswahl. Das Speichern erfolgt über [MealListNotifier].
 class AddMealScreen extends ConsumerStatefulWidget {
   const AddMealScreen({super.key});
 
@@ -28,6 +32,10 @@ class _AddMealScreenState extends ConsumerState<AddMealScreen> {
     super.dispose();
   }
 
+  /// Validiert das Formular, legt die Mahlzeit an und navigiert zur Detailansicht.
+  /// - Optionales Bild wird aus [addMealImageProvider] übernommen.
+  /// - Bei Erfolg: `pushReplacement` zur [MealDetailScreen] und Setzen von [lastViewedMealIdProvider] für Startseite.
+  /// - Bei Fehler: SnackBar als Nutzerfeedback.
   Future<void> _createMeal() async {
     if (!_formKey.currentState!.validate() || _portionUnit == null) return;
 

@@ -1,6 +1,7 @@
 import 'package:easy_carbs/domain/entities/portion_unit.dart';
 import 'package:flutter/material.dart';
 
+/// Formular-Sektion zur Eingabe der Nährwerte.
 class NutritionFieldsSection extends StatelessWidget {
   final TextEditingController carbsController;
   final TextEditingController sugarController;

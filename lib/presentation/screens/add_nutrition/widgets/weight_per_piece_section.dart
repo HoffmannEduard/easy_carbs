@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
+/// Formular-Sektion zur Eingabe des Gewichts pro Stück (in Gramm).
+///
+/// Wird verwendet, wenn die Portionsangabe über `Stück` erfolgt.
 class WeightPerPieceSection extends StatelessWidget {
   final TextEditingController weightOnePieceController;
 
   /// Optionaler FocusNode für "Next"-Navigation
   final FocusNode? focusNode;
 
-  /// Optionaler Callback wenn DONE gedrückt wird
   final VoidCallback? onSubmitted;
 
   const WeightPerPieceSection({

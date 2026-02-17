@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:easy_carbs/domain/entities/portion_unit.dart';
 
+/// Formularfelder zur Eingabe der Basisdaten einer Mahlzeit.
+///
+/// - Name (Pflichtfeld)
+/// - Location (optional)
+/// - PortionUnit-Auswahl (Pflichtfeld)
+///
+/// Validierungslogik ist direkt in den jeweiligen FormFields implementiert.
 class MealFormFields extends StatelessWidget {
   const MealFormFields({
     super.key,

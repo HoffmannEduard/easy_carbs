@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+/// Button zum endgültigen Löschen einer Mahlzeit.
+///
+/// - Zeigt vor dem Löschen einen Bestätigungsdialog.
+/// - Verhindert Mehrfachausführung über internen Busy-State.
+/// - Navigiert nach erfolgreichem Löschen zurück.
 class DeleteMealButton extends StatefulWidget {
   final Future<void> Function() onDelete;
 

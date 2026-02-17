@@ -7,6 +7,10 @@ import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Screen zum Hinzufügen oder Bearbeiten von Nährwerten einer Mahlzeit.
+///
+/// Speichert Nährwerte über [mealCommandsProvider] und triggert anschließend
+/// die automatische Berechnung (BE/KE & FPE), falls aktiviert.
 class AddNutritionScreen extends ConsumerStatefulWidget {
   final String mealId;
   final Nutrition? existingNutrition;
@@ -95,6 +99,7 @@ class _AddNutritionScreenState extends ConsumerState<AddNutritionScreen> {
     return double.tryParse(trimmed);
   }
 
+  /// Validiert das Formular, speichert die Nährwerte und stößt Autocalc an.
   Future<void> _saveNutrition() async {
     if (!_formKey.currentState!.validate()) return;
 

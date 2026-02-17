@@ -3,6 +3,10 @@ import 'package:easy_carbs/app/core/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+/// Widget zur Auswahl und Vorschau eines Mahlzeitenbilds.
+///
+/// - Zeigt entweder das ausgewählte Bild oder ein Standardbild.
+/// - Beim Tippen öffnet sich ein BottomSheet zur Auswahl der Quelle
 class MealImagePicker extends StatelessWidget {
   final XFile? image;
   final void Function(ImageSource source) onPickImage;

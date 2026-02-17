@@ -8,31 +8,34 @@ import 'package:easy_carbs/presentation/state/user_settings/user_settings_provid
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+/// Liefert einen Stream aller Mahlzeiten und bietet einfache Commands zum Anlegen und Löschen
 class MealListNotifier extends StreamNotifier<List<Meal>> {
-
   late final IMealRepository _repo;
 
+  /// Baut den Stream für alle Mahlzeiten auf.
   @override
   Stream<List<Meal>> build() {
     _repo = ref.read(mealRepositoryProvider);
     return _repo.watchAllMeals();
   }
 
-  //Create Meal, CarbUnits aus UserSettings übernehmen, Location und ImagePath ggf. aus User Input
+  /// Legt eine neue Mahlzeit an und gibt deren ID zurück.
+  /// - Übernimmt die Kohlenhydrat-Einheit aus den [UserSettings].
+  /// - Speichert optional ein Bild und setzt sonst das Standardbild.
+  /// - Setzt eine Default-Portionsgröße passend zu [portionUnit].
   Future<String> createMeal({
     required String name,
     String? location,
     XFile? imageFile,
     required PortionUnit portionUnit,
   }) async {
-    final settings = await ref
-      .read(userSettingsRepositoryProvider)
-      .getSettings();
+    final settings =
+        await ref.read(userSettingsRepositoryProvider).getSettings();
 
-    String imagePath = imageFile != null
-      ? await MealImageService().saveMealImage(imageFile)
-      : AppAssets.defaultMealImagePath;
-      
+    String imagePath =
+        imageFile != null
+            ? await MealImageService().saveMealImage(imageFile)
+            : AppAssets.defaultMealImagePath;
 
     final meal = Meal(
       name: name,
@@ -40,7 +43,7 @@ class MealListNotifier extends StreamNotifier<List<Meal>> {
       carbUnit: settings!.carbUnit,
       imagePath: imagePath,
       portionUnit: portionUnit,
-      portionsize: _defaultPortionSizeFor(portionUnit)
+      portionsize: _defaultPortionSizeFor(portionUnit),
     );
     await _repo.addMeal(meal);
     return meal.id;
@@ -50,20 +53,20 @@ class MealListNotifier extends StreamNotifier<List<Meal>> {
     await _repo.deleteMeal(id);
   }
 
+  /// Liefert eine sinnvolle Default-Portionsgröße je Einheit.
+  /// - Gramm: 100 g
+  /// - Stück/Portion: 1
   double _defaultPortionSizeFor(PortionUnit unit) {
-  switch (unit) {
-    case PortionUnit.gramm:
-      return 100.0;
-    case PortionUnit.piece:
-    case PortionUnit.portion:
-      return 1.0;
+    switch (unit) {
+      case PortionUnit.gramm:
+        return 100.0;
+      case PortionUnit.piece:
+      case PortionUnit.portion:
+        return 1.0;
+    }
   }
 }
 
-
-}
-
+/// Provider für die Mahlzeitenliste als Stream.
 final mealListNotifierProvider =
-    StreamNotifierProvider<MealListNotifier, List<Meal>>(
-  MealListNotifier.new,
-);
+    StreamNotifierProvider<MealListNotifier, List<Meal>>(MealListNotifier.new);

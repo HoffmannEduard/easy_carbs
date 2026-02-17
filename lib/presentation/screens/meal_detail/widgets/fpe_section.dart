@@ -2,6 +2,11 @@ import 'dart:async';
 import 'package:easy_carbs/app/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 
+/// Eingabebereich für den FPE-Wert einer Mahlzeit.
+///
+/// - Änderungen werden debounced gespeichert (350 ms).
+/// - Bei "Done" erfolgt sofortiges Commit.
+/// - Im Readonly-Modus ist die Eingabe deaktiviert.
 class FPESection extends StatefulWidget {
   const FPESection({
     super.key,

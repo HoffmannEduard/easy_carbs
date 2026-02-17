@@ -2,6 +2,11 @@ import 'package:easy_carbs/domain/services/fixed_insulin_schedule.dart';
 import 'package:flutter/material.dart';
 import 'insulin_factor_field.dart';
 
+/// UI-Zeile zur Darstellung und Bearbeitung eines Insulin-Zeitblocks.
+///
+/// - Titel
+/// - Start- und Endzeit (Ende wird als "inklusive" angezeigt)
+/// - Eingabefeld für den Insulinfaktor
 class InsulinBlockRow extends StatelessWidget {
   final String title;
   final bool isNight;

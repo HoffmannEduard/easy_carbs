@@ -2,6 +2,10 @@ import 'dart:io';
 import 'package:easy_carbs/app/core/app_assets.dart';
 import 'package:flutter/material.dart';
 
+/// Anzeige des Mahlzeitenbildes in der Detailansicht.
+///
+/// - Zeigt entweder das Default-Asset oder ein gespeichertes Dateibild.
+/// - Optional klickbar über [onTap].
 class MealImageSection extends StatelessWidget {
   final String imagePath;
   final VoidCallback? onTap;

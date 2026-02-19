@@ -24,6 +24,8 @@ dependencies:
   drift_db_viewer: ^2.1.0
   flutter_picker_plus: ^1.5.4
   image_picker: ^1.2.1
+  flutter_native_splash: ^2.4.6
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -40,3 +42,26 @@ flutter:
   assets:
     - assets/defaults/default-burger.jpg
     - assets/defaults/ec-default.jpg
+    - assets/splash/splashlogo.png
+    - assets/icon/ec-icon.png
+
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  color_dark: "#000000"
+  image: assets/splash/splashlogo.png
+
+  android_12:
+    color: "#FFFFFF"
+    color_dark: "#000000"
+    image: assets/splash/splashlogo.png
+
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+
+  image_path: "assets/icon/ec-icon.png"
+
+  adaptive_icon_background: "#111827"
+  adaptive_icon_foreground: "assets/icon/ec-icon.png"

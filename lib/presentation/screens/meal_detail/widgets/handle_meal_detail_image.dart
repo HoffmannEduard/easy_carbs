@@ -127,6 +127,7 @@ Future<bool?> confirmDeleteMealImage(
                   break;
                 case 'delete':
                   final confirmed =
+                      // ignore: use_build_context_synchronously
                       await confirmDeleteMealImage(context);
                   if (confirmed == true) {
                     notifier.deleteImage();

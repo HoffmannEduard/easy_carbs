@@ -298,7 +298,7 @@ void main() {
 
       // Assert
       final savedMeal = await repository.getMealById(meal.id);
-      expect(savedMeal!.imagePath, 'assets/defaults/default-burger.jpg');
+      expect(savedMeal!.imagePath, 'assets/defaults/ec-default.jpg');
     });
   });
 }

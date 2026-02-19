@@ -1,35 +1,298 @@
+import 'package:easy_carbs/app/theme/app_spacing.dart';
+import 'package:easy_carbs/app/utils/format_extensions.dart';
+import 'package:easy_carbs/domain/entities/meal.dart';
+import 'package:easy_carbs/domain/entities/portion_unit.dart';
+import 'package:easy_carbs/presentation/screens/add_nutrition/add_nutrition_screen.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/widgets/auto_calculate_section.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/widgets/be_section.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/widgets/delete_meal_button.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/widgets/insulin_units_card.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/widgets/fpe_section.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/widgets/handle_meal_detail_image.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/widgets/location_section.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/widgets/name_section.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/widgets/note_section.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/widgets/nutrition_section.dart';
+import 'package:easy_carbs/presentation/screens/meal_detail/widgets/portion_size_section.dart';
+import 'package:easy_carbs/presentation/state/meals/meal_detail/meal_insulin_units_provider.dart';
+import 'package:easy_carbs/presentation/state/meals/meal_provider.dart';
+import 'package:easy_carbs/presentation/state/user_settings/user_settings_async_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../state/meals/meal_detail_notifier.dart';
-import 'widgets/meal_detail_form.dart';
-
-class MealDetailScreen extends ConsumerWidget {
+/// Detailansicht einer Mahlzeit.
+///
+/// Zeigt und bearbeitet:
+/// - Basisdaten (Name, Ort, Notiz, Portion)
+/// - BE/KE und FPE (manuell oder automatisch berechnet)
+/// - optionale Insulineinheiten (abhängig von UserSettings)
+///
+/// Datenfluss:
+/// - Laden der Mahlzeit über [mealByIdProvider]
+/// - Schreiben über [mealCommandsProvider]
+/// - Autocalc über [calculateAutomaticallyUseCaseProvider]
+/// - Insulinanzeige/Berechnung über [userSettingsNotifierProvider] und [mealInsulinUnitsProvider]
+class MealDetailScreen extends ConsumerStatefulWidget {
   final String mealId;
-
   const MealDetailScreen({super.key, required this.mealId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final mealAsync = ref.watch(mealDetailNotifierProvider(mealId));
+  ConsumerState<MealDetailScreen> createState() => _MealDetailScreenState();
+}
+
+class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
+  final _nameController = TextEditingController();
+  final _carbsInUnitController = TextEditingController();
+  final _fpeController = TextEditingController();
+  final _locationController = TextEditingController();
+  final _portionSizeController = TextEditingController();
+  final _noteController = TextEditingController();
+
+  bool _controllersInitialized = false;
+
+  /// Initialisiert TextController einmalig aus dem geladenen [Meal].
+  /// Bei aktivem Autocalc werden die berechneten Werte im build aktualisiert.
+  void _initControllers(Meal meal) {
+    if (_controllersInitialized) return;
+
+    if (!meal.autocalculate) {
+      _carbsInUnitController.text = meal.carbsInUnit.to1dp();
+      _fpeController.text = meal.fpe.to1dp();
+    }
+    _nameController.text = meal.name;
+    _locationController.text = meal.location ?? '';
+    _portionSizeController.text = meal.portionsize.to1dp();
+    _noteController.text = meal.note ?? '';
+
+    _controllersInitialized = true;
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _carbsInUnitController.dispose();
+    _fpeController.dispose();
+    _locationController.dispose();
+    _portionSizeController.dispose();
+    _noteController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mealAsync = ref.watch(mealByIdProvider(widget.mealId));
+    final commands = ref.read(mealCommandsProvider(widget.mealId));
+    final autocalc = ref.read(calculateAutomaticallyUseCaseProvider);
+    final showInsulin = ref.watch(
+      userSettingsNotifierProvider.select(
+        (s) => s.asData?.value.showInsulin ?? false,
+      ),);
+    final insulinAsync = showInsulin
+    ? ref.watch(mealInsulinUnitsProvider(widget.mealId))
+    : null;
+
+
 
     return Scaffold(
-      appBar: AppBar(
-        title: mealAsync.when(
-          loading: () => const Text('Lade Mahlzeit…'),
-          error: (_, __) => const Text('Fehler'),
-          data: (meal) => Text(
-            meal.name,
-          ),
-        ),
-      ),
+      appBar: AppBar(title: Text('Alle Mahlzeiten')),
       body: mealAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text(e.toString())),
-        data: (meal) => MealDetailForm(
-          meal: meal,
-          mealId: mealId,
-        ),
+        data: (meal) {
+          _initControllers(meal);
+          if (meal.autocalculate) {
+            _carbsInUnitController.text = meal.carbsInUnit.to1dp();
+            _fpeController.text = meal.fpe.to1dp();
+          }
+
+          
+
+          return Listener(
+            behavior: HitTestBehavior.translucent,
+            onPointerDown: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: ListView(
+                children: [
+                  // Image
+                  HandleMealDetailImage(meal: meal, mealId: widget.mealId),
+                  const SizedBox(height: AppSpacing.spacingMd),
+
+                  // NameSection
+                  NameSection(
+                    controller: _nameController,
+                    onCommit: commands.updateName,
+                  ),
+
+                  // Location
+                  LocationSection(
+                    controller: _locationController,
+                    onCommit: commands.updateLocation,
+                  ),
+                  const Divider(height: 8, thickness: 2),
+                  const SizedBox(height: AppSpacing.spacingMd),
+
+                  // PortionSize
+                  Padding(
+                    padding: const EdgeInsets.all(.0),
+                    child: PortionSizeSection(
+                      controller: _portionSizeController,
+                      unitLabel: meal.portionUnit!.label,
+                      onCommit: (value) async {
+                        await commands.updatePortionSize(value);
+                        if (value == 0) {
+                          await commands.toggleAutocalculate(false);
+                        }
+                        if (meal.autocalculate) {
+                          await autocalc.setCarbsInUnitAndFpe(widget.mealId);
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.spacingMd),
+
+                  // Autocalculate Switch
+                  AutoCalculateSection(
+                    meal: meal,
+                    onToggleAutocalculate:
+                        (value) => commands.toggleAutocalculate(value),
+                    onRunAutocalc:
+                        () => autocalc.setCarbsInUnitAndFpe(widget.mealId),
+                  ),
+                  const SizedBox(height: AppSpacing.spacingMd),
+
+                  // BE/KE
+                  Row(
+                    children: [
+                      Expanded(
+                        child: BESection(
+                          controller: _carbsInUnitController,
+                          readonly: meal.autocalculate,
+                          unitLabel: meal.carbUnit.name.toUpperCase(),
+                          onCommit: commands.updateCarbsInUnit,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      if (showInsulin)
+                      insulinAsync!.when(
+                        loading: () => const SizedBox.shrink(),
+                        error: (_, __) => const SizedBox.shrink(),
+                        data:
+                            (ins) =>
+                                InsulinUnitsCard(insulinUnits: ins.carbsUnits),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.spacingXs),
+
+                  // FPE
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FPESection(
+                          controller: _fpeController,
+                          readonly: meal.autocalculate,
+                          onCommit: commands.updateFpe,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      if (showInsulin)
+                      insulinAsync!.when(
+                        loading: () => const SizedBox.shrink(),
+                        error: (_, __) => const SizedBox.shrink(),
+                        data:
+                            (ins) =>
+                                InsulinUnitsCard(insulinUnits: ins.fpeUnits),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: AppSpacing.spacingMd),
+
+                  // Note
+                  NoteSection(
+                    controller: _noteController,
+                    onChanged: commands.updateNote,
+                  ),
+                  const SizedBox(height: AppSpacing.spacingMd),
+
+                  // Nutrition
+                  NutritionSection(
+                    nutrition: meal.nutrition,
+                    portionUnit: meal.portionUnit!,
+                    onAdd: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => AddNutritionScreen(mealId: widget.mealId),
+                        ),
+                      );
+                    },
+                    onEdit: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => AddNutritionScreen(
+                                mealId: widget.mealId,
+                                existingNutrition: meal.nutrition,
+                              ),
+                        ),
+                      );
+                    },
+                    onDelete: () async {
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder:
+                            (_) => AlertDialog(
+                              title: const Text('Nährwerte endgültig löschen?'),
+                              actions: [
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.pop(context, false),
+                                  child: const Text('Abbrechen'),
+                                ),
+                                FilledButton(
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor:
+                                        Theme.of(context).colorScheme.error,
+                                    foregroundColor:
+                                        Theme.of(context).colorScheme.onError,
+                                  ),
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: const Text('Löschen'),
+                                ),
+                              ],
+                            ),
+                      );
+
+                      if (confirm == true) {
+                        if (meal.autocalculate) {
+                          commands.toggleAutocalculate(false);
+                        }
+                        await commands.removeNutrition();
+                      }
+                    },
+                  ),
+
+                  const SizedBox(height: AppSpacing.spacingXl),
+
+                  // Delete Meal
+                  DeleteMealButton(
+                    onDelete: () async {
+                      final lastViewedId = ref.read(lastViewedMealIdProvider);
+                      await commands.deleteMeal();
+                      if (lastViewedId == meal.id) {
+                        ref.read(lastViewedMealIdProvider.notifier).state = null;
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

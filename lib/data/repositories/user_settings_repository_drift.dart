@@ -1,17 +1,19 @@
-import 'package:drift/drift.dart';
+import 'package:easy_carbs/data/db/drift_daos/user_settings_dao.dart';
 import 'package:easy_carbs/data/db/drift_database.dart';
+import 'package:easy_carbs/data/mappers/user_settings_mapper.dart';
+import 'package:easy_carbs/domain/entities/user_settings.dart';
+import 'package:easy_carbs/domain/i_repo/i_user_settings_repository.dart';
 
-import '../db/drift_daos/user_settings_dao.dart';
-import '../mappers/user_settings_mapper.dart';
-import '../../domain/entities/user_settings.dart';
-import '../../domain/entities/time_based_insulin_factor.dart';
-import '../../domain/i_repo/i_user_settings_repository.dart';
-
+/// Drift-basierte Implementierung von [IUserSettingsRepository].
+///
+/// Kapselt den Zugriff auf [UserSettingsDao] und übernimmt
+/// das Mapping zwischen Drift-Datenklassen und Domänen-Entity [UserSettings].
 class UserSettingsRepositoryDrift implements IUserSettingsRepository {
   final UserSettingsDao _dao;
 
   UserSettingsRepositoryDrift(this._dao);
 
+  /// Lädt die aktuellen Benutzereinstellungen einmalig.
   @override
   Future<UserSettings?> getSettings() async {
     final result = await _dao.getSettings();
@@ -19,6 +21,7 @@ class UserSettingsRepositoryDrift implements IUserSettingsRepository {
     return UserSettingsMapper.fromDrift(result.settings, result.insulinFactors);
   }
 
+  /// Beobachtet die Benutzereinstellungen als Stream.
   @override
   Stream<UserSettings?> watchSettings() {
     return _dao.watchSettings().map((result) {
@@ -27,6 +30,7 @@ class UserSettingsRepositoryDrift implements IUserSettingsRepository {
     });
   }
 
+  /// Speichert die Benutzereinstellungen inklusive aller Insulinfaktoren.
   @override
   Future<void> saveSettings(UserSettings settings) async {
     final companions = UserSettingsMapper.toDrift(settings);
@@ -34,21 +38,5 @@ class UserSettingsRepositoryDrift implements IUserSettingsRepository {
       companions['settings'] as UserSettingsTableCompanion,
       companions['factors'] as List<TimeBasedInsulinFactorsTableCompanion>,
     );
-  }
-
-  @override
-  Future<void> addInsulinFactor(TimeBasedInsulinFactor factor) async {
-    await _dao.addOrUpdateFactor(TimeBasedInsulinFactorsTableCompanion(
-      id: Value(factor.id),
-      userSettingsId: Value(UserSettingsDao.defaultSettingsId), //kein Hardconding mit 'user'
-      startTimeMinutes: Value(factor.startTime.hour * 60 + factor.startTime.minute),
-      endTimeMinutes: Value(factor.endTime.hour * 60 + factor.endTime.minute),
-      insulinFactor: Value(factor.insulinFactor),
-    ));
-  }
-
-  @override
-  Future<void> deleteInsulinFactor(String factorId) async {
-    await _dao.deleteFactor(factorId);
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// Mehrzeiliges Eingabefeld für Notizen zur Mahlzeit.
+///
+/// - Übergibt Änderungen fortlaufend über [onChanged].
 class NoteSection extends StatelessWidget {
   const NoteSection({
     super.key,

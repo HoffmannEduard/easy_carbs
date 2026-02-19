@@ -5,11 +5,15 @@ import 'package:easy_carbs/domain/entities/meal.dart';
 import 'package:easy_carbs/domain/entities/nutrition.dart';
 import 'package:easy_carbs/domain/i_repo/i_meal_repository.dart';
 
+/// Drift-basierte Implementierung von [IMealRepository].
+/// Kapselt den Zugriff auf [MealDao] und übernimmt das Mapping zwischen
+/// Drift-Datenklassen und Domänen-Entities ([Meal], [Nutrition]).
 class MealRepositoryDrift implements IMealRepository {
   final MealDao _dao;
 
   MealRepositoryDrift(this._dao);
 
+  /// Streamt alle Mahlzeiten inklusive optionaler Nährwerte.
   @override
   Stream<List<Meal>> watchAllMeals() {
     return _dao.watchAllMeals().map(
@@ -25,9 +29,9 @@ class MealRepositoryDrift implements IMealRepository {
     );
   }
 
+  /// Speichert eine neue Mahlzeit (inkl. optionaler Nährwerte).
   @override
   Future<void> addMeal(Meal meal) async {
-    // Nutrition Companion erstellen falls vorhanden
     final nutritionCompanion = meal.nutrition != null
         ? NutritionMapper.toDrift(meal.nutrition!)
         : null;
@@ -39,11 +43,13 @@ class MealRepositoryDrift implements IMealRepository {
     );
   }
 
+  /// Löscht eine Mahlzeit anhand ihrer ID.
   @override
   Future<void> deleteMeal(String id) async {
     await _dao.deleteMeal(id);
   }
 
+  /// Lädt eine Mahlzeit inkl. optionaler Nährwerte anhand ihrer ID
   @override
   Future<Meal?> getMealById(String id) async {
     final mealWithNutrition = await _dao.getMealById(id);
@@ -61,6 +67,7 @@ class MealRepositoryDrift implements IMealRepository {
     );
   }
 
+  /// Aktualisiert eine Mahlzeit (inkl. optionaler Nährwerte).
   @override
   Future<void> updateMeal(Meal meal) async {
     // Nutrition Companion erstellen falls vorhanden
@@ -74,8 +81,7 @@ class MealRepositoryDrift implements IMealRepository {
     );
   }
 
-  // Spezielle Methode für deinen Dialog-Use-Case:
-  // Nutrition nachträglich zu einem Meal hinzufügen/aktualisieren
+  /// Fügt Nährwerte hinzu oder aktualisiert sie für eine bestehende Mahlzeit anhand der MealID.
   @override
   Future<void> addOrUpdateNutrition(String mealId, Nutrition nutrition) async {
     await _dao.addOrUpdateNutritionForMeal(
@@ -84,7 +90,7 @@ class MealRepositoryDrift implements IMealRepository {
     );
   }
 
-  // Nutrition von einem Meal entfernen
+  /// Entfernt die Nährwerte einer Mahlzeit anhand der MealID
   @override
   Future<void> removeNutrition(String mealId) async {
     await _dao.removeNutritionFromMeal(mealId);

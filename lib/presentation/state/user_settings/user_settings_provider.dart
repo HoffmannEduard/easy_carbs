@@ -5,18 +5,20 @@ import 'package:easy_carbs/domain/entities/user_settings.dart';
 import 'package:easy_carbs/domain/i_repo/i_user_settings_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// CRUD-Operationen werden über DAO-Klasse ausgeführt, Datenbank wird injiziert
+/// Provider für den Drift-DAO der Benutzereinstellungen.
+/// Der DAO erhält die Datenbankinstanz über [driftDbProvider].
 final userSettingsDaoProvider = Provider<UserSettingsDao>((ref) {
   final db = ref.watch(driftDbProvider);
   return UserSettingsDao(db);
 });
 
-// Verbindung des IRepo mit der konkreten Implementierung (MealRepositoryDrift) und der CRUD-Operationen über DAO
+/// Bindet [IUserSettingsRepository] an die Drift-Implementierung.
 final userSettingsRepositoryProvider = Provider<IUserSettingsRepository>((ref) {
   final dao = ref.watch(userSettingsDaoProvider);
   return UserSettingsRepositoryDrift(dao);
 });
 
+/// StreamProvider für die aktuellen Benutzereinstellungen.
 final userSettingsProvider = StreamProvider<UserSettings?>((ref) {
   final repo = ref.watch(userSettingsRepositoryProvider);
   return repo.watchSettings();

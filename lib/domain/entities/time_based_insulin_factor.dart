@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 
+/// Repräsentiert einen zeitabhängigen Insulinfaktor innerhalb eines Tages.
 class TimeBasedInsulinFactor {
-  final String id;
+  /// Ein Block ist durch eine Startzeit und eine Endzeit definiert.
+  /// Die Endzeit entspricht intern der Startzeit des nächsten Blocks
+  final String id; 
   final TimeOfDay startTime;
-  final TimeOfDay endTime;
+  final TimeOfDay endTime;  
   final double insulinFactor;
 
   TimeBasedInsulinFactor({
-    String? id,
+    required this.id,
     required this.startTime,
     required this.endTime,
     required this.insulinFactor,
-  }) : id = id ?? const Uuid().v4();
+  });
 
   TimeBasedInsulinFactor copyWith({
     String? id,

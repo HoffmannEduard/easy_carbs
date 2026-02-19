@@ -5,8 +5,8 @@ import '../drift_tables/nutritions_table.dart';
 
 part 'meal_dao.g.dart';
 
-// DAO Klasse für Mahlzeiten
-// Verwaltet auch die Beziehung zu Nutritions
+/// DAO Klasse für Mahlzeiten
+/// Verwaltet auch die Beziehung zu Nutritions
 @DriftAccessor(tables: [MealsTable, NutritionsTable])
 class MealDao extends DatabaseAccessor<AppDatabase> with _$MealDaoMixin {
 
@@ -14,7 +14,7 @@ class MealDao extends DatabaseAccessor<AppDatabase> with _$MealDaoMixin {
 
   // ========== INSERT ==========
   
-  // Meal mit optionalen Nutrition-Daten speichern
+  /// Meal mit optionalen Nutrition-Daten speichern
   Future<String> insertMeal(
     MealsTableCompanion meal,
     NutritionsTableCompanion? nutrition,
@@ -35,7 +35,7 @@ class MealDao extends DatabaseAccessor<AppDatabase> with _$MealDaoMixin {
 
   // ========== UPDATE ==========
   
-  // Meal mit optionalen Nutrition-Daten aktualisieren
+  /// Meal mit optionalen Nutrition-Daten aktualisieren
   Future<bool> updateMeal(
     MealsTableCompanion meal,
     NutritionsTableCompanion? nutrition,
@@ -77,8 +77,7 @@ class MealDao extends DatabaseAccessor<AppDatabase> with _$MealDaoMixin {
     });
   }
 
-  // Nur Nutrition zu einem bestehenden Meal hinzufügen/aktualisieren
-  // Perfekt für deinen Dialog-Use-Case!
+  /// Nur Nutrition zu einem bestehenden Meal hinzufügen/aktualisieren
   Future<bool> addOrUpdateNutritionForMeal(
     String mealId,
     NutritionsTableCompanion nutrition,
@@ -110,7 +109,7 @@ class MealDao extends DatabaseAccessor<AppDatabase> with _$MealDaoMixin {
     });
   }
 
-  // Nutrition von einem Meal entfernen
+  /// Nutrition anhand der MealID von einem Meal entfernen
   Future<bool> removeNutritionFromMeal(String mealId) async {
     return await transaction(() async {
       // Hole das Meal um die nutritionId zu bekommen
@@ -138,7 +137,7 @@ class MealDao extends DatabaseAccessor<AppDatabase> with _$MealDaoMixin {
 
   // ========== DELETE ==========
   
-  // Delete Meal (inkl. zugehöriger Nutrition)
+  /// Delete Meal anhand der MealID (inkl. zugehöriger Nutrition)
   Future<int> deleteMeal(String id) async {
     return await transaction(() async {
       // Hole das Meal um die nutritionId zu bekommen
@@ -164,7 +163,7 @@ class MealDao extends DatabaseAccessor<AppDatabase> with _$MealDaoMixin {
 
   // ========== SELECT ==========
   
-  // Alle Meals mit ihren Nutrition-Daten abrufen (Left Join)
+  /// Alle Meals mit ihren Nutrition-Daten abrufen (Left Join)
   Stream<List<MealWithNutrition>> watchAllMeals() {
     final query = (select(mealsTable)
       ..orderBy([
@@ -190,7 +189,7 @@ class MealDao extends DatabaseAccessor<AppDatabase> with _$MealDaoMixin {
     });
   }
 
-  // Einzelnes Meal mit Nutrition abrufen
+  /// Einzelnes Meal anhand der MealID mit Nutrition abrufen
   Future<MealWithNutrition?> getMealById(String id) async {
     final query = select(mealsTable).join([
       leftOuterJoin(

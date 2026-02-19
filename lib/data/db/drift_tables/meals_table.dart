@@ -1,18 +1,17 @@
 import 'package:drift/drift.dart';
 import 'nutritions_table.dart';
 
-// Database Tabelle für Mahlzeiten -> erstellt die Tabelle in der Datenbank (Drift)
-// Erstellt auch die MealsTableData und MealsTableCompanion Klassen
+/// Database Tabelle für Mahlzeiten -> erstellt die Tabelle in der Datenbank (Drift)
+/// Erstellt auch die MealsTableData und MealsTableCompanion Klassen
 
 class MealsTable extends Table {
   TextColumn get id => text()();
-  TextColumn get carbUnit => text()();
+  TextColumn get carbUnit => text()(); //Speichert Enum als String
   TextColumn get name => text().withLength(min: 1, max: 100)();
   TextColumn get imagePath => text().nullable()();
   DateTimeColumn get timestamp => dateTime()();
-
+  BoolColumn get autocalculate => boolean()();
   RealColumn get carbsInUnit => real().nullable()();
-   // Speichert Enum als String
   RealColumn get fpe => real().nullable()();
   
   // Foreign Key zu Nutritions

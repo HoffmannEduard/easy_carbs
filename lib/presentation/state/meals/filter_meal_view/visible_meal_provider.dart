@@ -3,25 +3,24 @@ import 'package:easy_carbs/presentation/state/meals/filter_meal_view/meal_list_v
 import 'package:easy_carbs/presentation/state/meals/meal_list_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final visibleMealsProvider = Provider<AsyncValue<List<Meal>>>(
-  (ref) {
-    final mealStream = ref.watch(mealListNotifierProvider);
-    final settings = ref.watch(mealListViewFilterProvider);
+/// Liefert die sichtbaren Mahlzeiten basierend auf aktuellem Filter.
+/// Kombiniert:
+/// - den Stream aller Mahlzeiten ([mealListNotifierProvider])
+/// - den aktuellen Filterzustand ([mealListViewFilterProvider])
+final visibleMealsProvider = Provider<AsyncValue<List<Meal>>>((ref) {
+  final mealStream = ref.watch(mealListNotifierProvider);
+  final filter = ref.watch(mealListViewFilterProvider);
 
-    return mealStream.whenData((meals) {
-      var result = meals;
+  return mealStream.whenData((meals) {
+    final q = filter.searchQuery.trim().toLowerCase();
+    if (q.isEmpty) return meals;
 
-      // Suche
-      if (settings.searchQuery.isNotEmpty) {
-        final q = settings.searchQuery.toLowerCase();
-        result = result
-            .where(
-              (m) => m.name.toLowerCase().contains(q),
-            )
-            .toList();
-      }
+    return meals.where((m) {
+      final name = m.name.toLowerCase();
+      // Location mit durchsuchen
+      final location = (m.location ?? '').toLowerCase();
+      return name.contains(q) || location.contains(q);
+    }).toList();
+  });
+});
 
-      return result;
-    });
-  },
-);

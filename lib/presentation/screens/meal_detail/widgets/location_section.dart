@@ -94,7 +94,6 @@ class LocationSection extends StatelessWidget {
         Flexible(
           child: Text(
             display,
-            textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: isPlaceholder

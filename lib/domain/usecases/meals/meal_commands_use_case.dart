@@ -89,7 +89,7 @@ class MealCommandsUseCase {
     return _updateMeal((meal) => meal.copyWith(name: name));
   }
 
-  Future<void> updateLocation(String location) {
+  Future<void> updateLocation(String? location) {
     return _updateMeal((meal) => meal.copyWith(location: location));
   }
 

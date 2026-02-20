@@ -41,10 +41,8 @@ class MealDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
-  final _nameController = TextEditingController();
   final _carbsInUnitController = TextEditingController();
   final _fpeController = TextEditingController();
-  final _locationController = TextEditingController();
   final _portionSizeController = TextEditingController();
   final _noteController = TextEditingController();
 
@@ -59,8 +57,6 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
       _carbsInUnitController.text = meal.carbsInUnit.to1dp();
       _fpeController.text = meal.fpe.to1dp();
     }
-    _nameController.text = meal.name;
-    _locationController.text = meal.location ?? '';
     _portionSizeController.text = meal.portionsize.to1dp();
     _noteController.text = meal.note ?? '';
 
@@ -69,10 +65,8 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
 
   @override
   void dispose() {
-    _nameController.dispose();
     _carbsInUnitController.dispose();
     _fpeController.dispose();
-    _locationController.dispose();
     _portionSizeController.dispose();
     _noteController.dispose();
     super.dispose();
@@ -138,13 +132,13 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
 
                     // NameSection
                     NameSection(
-                      controller: _nameController,
+                      name: meal.name,
                       onCommit: commands.updateName,
                     ),
 
                     // Location
                     LocationSection(
-                      controller: _locationController,
+                      location: meal.location,
                       onCommit: commands.updateLocation,
                     ),
                     const Divider(height: 8, thickness: 2),

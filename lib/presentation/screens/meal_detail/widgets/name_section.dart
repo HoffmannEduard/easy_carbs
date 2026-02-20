@@ -4,65 +4,89 @@ import 'package:flutter/material.dart';
 ///
 /// - Übergibt den getrimmten Text über [onCommit].
 /// - Commit erfolgt bei "Done" oder beim Verlassen des Feldes.
-class NameSection extends StatelessWidget {
+class NameSection extends StatefulWidget {
   const NameSection({
     super.key,
-    required this.name,
+    required this.controller,
     required this.onCommit,
   });
 
-  final String name;
+  final TextEditingController controller;
   final ValueChanged<String> onCommit;
 
-  Future<void> _openEditDialog(BuildContext context) async {
-    final dialogController = TextEditingController(text: name);
+  @override
+  State<NameSection> createState() => _NameSectionState();
+}
 
-    final result = await showDialog<String>(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: const Text('Mahlzeit umbenennen'),
-          content: TextField(
-            controller: dialogController,
-            autofocus: true,
-            textInputAction: TextInputAction.done,
-            onSubmitted: (_) => Navigator.of(ctx).pop(dialogController.text),
-            decoration: const InputDecoration(labelText: 'Name'),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Abbrechen'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(ctx).pop(dialogController.text),
-              child: const Text('Speichern'),
-            ),
-          ],
-        );
-      },
-    );
+class _NameSectionState extends State<NameSection> {
+  final _focusNode = FocusNode();
+  String _beforeEdit = '';
 
-    if (result == null) return;
-    final trimmed = result.trim();
-    if (trimmed.isEmpty || trimmed == name.trim()) return;
+  @override
+  void initState() {
+    super.initState();
 
-    onCommit(trimmed);
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        _commit();
+      }
+      setState(() {}); // UI neu bauen → Border an/aus
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _commit() {
+    final trimmed = widget.controller.text.trim();
+
+    if (trimmed.isEmpty) {
+      widget.controller.text = _beforeEdit;
+      return;
+    }
+
+    if (trimmed != _beforeEdit) {
+      widget.controller.text = trimmed;
+      widget.onCommit(trimmed);
+    }
+  }
+
+  void _startEditing() {
+    _beforeEdit = widget.controller.text;
+    _focusNode.requestFocus();
   }
 
   @override
   Widget build(BuildContext context) {
-    final mealName = name.trim().isEmpty ? 'Ohne Namen' : name.trim();
+    final isEditing = _focusNode.hasFocus;
 
-    return InkWell(
-      onTap: () => _openEditDialog(context),
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        child: Text(
-          mealName,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+    return Center(
+      child: TextField(
+        controller: widget.controller,
+        focusNode: _focusNode,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.titleLarge,
+        readOnly: !isEditing,
+        onTap: _startEditing,
+        textInputAction: TextInputAction.done,
+        onSubmitted: (_) => _focusNode.unfocus(),
+        decoration: InputDecoration(
+  isDense: true,
+  isCollapsed: !isEditing,
+  filled: false,
+  hintText: null,
+  border: isEditing ? const OutlineInputBorder() : InputBorder.none,
+  enabledBorder:
+      isEditing ? const OutlineInputBorder() : InputBorder.none,
+  focusedBorder:
+      isEditing ? const OutlineInputBorder() : InputBorder.none,
+  contentPadding: isEditing
+      ? const EdgeInsets.symmetric(horizontal: 12, vertical: 8)
+      : EdgeInsets.zero,
+),
       ),
     );
   }

@@ -10,11 +10,7 @@ class MealImageSection extends StatelessWidget {
   final String imagePath;
   final VoidCallback? onTap;
 
-  const MealImageSection({
-    super.key,
-    required this.imagePath,
-    this.onTap,
-  });
+  const MealImageSection({super.key, required this.imagePath, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -29,19 +25,23 @@ class MealImageSection extends StatelessWidget {
             bottomLeft: Radius.circular(16),
             bottomRight: Radius.circular(16),
           ),
-          child: SizedBox(
-            width: double.infinity,
-            child: isDefault
-                ? Image.asset(
-                    AppAssets.defaultMealImagePath,
-                    fit: BoxFit.contain,
-                    alignment: Alignment.topCenter,
-                  )
-                : Image.file(
-                    File(imagePath),
-                    fit: BoxFit.contain,
-                    alignment: Alignment.topCenter,
-                  ),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxHeight: 350, 
+              minHeight: 220,
+            ),
+            child: SizedBox(
+              width: double.infinity,
+              child: FittedBox(
+                fit: BoxFit.fitWidth, 
+                alignment: Alignment.center, 
+                clipBehavior: Clip.hardEdge,
+                child:
+                    isDefault
+                        ? Image.asset(AppAssets.defaultMealImagePath)
+                        : Image.file(File(imagePath)),
+              ),
+            ),
           ),
         ),
       ),

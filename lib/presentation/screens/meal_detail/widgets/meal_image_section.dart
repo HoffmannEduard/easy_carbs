@@ -25,18 +25,22 @@ class MealImageSection extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(16),
+            bottomRight: Radius.circular(16),
+          ),
           child: SizedBox(
             width: double.infinity,
-            height: 250,
             child: isDefault
                 ? Image.asset(
                     AppAssets.defaultMealImagePath,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
+                    alignment: Alignment.topCenter,
                   )
                 : Image.file(
                     File(imagePath),
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
+                    alignment: Alignment.topCenter,
                   ),
           ),
         ),

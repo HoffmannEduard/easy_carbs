@@ -86,15 +86,12 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
     final showInsulin = ref.watch(
       userSettingsNotifierProvider.select(
         (s) => s.asData?.value.showInsulin ?? false,
-      ),);
-    final insulinAsync = showInsulin
-    ? ref.watch(mealInsulinUnitsProvider(widget.mealId))
-    : null;
-
-
+      ),
+    );
+    final insulinAsync =
+        showInsulin ? ref.watch(mealInsulinUnitsProvider(widget.mealId)) : null;
 
     return Scaffold(
-      appBar: AppBar(title: Text('Alle Mahlzeiten')),
       body: mealAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text(e.toString())),
@@ -105,190 +102,219 @@ class _MealDetailScreenState extends ConsumerState<MealDetailScreen> {
             _fpeController.text = meal.fpe.to1dp();
           }
 
-          
-
           return Listener(
             behavior: HitTestBehavior.translucent,
             onPointerDown: (_) => FocusManager.instance.primaryFocus?.unfocus(),
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: ListView(
-                children: [
-                  // Image
-                  HandleMealDetailImage(meal: meal, mealId: widget.mealId),
-                  const SizedBox(height: AppSpacing.spacingMd),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8, right: 8, bottom: 6),
+                child: ListView(
+                  children: [
+                    // Image
+                    Stack(
+                      children: [
+                        HandleMealDetailImage(
+                          meal: meal,
+                          mealId: widget.mealId,
+                        ),
+                        Positioned(
+                          top: 10,
+                          left: 10,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withAlpha(150),
+                              shape: BoxShape.circle,
+                            ),
+                            child: IconButton(
+                              icon: Icon(Icons.arrow_back),
+                              color: Colors.white,
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.spacingMd),
 
-                  // NameSection
-                  NameSection(
-                    controller: _nameController,
-                    onCommit: commands.updateName,
-                  ),
+                    // NameSection
+                    NameSection(
+                      controller: _nameController,
+                      onCommit: commands.updateName,
+                    ),
 
-                  // Location
-                  LocationSection(
-                    controller: _locationController,
-                    onCommit: commands.updateLocation,
-                  ),
-                  const Divider(height: 8, thickness: 2),
-                  const SizedBox(height: AppSpacing.spacingMd),
+                    // Location
+                    LocationSection(
+                      controller: _locationController,
+                      onCommit: commands.updateLocation,
+                    ),
+                    const Divider(height: 8, thickness: 2),
+                    const SizedBox(height: AppSpacing.spacingMd),
 
-                  // PortionSize
-                  Padding(
-                    padding: const EdgeInsets.all(.0),
-                    child: PortionSizeSection(
-                      controller: _portionSizeController,
-                      unitLabel: meal.portionUnit!.label,
-                      onCommit: (value) async {
-                        await commands.updatePortionSize(value);
-                        if (value == 0) {
-                          await commands.toggleAutocalculate(false);
-                        }
-                        if (meal.autocalculate) {
-                          await autocalc.setCarbsInUnitAndFpe(widget.mealId);
+                    // PortionSize
+                    Padding(
+                      padding: const EdgeInsets.all(.0),
+                      child: PortionSizeSection(
+                        controller: _portionSizeController,
+                        unitLabel: meal.portionUnit!.label,
+                        onCommit: (value) async {
+                          await commands.updatePortionSize(value);
+                          if (value == 0) {
+                            await commands.toggleAutocalculate(false);
+                          }
+                          if (meal.autocalculate) {
+                            await autocalc.setCarbsInUnitAndFpe(widget.mealId);
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.spacingMd),
+
+                    // Autocalculate Switch
+                    AutoCalculateSection(
+                      meal: meal,
+                      onToggleAutocalculate:
+                          (value) => commands.toggleAutocalculate(value),
+                      onRunAutocalc:
+                          () => autocalc.setCarbsInUnitAndFpe(widget.mealId),
+                    ),
+                    const SizedBox(height: AppSpacing.spacingMd),
+
+                    // BE/KE
+                    Row(
+                      children: [
+                        Expanded(
+                          child: BESection(
+                            controller: _carbsInUnitController,
+                            readonly: meal.autocalculate,
+                            unitLabel: meal.carbUnit.name.toUpperCase(),
+                            onCommit: commands.updateCarbsInUnit,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        if (showInsulin)
+                          insulinAsync!.when(
+                            loading: () => const SizedBox.shrink(),
+                            error: (_, __) => const SizedBox.shrink(),
+                            data:
+                                (ins) => InsulinUnitsCard(
+                                  insulinUnits: ins.carbsUnits,
+                                ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.spacingXs),
+
+                    // FPE
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FPESection(
+                            controller: _fpeController,
+                            readonly: meal.autocalculate,
+                            onCommit: commands.updateFpe,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        if (showInsulin)
+                          insulinAsync!.when(
+                            loading: () => const SizedBox.shrink(),
+                            error: (_, __) => const SizedBox.shrink(),
+                            data:
+                                (ins) => InsulinUnitsCard(
+                                  insulinUnits: ins.fpeUnits,
+                                ),
+                          ),
+                      ],
+                    ),
+
+                    const SizedBox(height: AppSpacing.spacingMd),
+
+                    // Note
+                    NoteSection(
+                      controller: _noteController,
+                      onChanged: commands.updateNote,
+                    ),
+                    const SizedBox(height: AppSpacing.spacingMd),
+
+                    // Nutrition
+                    NutritionSection(
+                      nutrition: meal.nutrition,
+                      portionUnit: meal.portionUnit!,
+                      onAdd: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) =>
+                                    AddNutritionScreen(mealId: widget.mealId),
+                          ),
+                        );
+                      },
+                      onEdit: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => AddNutritionScreen(
+                                  mealId: widget.mealId,
+                                  existingNutrition: meal.nutrition,
+                                ),
+                          ),
+                        );
+                      },
+                      onDelete: () async {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder:
+                              (_) => AlertDialog(
+                                title: const Text(
+                                  'Nährwerte endgültig löschen?',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed:
+                                        () => Navigator.pop(context, false),
+                                    child: const Text('Abbrechen'),
+                                  ),
+                                  FilledButton(
+                                    style: FilledButton.styleFrom(
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.error,
+                                      foregroundColor:
+                                          Theme.of(context).colorScheme.onError,
+                                    ),
+                                    onPressed:
+                                        () => Navigator.pop(context, true),
+                                    child: const Text('Löschen'),
+                                  ),
+                                ],
+                              ),
+                        );
+
+                        if (confirm == true) {
+                          if (meal.autocalculate) {
+                            commands.toggleAutocalculate(false);
+                          }
+                          await commands.removeNutrition();
                         }
                       },
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.spacingMd),
 
-                  // Autocalculate Switch
-                  AutoCalculateSection(
-                    meal: meal,
-                    onToggleAutocalculate:
-                        (value) => commands.toggleAutocalculate(value),
-                    onRunAutocalc:
-                        () => autocalc.setCarbsInUnitAndFpe(widget.mealId),
-                  ),
-                  const SizedBox(height: AppSpacing.spacingMd),
+                    const SizedBox(height: AppSpacing.spacingXl),
 
-                  // BE/KE
-                  Row(
-                    children: [
-                      Expanded(
-                        child: BESection(
-                          controller: _carbsInUnitController,
-                          readonly: meal.autocalculate,
-                          unitLabel: meal.carbUnit.name.toUpperCase(),
-                          onCommit: commands.updateCarbsInUnit,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      if (showInsulin)
-                      insulinAsync!.when(
-                        loading: () => const SizedBox.shrink(),
-                        error: (_, __) => const SizedBox.shrink(),
-                        data:
-                            (ins) =>
-                                InsulinUnitsCard(insulinUnits: ins.carbsUnits),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.spacingXs),
-
-                  // FPE
-                  Row(
-                    children: [
-                      Expanded(
-                        child: FPESection(
-                          controller: _fpeController,
-                          readonly: meal.autocalculate,
-                          onCommit: commands.updateFpe,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      if (showInsulin)
-                      insulinAsync!.when(
-                        loading: () => const SizedBox.shrink(),
-                        error: (_, __) => const SizedBox.shrink(),
-                        data:
-                            (ins) =>
-                                InsulinUnitsCard(insulinUnits: ins.fpeUnits),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: AppSpacing.spacingMd),
-
-                  // Note
-                  NoteSection(
-                    controller: _noteController,
-                    onChanged: commands.updateNote,
-                  ),
-                  const SizedBox(height: AppSpacing.spacingMd),
-
-                  // Nutrition
-                  NutritionSection(
-                    nutrition: meal.nutrition,
-                    portionUnit: meal.portionUnit!,
-                    onAdd: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (_) => AddNutritionScreen(mealId: widget.mealId),
-                        ),
-                      );
-                    },
-                    onEdit: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (_) => AddNutritionScreen(
-                                mealId: widget.mealId,
-                                existingNutrition: meal.nutrition,
-                              ),
-                        ),
-                      );
-                    },
-                    onDelete: () async {
-                      final confirm = await showDialog<bool>(
-                        context: context,
-                        builder:
-                            (_) => AlertDialog(
-                              title: const Text('Nährwerte endgültig löschen?'),
-                              actions: [
-                                TextButton(
-                                  onPressed:
-                                      () => Navigator.pop(context, false),
-                                  child: const Text('Abbrechen'),
-                                ),
-                                FilledButton(
-                                  style: FilledButton.styleFrom(
-                                    backgroundColor:
-                                        Theme.of(context).colorScheme.error,
-                                    foregroundColor:
-                                        Theme.of(context).colorScheme.onError,
-                                  ),
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: const Text('Löschen'),
-                                ),
-                              ],
-                            ),
-                      );
-
-                      if (confirm == true) {
-                        if (meal.autocalculate) {
-                          commands.toggleAutocalculate(false);
+                    // Delete Meal
+                    DeleteMealButton(
+                      onDelete: () async {
+                        final lastViewedId = ref.read(lastViewedMealIdProvider);
+                        await commands.deleteMeal();
+                        if (lastViewedId == meal.id) {
+                          ref.read(lastViewedMealIdProvider.notifier).state =
+                              null;
                         }
-                        await commands.removeNutrition();
-                      }
-                    },
-                  ),
-
-                  const SizedBox(height: AppSpacing.spacingXl),
-
-                  // Delete Meal
-                  DeleteMealButton(
-                    onDelete: () async {
-                      final lastViewedId = ref.read(lastViewedMealIdProvider);
-                      await commands.deleteMeal();
-                      if (lastViewedId == meal.id) {
-                        ref.read(lastViewedMealIdProvider.notifier).state = null;
-                      }
-                    },
-                  ),
-                ],
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           );

@@ -29,6 +29,7 @@ class MealFormFields extends StatelessWidget {
       children: [
 // --- Name ---
         TextFormField(
+          key: const Key('addMeal_name_field'),
           controller: nameController,
           decoration: const InputDecoration(
             hintText: 'Name',
@@ -55,6 +56,7 @@ class MealFormFields extends StatelessWidget {
 
 // --- PortionUnit ---
         DropdownButtonFormField<PortionUnit>(
+          key: const Key('addMeal_portionUnit_field'),
           value: portionUnit,
           hint: const Text('Einheit wählen'),
           items: const [

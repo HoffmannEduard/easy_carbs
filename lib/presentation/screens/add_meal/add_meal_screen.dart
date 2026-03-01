@@ -110,6 +110,7 @@ class _AddMealScreenState extends ConsumerState<AddMealScreen> {
                 SizedBox(
                   height: 48,
                   child: ElevatedButton(
+                    key: const Key('addMeal_create_button'),
                     onPressed: _createMeal,
                     child: const Text('Erstellen'),
                   ),

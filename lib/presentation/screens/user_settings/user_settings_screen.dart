@@ -58,6 +58,7 @@ class _UserSettingsScreenState extends ConsumerState<UserSettingsScreen> {
                 children: [
                   // Toggle ShowInsulin
                   SwitchListTile(
+                    key: const Key('showInsulin_switch'),
                     title: const Text('Insulin anzeigen'),
                     subtitle: const Text('Blendet Insulin-Felder bei Mahlzeiten ein oder aus'),
                     value: settings.showInsulin,

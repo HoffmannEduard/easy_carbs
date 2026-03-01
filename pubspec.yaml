@@ -30,6 +30,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
+  dartdoc: ^8.2.2
     
   flutter_lints: ^5.0.0
   drift_dev: ^2.29.0

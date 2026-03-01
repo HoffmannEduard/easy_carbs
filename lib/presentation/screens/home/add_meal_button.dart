@@ -17,6 +17,7 @@ class AddMealButton extends ConsumerWidget {
       child: SizedBox(
         height: 100,
         child: FilledButton(
+          key: const Key('home_addMeal_button'),
           onPressed: () {
             Navigator.push(
               context,

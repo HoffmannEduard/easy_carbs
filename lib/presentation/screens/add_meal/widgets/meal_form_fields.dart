@@ -3,9 +3,10 @@ import 'package:easy_carbs/domain/entities/portion_unit.dart';
 
 /// Formularfelder zur Eingabe der Basisdaten einer Mahlzeit.
 ///
-/// - Name (Pflichtfeld)
-/// - Location (optional)
-/// - PortionUnit-Auswahl (Pflichtfeld)
+/// [nameController] steuert das Pflichtfeld für den Namen.
+/// [locationController] steuert das optionale Ortsfeld.
+/// [portionUnit] aktuell gewählte Einheit.
+/// [onPortionUnitChanged] Callback bei Änderung der Einheit.
 ///
 /// Validierungslogik ist direkt in den jeweiligen FormFields implementiert.
 class MealFormFields extends StatelessWidget {

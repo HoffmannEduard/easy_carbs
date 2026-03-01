@@ -1,7 +1,7 @@
 import 'package:easy_carbs/app/provider/tab_provider.dart';
 import 'package:easy_carbs/app/theme/app_spacing.dart';
 import 'package:easy_carbs/presentation/screens/home/add_meal_button.dart';
-import 'package:easy_carbs/presentation/screens/home/db_viewer_button.dart';
+//import 'package:easy_carbs/presentation/screens/home/db_viewer_button.dart';
 import 'package:easy_carbs/presentation/screens/home/show_all_meals_button.dart';
 import 'package:easy_carbs/presentation/screens/meal_detail/meal_detail_screen.dart';
 import 'package:easy_carbs/presentation/screens/meal_list/widgets/meal_search_bar.dart';
@@ -29,6 +29,7 @@ class HomeScreen extends ConsumerWidget {
           // Oberer Inhalt
           Column(
             children: [
+              //SearchBar
               MealSearchBar(
                 onSubmitted: () {
                   ref.read(selectedTabProvider.notifier).setTab(1);
@@ -46,13 +47,16 @@ class HomeScreen extends ConsumerWidget {
                   children: const [
                     ShowAllMealsButton(),
                     SizedBox(width: AppSpacing.spacingXl),
+                    //AddMeal Button
                     AddMealButton(),
                   ],
                 ),
               ),
 
               const SizedBox(height: AppSpacing.spacingLg),
-              const DbViewerButton(),
+              //DB Viewer -- Auskommentiert
+              //Kommentar entfernen um die Datenbank einzusehen
+              //const DbViewerButton(),
             ],
           ),
 
